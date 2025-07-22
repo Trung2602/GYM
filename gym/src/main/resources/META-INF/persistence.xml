@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.2" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence           http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
+  <persistence-unit name="com.lht_gym_jar_0.0.1-SNAPSHOTPU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>com.lht.pojo.StaffSchedule</class>
+    <class>com.lht.pojo.Room</class>
+    <class>com.lht.pojo.Sauna</class>
+    <class>com.lht.pojo.CustomerSchedule</class>
+    <class>com.lht.pojo.Plan</class>
+    <class>com.lht.pojo.Salary</class>
+    <class>com.lht.pojo.Account</class>
+    <class>com.lht.pojo.StaffDayOff</class>
+    <class>com.lht.pojo.PayCustomer</class>
+    <class>com.lht.pojo.Staff</class>
+    <class>com.lht.pojo.Facility</class>
+    <class>com.lht.pojo.Admin</class>
+    <class>com.lht.pojo.StaffType</class>
+    <class>com.lht.pojo.Customer</class>
+    <class>com.lht.pojo.Message</class>
+    <class>com.lht.pojo.Shift</class>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/gymdb?zeroDateTimeBehavior=CONVERT_TO_NULL"/>
+      <property name="javax.persistence.jdbc.user" value="root"/>
+      <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+      <property name="javax.persistence.jdbc.password" value="Admin@123"/>
+    </properties>
+  </persistence-unit>
+</persistence>
