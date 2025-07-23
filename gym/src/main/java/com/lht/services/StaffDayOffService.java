@@ -4,10 +4,23 @@
  */
 package com.lht.services;
 
+import com.lht.pojo.StaffDayOff;
+import java.util.List;
+import java.util.Map;
+
 /**
  *
  * @author admin
  */
 public interface StaffDayOffService {
-    
+
+    List<StaffDayOff> getStaffDayOffs(Map<String, String> params);
+
+    List<StaffDayOff> getAllStaffDayOffs();
+
+    StaffDayOff getStaffDayOffById(Integer id);
+
+    StaffDayOff addOrUpdateStaffDayOff(StaffDayOff sdo);
+
+    boolean deleteStaffDayOff(Integer id);
 }

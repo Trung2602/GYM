@@ -4,10 +4,23 @@
  */
 package com.lht.services;
 
+import com.lht.pojo.Shift;
+import java.util.List;
+import java.util.Map;
+
 /**
  *
  * @author admin
  */
 public interface ShiftService {
-    
+
+    List<Shift> getShifts(Map<String, String> params);
+
+    List<Shift> getAllShifts();
+
+    Shift getShiftById(Integer id);
+
+    Shift addOrUpdateShift(Shift s);
+
+    boolean deleteShift(Integer id);
 }

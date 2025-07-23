@@ -72,7 +72,6 @@ public class PlanServiceImpl implements PlanService {
     }
 
     @Override
-    @Transactional
     public Plan addOrUpdatePlan(Plan p) {
         // Mặc định nếu thiếu thông tin
         if (p.getName() == null || p.getName().isEmpty()) {
@@ -92,7 +91,6 @@ public class PlanServiceImpl implements PlanService {
     }
 
     @Override
-    @Transactional
     public boolean deletePlan(Integer id) {
         if (planRepository.existsById(id)) {
             planRepository.deleteById(id);

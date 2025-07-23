@@ -4,10 +4,23 @@
  */
 package com.lht.services;
 
+import com.lht.pojo.Admin;
+import java.util.List;
+import java.util.Map;
+
 /**
  *
  * @author admin
  */
 public interface AdminService {
-    
+
+    List<Admin> getAdmins(Map<String, String> params);
+
+    List<Admin> getAllAdmins();
+
+    Admin getAdminById(Integer id);
+
+    Admin addOrUpdateAdmin(Admin a);
+
+    boolean deleteAdmin(Integer id);
 }

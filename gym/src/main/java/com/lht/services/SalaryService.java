@@ -4,10 +4,23 @@
  */
 package com.lht.services;
 
+import com.lht.pojo.Salary;
+import java.util.List;
+import java.util.Map;
+
 /**
  *
  * @author admin
  */
 public interface SalaryService {
-    
+
+    List<Salary> getSalaries(Map<String, String> params);
+
+    List<Salary> getAllSalaries();
+
+    Salary getSalaryById(Integer id);
+
+    Salary addOrUpdateSalary(Salary s);
+
+    boolean deleteSalary(Integer id);
 }

@@ -8,10 +8,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
@@ -29,6 +33,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "account")
+@Inheritance(strategy = InheritanceType.JOINED)
 @NamedQueries({
     @NamedQuery(name = "Account.findAll", query = "SELECT a FROM Account a"),
     @NamedQuery(name = "Account.findById", query = "SELECT a FROM Account a WHERE a.id = :id"),
@@ -58,7 +63,7 @@ public class Account implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date birthday;
     @Column(name = "gender")
-    private Short gender;
+    private Boolean gender;
     @Column(name = "mail")
     private String mail;
     @Column(name = "avatar")
@@ -67,12 +72,15 @@ public class Account implements Serializable {
     private Boolean isActive;
     
     
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "account")
-    private Admin admin;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "account")
-    private Staff staff;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "account")
-    private Customer customer;
+//    @OneToOne(cascade = CascadeType.ALL, mappedBy = "account")
+//    @JsonIgnore
+//    private Admin admin;
+//    @OneToOne(cascade = CascadeType.ALL, mappedBy = "account")
+//    @JsonIgnore
+//    private Staff staff;
+//    @OneToOne(cascade = CascadeType.ALL, mappedBy = "account")
+//    @JsonIgnore
+//    private Customer customer;
     
     @OneToMany(mappedBy = "senderId")
     @JsonIgnore
@@ -129,11 +137,11 @@ public class Account implements Serializable {
         this.birthday = birthday;
     }
 
-    public Short getGender() {
+    public Boolean getGender() {
         return gender;
     }
 
-    public void setGender(Short gender) {
+    public void setGender(Boolean gender) {
         this.gender = gender;
     }
 
@@ -161,21 +169,28 @@ public class Account implements Serializable {
         this.isActive = isActive;
     }
 
-    public Admin getAdmin() {
-        return admin;
-    }
-
-    public void setAdmin(Admin admin) {
-        this.admin = admin;
-    }
-
-    public Staff getStaff() {
-        return staff;
-    }
-
-    public void setStaff(Staff staff) {
-        this.staff = staff;
-    }
+//    public Admin getAdmin() {
+//        return admin;
+//    }
+//
+//    public void setAdmin(Admin admin) {
+//        this.admin = admin;
+//    }
+//
+//    public Staff getStaff() {
+//        return staff;
+//    }
+//
+//    public void setStaff(Staff staff) {
+//        this.staff = staff;
+//    }
+//    public Customer getCustomer() {
+//        return customer;
+//    }
+//
+//    public void setCustomer(Customer customer) {
+//        this.customer = customer;
+//    }
 
     public Set<Message> getMessageSet() {
         return messageSet;
@@ -191,14 +206,6 @@ public class Account implements Serializable {
 
     public void setMessageSet1(Set<Message> messageSet1) {
         this.messageSet1 = messageSet1;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
     }
 
     @Override

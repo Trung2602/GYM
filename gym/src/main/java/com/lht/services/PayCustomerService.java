@@ -4,10 +4,23 @@
  */
 package com.lht.services;
 
+import com.lht.pojo.PayCustomer;
+import java.util.List;
+import java.util.Map;
+
 /**
  *
  * @author admin
  */
 public interface PayCustomerService {
-    
+
+    List<PayCustomer> getPayCustomers(Map<String, String> params);
+
+    List<PayCustomer> getAllPayCustomers();
+
+    PayCustomer getPayCustomerById(Integer id);
+
+    PayCustomer addOrUpdatePayCustomer(PayCustomer pc);
+
+    boolean deletePayCustomer(Integer id);
 }

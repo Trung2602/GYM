@@ -49,11 +49,11 @@ public class Message implements Serializable {
     
     @JoinColumn(name = "sender_id", referencedColumnName = "id")
     @ManyToOne
-    @JsonIgnoreProperties({"messageSet"})
+    @JsonIgnoreProperties({"messageSet", "messageSet1"})
     private Account senderId;
     @JoinColumn(name = "receiver_id", referencedColumnName = "id")
     @ManyToOne
-    @JsonIgnoreProperties({"messageSet"})
+    @JsonIgnoreProperties({"messageSet", "messageSet1"})
     private Account receiverId;
 
     public Message() {

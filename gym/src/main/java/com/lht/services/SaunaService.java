@@ -4,10 +4,23 @@
  */
 package com.lht.services;
 
+import com.lht.pojo.Sauna;
+import java.util.List;
+import java.util.Map;
+
 /**
  *
  * @author admin
  */
 public interface SaunaService {
-    
+
+    List<Sauna> getSaunas(Map<String, String> params);
+
+    List<Sauna> getAllSaunas();
+
+    Sauna getSaunaById(Integer id);
+
+    Sauna addOrUpdateSauna(Sauna s);
+
+    boolean deleteSauna(Integer id);
 }

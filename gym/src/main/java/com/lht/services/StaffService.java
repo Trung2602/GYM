@@ -4,10 +4,23 @@
  */
 package com.lht.services;
 
+import com.lht.pojo.Staff;
+import java.util.List;
+import java.util.Map;
+
 /**
  *
  * @author admin
  */
 public interface StaffService {
-    
+
+    List<Staff> getStaffs(Map<String, String> params);
+
+    List<Staff> getAllStaffs();
+
+    Staff getStaffById(Integer id);
+
+    Staff addOrUpdateStaff(Staff s);
+
+    boolean deleteStaff(Integer id);
 }

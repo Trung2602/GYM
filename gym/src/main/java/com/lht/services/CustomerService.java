@@ -4,10 +4,24 @@
  */
 package com.lht.services;
 
+import com.lht.pojo.Customer;
+import java.util.List;
+import java.util.Map;
+
 /**
  *
  * @author admin
  */
 public interface CustomerService {
-    
+
+    List<Customer> getCustomers(Map<String, String> params);
+
+    List<Customer> getAllCustomers();
+
+    Customer getCustomerById(Integer id);
+
+    Customer addOrUpdateCustomer(Customer c);
+
+    boolean deleteCustomer(Integer id);
+
 }

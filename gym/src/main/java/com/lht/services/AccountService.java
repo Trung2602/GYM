@@ -4,10 +4,22 @@
  */
 package com.lht.services;
 
+import com.lht.pojo.Account;
+import java.util.List;
+import java.util.Map;
+
 /**
  *
  * @author admin
  */
 public interface AccountService {
-    
+    List<Account> getAccounts(Map<String, String> params);
+
+    List<Account> getAllAccounts();
+
+    Account getAccountById(Integer id);
+
+    Account addOrUpdateAccount(Account p);
+
+    boolean deleteAccount(Integer id);
 }

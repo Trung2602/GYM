@@ -4,10 +4,23 @@
  */
 package com.lht.services;
 
+import com.lht.pojo.CustomerSchedule;
+import java.util.List;
+import java.util.Map;
+
 /**
  *
  * @author admin
  */
 public interface CustomerScheduleService {
-    
+
+    List<CustomerSchedule> getCustomerSchedules(Map<String, String> params);
+
+    List<CustomerSchedule> getAllCustomerSchedules();
+
+    CustomerSchedule getCustomerScheduleById(Integer id);
+
+    CustomerSchedule addOrUpdateCustomerSchedule(CustomerSchedule cs);
+
+    boolean deleteCustomerSchedule(Integer id);
 }
