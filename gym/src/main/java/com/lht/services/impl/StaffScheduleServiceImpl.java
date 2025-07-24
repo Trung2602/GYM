@@ -8,7 +8,11 @@ import com.lht.pojo.StaffSchedule;
 import com.lht.reponsitories.StaffScheduleRepository;
 import com.lht.services.StaffScheduleService;
 import jakarta.persistence.criteria.Predicate;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +45,37 @@ public class StaffScheduleServiceImpl implements StaffScheduleService {
     public List<StaffSchedule> getStaffSchedules(Map<String, String> params) {
         Specification<StaffSchedule> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
+            // Lọc theo staffId
             if (params.containsKey("staffId")) {
-                predicates.add(cb.equal(root.get("staff").get("id"), Integer.parseInt(params.get("staffId"))));
+                try {
+                    Integer staffId = Integer.parseInt(params.get("staffId"));
+                    predicates.add(cb.equal(root.get("staffId").get("id"), staffId));
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Invalid staffId, expected a number");
+                }
             }
+
+            // Lọc theo shiftId
+            if (params.containsKey("shiftId")) {
+                try {
+                    Integer shiftId = Integer.parseInt(params.get("shiftId"));
+                    predicates.add(cb.equal(root.get("shiftId").get("id"), shiftId));
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Invalid shiftId, expected a number");
+                }
+            }
+
+            // Lọc theo date
+            if (params.containsKey("date")) {
+                try {
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                    Date date = df.parse(params.get("date"));
+                    predicates.add(cb.equal(root.get("date"), date));
+                } catch (ParseException e) {
+                    throw new IllegalArgumentException("Invalid date format, expected yyyy-MM-dd");
+                }
+            }
+            
             return cb.and(predicates.toArray(new Predicate[0]));
         };
         return staffScheduleRepository.findAll(spec);

@@ -18,6 +18,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import java.io.Serializable;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.Set;
 
@@ -43,10 +44,10 @@ public class Shift implements Serializable {
     private Integer id;
     @Column(name = "checkin")
     @Temporal(TemporalType.TIME)
-    private Date checkin;
+    private LocalTime checkin;
     @Column(name = "checkout")
     @Temporal(TemporalType.TIME)
-    private Date checkout;
+    private LocalTime checkout;
     @Column(name = "duration")
     private Integer duration;
     
@@ -69,19 +70,19 @@ public class Shift implements Serializable {
         this.id = id;
     }
 
-    public Date getCheckin() {
+    public LocalTime getCheckin() {
         return checkin;
     }
 
-    public void setCheckin(Date checkin) {
+    public void setCheckin(LocalTime checkin) {
         this.checkin = checkin;
     }
 
-    public Date getCheckout() {
+    public LocalTime getCheckout() {
         return checkout;
     }
 
-    public void setCheckout(Date checkout) {
+    public void setCheckout(LocalTime checkout) {
         this.checkout = checkout;
     }
 

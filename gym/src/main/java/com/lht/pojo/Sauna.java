@@ -19,6 +19,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import java.io.Serializable;
+import java.time.LocalTime;
 import java.util.Date;
 
 /**
@@ -46,7 +47,7 @@ public class Sauna implements Serializable {
     private Date date;
     @Column(name = "checkin")
     @Temporal(TemporalType.TIME)
-    private Date checkin;
+    private LocalTime checkin;
     @Column(name = "is_paid")
     private Boolean isPaid;
     
@@ -82,11 +83,11 @@ public class Sauna implements Serializable {
         this.date = date;
     }
 
-    public Date getCheckin() {
+    public LocalTime getCheckin() {
         return checkin;
     }
 
-    public void setCheckin(Date checkin) {
+    public void setCheckin(LocalTime checkin) {
         this.checkin = checkin;
     }
 

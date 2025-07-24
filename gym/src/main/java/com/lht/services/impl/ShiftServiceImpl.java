@@ -8,6 +8,8 @@ import com.lht.pojo.Shift;
 import com.lht.reponsitories.ShiftRepository;
 import com.lht.services.ShiftService;
 import jakarta.persistence.criteria.Predicate;
+import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -41,9 +43,32 @@ public class ShiftServiceImpl implements ShiftService {
     public List<Shift> getShifts(Map<String, String> params) {
         Specification<Shift> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
-            if (params.containsKey("duration")) {
-                predicates.add(cb.equal(root.get("duration"), Integer.parseInt(params.get("duration"))));
+            if (params.containsKey("checkin")) {
+                try {
+                    LocalTime time = LocalTime.parse(params.get("checkin")); // HH:mm:ss
+                    predicates.add(cb.equal(root.get("checkin"), time));
+                } catch (DateTimeParseException e) {
+                    throw new IllegalArgumentException("Invalid checkin format, expected HH:mm:ss");
+                }
             }
+
+            if (params.containsKey("checkout")) {
+                try {
+                    LocalTime time = LocalTime.parse(params.get("checkout")); // HH:mm:ss
+                    predicates.add(cb.equal(root.get("checkout"), time));
+                } catch (DateTimeParseException e) {
+                    throw new IllegalArgumentException("Invalid checkout format, expected HH:mm:ss");
+                }
+            }
+
+            if (params.containsKey("duration")) {
+                try {
+                    predicates.add(cb.equal(root.get("duration"), Integer.parseInt(params.get("duration"))));
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Invalid duration, expected a number");
+                }
+            }
+            
             return cb.and(predicates.toArray(new Predicate[0]));
         };
         return shiftRepository.findAll(spec);

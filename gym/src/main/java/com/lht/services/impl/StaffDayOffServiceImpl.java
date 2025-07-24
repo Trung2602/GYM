@@ -8,7 +8,11 @@ import com.lht.pojo.StaffDayOff;
 import com.lht.reponsitories.StaffDayOffRepository;
 import com.lht.services.StaffDayOffService;
 import jakarta.persistence.criteria.Predicate;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +45,25 @@ public class StaffDayOffServiceImpl implements StaffDayOffService {
     public List<StaffDayOff> getStaffDayOffs(Map<String, String> params) {
         Specification<StaffDayOff> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
+            // Lọc theo staffId
             if (params.containsKey("staffId")) {
-                predicates.add(cb.equal(root.get("staff").get("id"), Integer.parseInt(params.get("staffId"))));
+                try {
+                    Integer staffId = Integer.parseInt(params.get("staffId"));
+                    predicates.add(cb.equal(root.get("staffId").get("id"), staffId));
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Invalid staffId. Expected a number.");
+                }
+            }
+
+            // Lọc theo date
+            if (params.containsKey("date")) {
+                try {
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                    Date date = df.parse(params.get("date"));
+                    predicates.add(cb.equal(root.get("date"), date));
+                } catch (ParseException e) {
+                    throw new IllegalArgumentException("Invalid date format. Expected yyyy-MM-dd.");
+                }
             }
             return cb.and(predicates.toArray(new Predicate[0]));
         };

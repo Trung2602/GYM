@@ -9,7 +9,11 @@ import com.lht.reponsitories.SalaryRepository;
 import com.lht.services.SalaryService;
 
 import jakarta.persistence.criteria.Predicate;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +46,37 @@ public class SalaryServiceImpl implements SalaryService {
     public List<Salary> getSalaries(Map<String, String> params) {
         Specification<Salary> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
+            if (params.containsKey("id")) {
+                predicates.add(cb.equal(root.get("id"), Integer.parseInt(params.get("id"))));
+            }
+
+            if (params.containsKey("date")) {
+                try {
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                    Date date = df.parse(params.get("date"));
+                    predicates.add(cb.equal(root.get("date"), date));
+                } catch (ParseException e) {
+                    throw new IllegalArgumentException("Invalid date format, expected yyyy-MM-dd");
+                }
+            }
+
+            if (params.containsKey("duration")) {
+                predicates.add(cb.equal(root.get("duration"), Integer.parseInt(params.get("duration"))));
+            }
+
+            if (params.containsKey("dayOff")) {
+                predicates.add(cb.equal(root.get("dayOff"), Integer.parseInt(params.get("dayOff"))));
+            }
+
+            if (params.containsKey("price")) {
+                predicates.add(cb.equal(root.get("price"), Integer.parseInt(params.get("price"))));
+            }
+
             if (params.containsKey("staffId")) {
-                predicates.add(cb.equal(root.get("staff").get("id"), Integer.parseInt(params.get("staffId"))));
+                predicates.add(cb.equal(
+                        root.get("staffId").get("id"),
+                        Integer.parseInt(params.get("staffId"))
+                ));
             }
             return cb.and(predicates.toArray(new Predicate[0]));
         };

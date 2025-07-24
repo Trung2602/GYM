@@ -8,7 +8,13 @@ import com.lht.pojo.CustomerSchedule;
 import com.lht.reponsitories.CustomerScheduleRepository;
 import com.lht.services.CustomerScheduleService;
 import jakarta.persistence.criteria.Predicate;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +47,51 @@ public class CustomerScheduleServiceImpl implements CustomerScheduleService {
     public List<CustomerSchedule> getCustomerSchedules(Map<String, String> params) {
         Specification<CustomerSchedule> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
+            if (params.containsKey("id")) {
+                predicates.add(cb.equal(root.get("id"), Integer.parseInt(params.get("id"))));
+            }
+
             if (params.containsKey("customerId")) {
                 predicates.add(cb.equal(root.get("customer").get("id"), Integer.parseInt(params.get("customerId"))));
             }
+
+            if (params.containsKey("staffId")) {
+                predicates.add(cb.equal(root.get("staff").get("id"), Integer.parseInt(params.get("staffId"))));
+            }
+
+            if (params.containsKey("facilityId")) {
+                predicates.add(cb.equal(root.get("facility").get("id"), Integer.parseInt(params.get("facilityId"))));
+            }
+
+            if (params.containsKey("date")) {
+                //format yyyy-MM-dd
+                try {
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                    Date date = df.parse(params.get("date"));
+                    predicates.add(cb.equal(root.get("date"), date));
+                } catch (ParseException e) {
+                    throw new IllegalArgumentException("Invalid date format, expected yyyy-MM-dd");
+                }
+            }
+
+            if (params.containsKey("checkin")) {
+                try {
+                    LocalTime checkin = LocalTime.parse(params.get("checkin")); // format HH:mm:ss
+                    predicates.add(cb.equal(root.get("checkin"), checkin));
+                } catch (DateTimeParseException e) {
+                    throw new IllegalArgumentException("Invalid checkin format, expected HH:mm:ss");
+                }
+            }
+
+            if (params.containsKey("checkout")) {
+                try {
+                    LocalTime checkout = LocalTime.parse(params.get("checkout")); // format HH:mm:ss
+                    predicates.add(cb.equal(root.get("checkout"), checkout));
+                } catch (DateTimeParseException e) {
+                    throw new IllegalArgumentException("Invalid checkout format, expected HH:mm:ss");
+                }
+            }
+
             return cb.and(predicates.toArray(new Predicate[0]));
         };
         return customerScheduleRepository.findAll(spec);

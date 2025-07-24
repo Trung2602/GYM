@@ -43,7 +43,11 @@ public class RoomServiceImpl implements RoomService {
         Specification<Room> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (params.containsKey("facilityId")) {
-                predicates.add(cb.equal(root.get("facility").get("id"), Integer.parseInt(params.get("facilityId"))));
+                predicates.add(cb.equal(root.get("facilityId").get("id"),Integer.parseInt(params.get("facilityId"))));
+            }
+
+            if (params.containsKey("roomNumber")) {
+                predicates.add(cb.like(cb.lower(root.get("roomNumber")), "%" + params.get("roomNumber").toLowerCase() + "%" ));
             }
             return cb.and(predicates.toArray(new Predicate[0]));
         };

@@ -8,7 +8,11 @@ import com.lht.pojo.Staff;
 import com.lht.reponsitories.StaffRepository;
 import com.lht.services.StaffService;
 import jakarta.persistence.criteria.Predicate;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,14 +45,33 @@ public class StaffServiceImpl implements StaffService {
     public List<Staff> getStaffs(Map<String, String> params) {
         Specification<Staff> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
-            if (params.containsKey("name")) {
-                predicates.add(cb.like(cb.lower(root.get("name")), "%" + params.get("name").toLowerCase() + "%"));
+            // Lọc theo createdDate
+            if (params.containsKey("createdDate")) {
+                try {
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                    Date createdDate = df.parse(params.get("createdDate"));
+                    predicates.add(cb.equal(root.get("createdDate"), createdDate));
+                } catch (ParseException e) {
+                    throw new IllegalArgumentException("Invalid createdDate format. Expected yyyy-MM-dd");
+                }
             }
-            if (params.containsKey("phone")) {
-                predicates.add(cb.like(root.get("phone"), "%" + params.get("phone") + "%"));
+
+            // Lọc theo facilityId
+            if (params.containsKey("facilityId")) {
+                try {
+                    predicates.add(cb.equal(root.get("facilityId").get("id"), Integer.parseInt(params.get("facilityId"))));
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Invalid facilityId. Expected number.");
+                }
             }
-            if (params.containsKey("position")) {
-                predicates.add(cb.equal(root.get("position"), params.get("position")));
+
+            // Lọc theo staffTypeId
+            if (params.containsKey("staffTypeId")) {
+                try {
+                    predicates.add(cb.equal(root.get("staffTypeId").get("id"), Integer.parseInt(params.get("staffTypeId"))));
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Invalid staffTypeId. Expected number.");
+                }
             }
             return cb.and(predicates.toArray(new Predicate[0]));
         };

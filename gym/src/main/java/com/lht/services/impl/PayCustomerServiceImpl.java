@@ -9,7 +9,11 @@ import com.lht.reponsitories.PayCustomerRepository;
 import com.lht.services.PayCustomerService;
 
 import jakarta.persistence.criteria.Predicate;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,11 +48,32 @@ public class PayCustomerServiceImpl implements PayCustomerService {
         Specification<PayCustomer> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (params.containsKey("customerId")) {
-                predicates.add(cb.equal(root.get("customer").get("id"), Integer.parseInt(params.get("customerId"))));
+                predicates.add(cb.equal(root.get("customerId").get("id"), Integer.parseInt(params.get("customerId"))));
             }
+
             if (params.containsKey("planId")) {
-                predicates.add(cb.equal(root.get("plan").get("id"), Integer.parseInt(params.get("planId"))));
+                predicates.add(cb.equal(root.get("planId").get("id"), Integer.parseInt(params.get("planId"))));
             }
+
+            if (params.containsKey("price")) {
+                try {
+                    Integer price = Integer.parseInt(params.get("price"));
+                    predicates.add(cb.equal(root.get("planId").get("price"), price));
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Invalid price format, expected a number");
+                }
+            }
+
+            if (params.containsKey("date")) {
+                try {
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                    Date date = df.parse(params.get("date"));
+                    predicates.add(cb.equal(root.get("date"), date));
+                } catch (ParseException e) {
+                    throw new IllegalArgumentException("Invalid date format, expected yyyy-MM-dd");
+                }
+            }
+
             return cb.and(predicates.toArray(new Predicate[0]));
         };
         return payCustomerRepository.findAll(spec);

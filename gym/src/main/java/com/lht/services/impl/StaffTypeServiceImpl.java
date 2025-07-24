@@ -42,9 +42,30 @@ public class StaffTypeServiceImpl implements StaffTypeService {
         Specification<StaffType> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
+            // Lọc theo name (LIKE, không phân biệt hoa thường)
             String name = params.get("name");
             if (name != null && !name.isEmpty()) {
                 predicates.add(cb.like(cb.lower(root.get("name")), "%" + name.toLowerCase() + "%"));
+            }
+
+            // Lọc theo salary (chính xác)
+            if (params.containsKey("salary")) {
+                try {
+                    Integer salary = Integer.parseInt(params.get("salary"));
+                    predicates.add(cb.equal(root.get("salary"), salary));
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Invalid salary, must be a number");
+                }
+            }
+
+            // Lọc theo dayOff (chính xác)
+            if (params.containsKey("dayOff")) {
+                try {
+                    Integer dayOff = Integer.parseInt(params.get("dayOff"));
+                    predicates.add(cb.equal(root.get("dayOff"), dayOff));
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Invalid dayOff, must be a number");
+                }
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));
