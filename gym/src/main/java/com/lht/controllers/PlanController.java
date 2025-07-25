@@ -33,7 +33,7 @@ public class PlanController {
         return "index";
     }
 
-    @GetMapping("/plans/{id}")
+    @GetMapping("/plan/{id}")
     public String getPlan(@PathVariable("id") Integer id, Model model) {
         Plan plan = planService.getPlanById(id);
         model.addAttribute("plan", plan);

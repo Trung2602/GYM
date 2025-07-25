@@ -22,4 +22,6 @@ public interface AccountService {
     Account addOrUpdateAccount(Account p);
 
     boolean deleteAccount(Integer id);
+    
+    boolean changeIsActive (Integer id);
 }

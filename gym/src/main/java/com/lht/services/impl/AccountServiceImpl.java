@@ -53,7 +53,7 @@ public class AccountServiceImpl implements AccountService {
             if (params.containsKey("username")) {
                 predicates.add(cb.like(cb.lower(root.get("username")), "%" + params.get("username").toLowerCase() + "%"));
             }
-            
+
             if (params.containsKey("name")) {
                 predicates.add(cb.like(cb.lower(root.get("name")), "%" + params.get("name").toLowerCase() + "%"));
             }
@@ -100,6 +100,20 @@ public class AccountServiceImpl implements AccountService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean changeIsActive(Integer id) {
+        Account acc = accountRepository.findById(id).orElse(null);
+        if (acc != null) {
+            if(acc.getIsActive())
+                acc.setIsActive(Boolean.FALSE);
+            else
+                acc.setIsActive(Boolean.TRUE);
+            return true;
+        }
+        return false;
+
     }
 
 }

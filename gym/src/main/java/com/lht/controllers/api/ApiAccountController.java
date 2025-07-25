@@ -52,17 +52,26 @@ public class ApiAccountController {
             return ResponseEntity.notFound().build();
     }
 
-    // POST /api/accounts
+    // POST /api/account
     @PostMapping("/account/addOrUpdate")
     public ResponseEntity<Account> addOrUpdateAccount(@RequestBody Account account) {
         Account saved = accountService.addOrUpdateAccount(account);
         return ResponseEntity.ok(saved);
     }
 
-    // DELETE /api/accounts/{id}
-    @DeleteMapping("/accounts/{id}")
+    // DELETE /api/account/{id}
+    @DeleteMapping("/account/{id}")
     public ResponseEntity<?> deleteAccount(@PathVariable Integer id) {
         boolean success = accountService.deleteAccount(id);
+        if (success)
+            return ResponseEntity.ok().build();
+        else
+            return ResponseEntity.notFound().build();
+    }
+    
+    @GetMapping("/account/isActive/{id}")
+    public ResponseEntity<Account> changeIsActive(@PathVariable Integer id) {
+        boolean success = accountService.changeIsActive(id);
         if (success)
             return ResponseEntity.ok().build();
         else
