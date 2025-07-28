@@ -55,6 +55,13 @@
             <version>9.3.0</version>
         </dependency>
 
+        <!-- Cloud -->
+        <dependency>
+            <groupId>com.cloudinary</groupId>
+            <artifactId>cloudinary-http44</artifactId>
+            <version>1.29.0</version>
+        </dependency>
+        
         <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -107,10 +114,10 @@
         </plugins>
     </build>
 
-<!-- tắt port 8080 đang chạy ngầm
-Mở cmd trên máy và truyền 2 lệnh sau vào
-Lệnh kiểm trả: netstat -ano | findstr :8080
-VD: TCP 127.0.0.1:8080 0.0.0.0:0 LISTENING 12345
-Lệnh tắt port: taskkill /PID <mã LISTENING> /F-->
+    <!-- tắt port 8080 đang chạy ngầm
+    Mở cmd trên máy và truyền 2 lệnh sau vào
+    Lệnh kiểm trả: netstat -ano | findstr :8080
+    VD: TCP 127.0.0.1:8080 0.0.0.0:0 LISTENING 12345
+    Lệnh tắt port: taskkill /PID <mã LISTENING> /F-->
 
 </project>
