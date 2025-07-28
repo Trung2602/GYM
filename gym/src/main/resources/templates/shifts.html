@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý ca làm</title>
+    <th:block th:replace="init :: styles"></th:block>
+</head>
+<body>
+    <th:block th:replace="init :: header"></th:block>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 col-md-3 col-lg-2 bg-light border-end vh-100 pt-3">
+                <th:block th:replace="init :: sidebar"></th:block>
+            </div>
+
+            <div class="col-12 col-md-9 col-lg-10 pt-3">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="text-shadow"><i class="bi bi-clock-history me-3"></i>Quản lý ca làm</h2>
+                    <a th:href="@{/Shifts/add}" class="btn btn-primary px-4 py-2 rounded-pill">
+                        <i class="bi bi-plus-circle me-1"></i> Thêm mới
+                    </a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Giờ bắt đầu</th>
+                                <th>Giờ kết thúc</th>
+                                <th>Thời lượng (phút)</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="s, iterStat : ${shifts}">
+                                <td th:text="${iterStat.count}" class="text-center"></td>
+                                <td th:text="${#temporals.format(s.checkin, 'HH:mm')}"></td>
+                                <td th:text="${#temporals.format(s.checkout, 'HH:mm')}"></td>
+                                <td th:text="${s.duration}" class="text-center"></td>
+                                <td class="text-center">
+                                    <a th:href="@{|/Shifts/edit/${s.id}|}" class="btn btn-warning btn-sm me-2">
+                                        <i class="bi bi-pencil-square"></i> Sửa
+                                    </a>
+                                    <a th:href="@{|/Shifts/delete/${s.id}|}" class="btn btn-danger btn-sm"
+                                       onclick="return confirm('Bạn có chắc chắn muốn xoá ca này?')">
+                                        <i class="bi bi-trash3"></i> Xoá
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(shifts)}">
+                                <td colspan="5" class="text-center text-muted">Không có dữ liệu</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block th:replace="init :: footer"></th:block>
+</body>
+</html>

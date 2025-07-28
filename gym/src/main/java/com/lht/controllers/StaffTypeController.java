@@ -4,7 +4,11 @@
  */
 package com.lht.controllers;
 
+import com.lht.services.StaffTypeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  *
@@ -12,5 +16,14 @@ import org.springframework.stereotype.Controller;
  */
 @Controller
 public class StaffTypeController {
-    
+
+    @Autowired
+    private StaffTypeService staffTypeService;
+
+    @GetMapping("/staffTypes")
+    public String listStaffTypes(Model model) {
+        model.addAttribute("staffTypes", staffTypeService.getAllStaffTypes());
+        return "staff-types";
+    }
+
 }

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Lịch sử khách hàng</title>
+    <th:block th:replace="init :: styles"></th:block>
+</head>
+<body>
+<th:block th:replace="init :: header"></th:block>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-2 bg-light">
+            <th:block th:replace="init :: sidebar"></th:block>
+        </div>
+
+        <!-- Main content -->
+        <div class="col-10 mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2><i class="bi bi-calendar-check me-2"></i>Lịch sử sử dụng dịch vụ</h2>
+                <a th:href="@{/CustomerSchedules/add}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Thêm mới
+                </a>
+            </div>
+
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark text-center">
+                    <tr>
+                        <th>#</th>
+                        <th>Ngày</th>
+                        <th>Giờ vào</th>
+                        <th>Giờ ra</th>
+                        <th>Khách hàng</th>
+                        <th>Cơ sở</th>
+                        <th>Nhân viên</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="cs, iter : ${customerSchedules}">
+                        <td th:text="${iter.count}" class="text-center"></td>
+                        <td th:text="${#dates.format(cs.date, 'dd/MM/yyyy')}"></td>
+                        <td th:text="${cs.checkin}"></td>
+                        <td th:text="${cs.checkout}"></td>
+                        <td th:text="${cs.customerId.name}"></td>
+                        <td th:text="${cs.facilityId.name}"></td>
+                        <td th:text="${cs.staffId.name}"></td>
+                        <td class="text-center">
+                            <a th:href="@{|/CustomerSchedules/edit/${cs.id}|}" class="btn btn-warning btn-sm me-1">
+                                <i class="bi bi-pencil-square"></i> Sửa
+                            </a>
+                            <a th:href="@{|/CustomerSchedules/delete/${cs.id}|}" class="btn btn-danger btn-sm"
+                               onclick="return confirm('Bạn có chắc chắn muốn xoá lịch sử này?')">
+                                <i class="bi bi-trash3"></i> Xoá
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(customerSchedules)}">
+                        <td colspan="8" class="text-center text-muted">Không có dữ liệu</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="init :: footer"></th:block>
+</body>
+</html>

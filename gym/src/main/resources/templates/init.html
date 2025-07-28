@@ -1,42 +1,36 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
-    <!--sec:authorize="isAuthenticated()"-->
-    <head>
-        <title th:fragment="title"></title>
-    <th:block th:fragment="styles"> 
+<head>
+    <title th:fragment="title"></title>
+    <th:block th:fragment="styles">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    </th:block>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlalTjsF2QhL3k8z4LgJz/j5sRz6v9+0i6W6d+4z9F5o+0z8z9+7g5+6l7+3+8w8w9+2l+8l8+7Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel="stylesheet" th:href="@{/css/galactic-styles.css}"> </th:block>
 </head>
 <body>
     <header th:fragment="header">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
             <div class="container-fluid d-flex align-items-center justify-content-between">
 
-                <!-- Bên trái: Logo + Trang chủ -->
                 <div class="d-flex align-items-center">
                     <a class="navbar-brand fw-bold me-3 d-flex align-items-center" th:href="@{/}">
-                        <i class="bi bi-tools me-2"></i> GYM
-                    </a>
-                    <a class="nav-link text-light d-flex align-items-center" th:href="@{/}"  >
+                        <i class="bi bi-rocket-takeoff-fill me-2 text-warning"></i> GALACTIC FITNESS </a>
+                    <a class="nav-link text-light d-flex align-items-center" th:href="@{/}" >
                         <i class="bi bi-house-door-fill me-1"></i> Trang chủ
                     </a>
                 </div>
 
-                <!-- Bên phải: Chào mừng + Đăng xuất -->
                 <ul class="navbar-nav d-flex align-items-center gap-3" >
                     <li class="nav-item">
                         <span class="navbar-text text-light fw-semibold d-flex align-items-center">
                             <i class="bi bi-person-circle me-1"></i>
-                            Xin chào,<!-- <span th:text="${#authentication.name}">Tên người dùng</span>-->
-                        </span>
+                            Xin chào, <!--<span th:text="${#authentication.name}">Phi Hành Gia</span> </span> -->
                     </li>
                     <li class="nav-item">
                         <a class="btn btn-outline-light btn-sm d-flex align-items-center" th:href="@{/logout}">
-                            <i class="bi bi-box-arrow-right me-1"></i> Đăng xuất
-                        </a>
+                            <i class="bi bi-box-arrow-right me-1"></i> Rời trạm vũ trụ </a>
                     </li>
                 </ul>
 
@@ -46,24 +40,22 @@
 
     <div th:fragment="sidebar">
         <div class="d-flex flex-column px-3 gap-3">
-            <!-- Admin -->
-            <a th:href="@{/accounts}" class="btn btn-outline-success text-start">Quản lý tài khoản</a>
-            <a th:href="@{/facilities}" class="btn btn-outline-success text-start">Quản lý cơ sở</a>
-            <a th:href="@{/plans}" class="btn btn-outline-success text-start">Quản lý gói tập</a>
-            <a th:href="@{/shifts}" class="btn btn-outline-success text-start">Quản lý ca làm việc</a>
-            <a th:href="@{/staffTypes}" class="btn btn-outline-success text-start">Quản lý chức vụ</a>
-            <a th:href="@{/rooms}" class="btn btn-outline-success text-start">Quản lý phòng xông hơi</a>
-            <a th:href="@{/saunas}" class="btn btn-outline-success text-start">Quản lý đăng ký xông hơi</a>
-            <a th:href="@{/messages}" class="btn btn-outline-success text-start">Quản lý tin nhắn</a>
+            <h5 class="text-white-70 mt-3 mb-2">Quản lý Hệ thống</h5> <a th:href="@{/accounts}" class="btn text-start"><i class="bi bi-person-gear me-2"></i> Quản lý tài khoản</a>
+            <a th:href="@{/facilities}" class="btn text-start"><i class="bi bi-building me-2"></i> Quản lý cơ sở</a>
+            <a th:href="@{/plans}" class="btn text-start"><i class="bi bi-box-seam me-2"></i> Quản lý gói tập</a>
+            <a th:href="@{/shifts}" class="btn text-start"><i class="bi bi-clock me-2"></i> Quản lý ca làm việc</a>
+            <a th:href="@{/staffTypes}" class="btn text-start"><i class="bi bi-person-badge me-2"></i> Quản lý chức vụ</a>
+            <a th:href="@{/rooms}" class="btn text-start"><i class="bi bi-thermometer-half me-2"></i> Quản lý phòng xông hơi</a>
+            <a th:href="@{/saunas}" class="btn text-start"><i class="bi bi-cloud-haze2 me-2"></i> Quản lý đăng ký xông hơi</a>
 
-             <!--Customer--> 
-            <a th:href="@{/customerSchedules}" class="btn btn-outline-success text-start">Quản lý lịch tập luyện</a>
-            <a th:href="@{/payCustomers}" class="btn btn-outline-success text-start">Lịch sử thanh toán</a>
+            <h5 class="text-white-70 mt-4 mb-2">Dành cho Khách hàng</h5> <a th:href="@{/customer-schedules}" class="btn text-start"><i class="bi bi-calendar-event me-2"></i> Lịch tập luyện</a>
+            <a th:href="@{/pay-customers}" class="btn text-start"><i class="bi bi-wallet2 me-2"></i> Lịch sử thanh toán</a>
 
-             <!--Staff--> 
-            <a th:href="@{/staffSchedules}" class="btn btn-outline-success text-start">Quản lý lịch làm việc</a>
-            <a th:href="@{/staffDayOffs}" class="btn btn-outline-success text-start">Quản lý nghỉ phép</a>                    
-            <a th:href="@{/salaries}" class="btn btn-outline-success text-start">Quản lý bảng lương</a>
+            <h5 class="text-white-70 mt-4 mb-2">Dành cho Nhân viên</h5> <a th:href="@{/staff-schedules}" class="btn text-start"><i class="bi bi-calendar-check me-2"></i> Lịch làm việc</a>
+            <a th:href="@{/staff-day-offs}" class="btn text-start"><i class="bi bi-calendar-x me-2"></i> Quản lý nghỉ phép</a>
+            <a th:href="@{/salaries}" class="btn text-start"><i class="bi bi-currency-dollar me-2"></i> Quản lý bảng lương</a>
+
+            <h5 class="text-white-70 mt-4 mb-2">Hỗ trợ</h5> <a th:href="@{/messages}" class="btn text-start"><i class="bi bi-chat-dots me-2"></i> Quản lý tin nhắn</a>
         </div>
     </div>
     <footer th:fragment="footer">
@@ -71,7 +63,6 @@
             <div>Hệ thống phòng gym &copy; 2025</div>
         </div>
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </body>
 </html>
-
-

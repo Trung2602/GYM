@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Quản lý loại nhân viên</title>
+    <th:block th:replace="init :: styles"></th:block>
+</head>
+<body>
+    <th:block th:replace="init :: header"></th:block>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-2 bg-light">
+                <th:block th:replace="init :: sidebar"></th:block>
+            </div>
+
+            <!-- Main content -->
+            <div class="col-10 mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2><i class="bi bi-person-badge me-2"></i>Quản lý chức vụ</h2>
+                    <a th:href="@{/StaffTypes/add}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Thêm mới
+                    </a>
+                </div>
+
+                <table class="table table-bordered table-striped">
+                    <thead class="table-dark text-center">
+                        <tr>
+                            <th>#</th>
+                            <th>Tên loại</th>
+                            <th>Lương cơ bản</th>
+                            <th>Số ngày nghỉ</th>
+                            <th>Mô tả</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="st, iterStat : ${staffTypes}">
+                            <td th:text="${iterStat.count}" class="text-center"></td>
+                            <td th:text="${st.name}"></td>
+                            <td th:text="${#numbers.formatInteger(st.salary, 0, 'COMMA')} + ' VND'"></td>
+                            <td th:text="${st.dayOff} + ' ngày'"></td>
+                            <td th:text="${st.description}"></td>
+                            <td class="text-center">
+                                <a th:href="@{|/StaffTypes/edit/${st.id}|}" class="btn btn-warning btn-sm me-1">
+                                    <i class="bi bi-pencil-square"></i> Sửa
+                                </a>
+                                <a th:href="@{|/StaffTypes/delete/${st.id}|}" class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Bạn có chắc chắn muốn xoá?')">
+                                    <i class="bi bi-trash3"></i> Xoá
+                                </a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(staffTypes)}">
+                            <td colspan="6" class="text-center text-muted">Không có dữ liệu</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <th:block th:replace="init :: footer"></th:block>
+</body>
+</html>
+

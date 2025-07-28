@@ -4,7 +4,11 @@
  */
 package com.lht.controllers;
 
+import com.lht.services.ShiftService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  *
@@ -13,4 +17,13 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class ShiftController {
     
+    @Autowired
+    private ShiftService shiftService;
+
+    @GetMapping("/shifts")
+    public String listShifts(Model model) {
+        model.addAttribute("shifts", shiftService.getAllShifts());
+        return "shifts"; // ứng với shifts.html
+    }
+
 }

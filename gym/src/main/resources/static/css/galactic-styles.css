@@ -1,0 +1,345 @@
+/* galactic-styles.css */
+
+/* -------------------------------------------------------------------------- */
+/* 1. Biến Màu Sắc (Color Variables) */
+/* -------------------------------------------------------------------------- */
+:root {
+    --galactic-dark-blue: #0F123A;          /* Nền tổng thể */
+    --galactic-medium-blue: #1A237E;        /* Navbar, Sidebar, Thead */
+    --galactic-light-blue: #2C318F;         /* Tab active, Sidebar button hover */
+    --galactic-accent-orange: #FFAB40;      /* Điểm nhấn chính: Icon, Tab active text */
+    --galactic-accent-gold: #FFD740;        /* Nút chính, Tiêu đề trang */
+    --galactic-text-white: #FFFFFF;         /* Chữ trắng thuần */
+    --galactic-text-white-70: rgba(255, 255, 255, 0.7); /* Chữ trắng mờ (70% opacity) */
+    --galactic-divider: rgba(255, 255, 255, 0.38); /* Đường phân cách (38% opacity) */
+}
+
+/* -------------------------------------------------------------------------- */
+/* 2. Cài đặt Chung (Base Styles) */
+/* -------------------------------------------------------------------------- */
+body {
+    background-color: var(--galactic-dark-blue);
+    color: var(--galactic-text-white);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+}
+
+/* Hiệu ứng bóng chữ cho tiêu đề */
+.text-shadow {
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 3. Header (Navbar) */
+/* -------------------------------------------------------------------------- */
+.navbar {
+    background-color: var(--galactic-medium-blue) !important;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.4);
+    padding: 1rem 1.5rem; /* Tăng padding để navbar trông rộng rãi hơn */
+}
+
+.navbar-brand,
+.nav-link,
+.navbar-text {
+    color: var(--galactic-text-white) !important;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+}
+
+.navbar-brand .bi {
+    color: var(--galactic-accent-orange);
+    font-size: 1.5rem; /* Điều chỉnh kích thước icon logo */
+}
+
+.nav-link .bi {
+    color: var(--galactic-text-white-70);
+    margin-right: 5px; /* Khoảng cách giữa icon và text trong nav-link */
+}
+
+/* Nút Đăng xuất */
+.btn-outline-light {
+    border-color: var(--galactic-text-white-70);
+    color: var(--galactic-text-white-70) !important;
+    transition: all 0.3s ease;
+    padding: 0.5rem 1rem; /* Điều chỉnh padding nút đăng xuất */
+}
+.btn-outline-light:hover {
+    background-color: var(--galactic-accent-orange);
+    color: var(--galactic-dark-blue) !important;
+    border-color: var(--galactic-accent-orange);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 4. Sidebar */
+/* -------------------------------------------------------------------------- */
+/* Áp dụng cho cả col-2 và col-12/md-3/lg-2 */
+.col-2.bg-light,
+.col-12.col-md-3.col-lg-2.bg-light {
+    background-color: var(--galactic-medium-blue) !important;
+    border-right: 1px solid var(--galactic-divider) !important;
+    padding: 1.5rem 0; /* Padding trên dưới cho sidebar */
+    min-height: calc(100vh - 56px - 100px); /* Đảm bảo sidebar kéo dài */
+}
+
+/* Các nút trong sidebar */
+.d-flex.flex-column.px-3.gap-3 a.btn {
+    background-color: transparent !important;
+    border: 1px solid var(--galactic-light-blue) !important;
+    color: var(--galactic-text-white-70) !important;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    padding: 10px 15px;
+    border-radius: 8px; /* Bo góc nhẹ cho nút sidebar */
+    text-align: left; /* Căn trái text trong nút */
+}
+.d-flex.flex-column.px-3.gap-3 a.btn i.bi {
+    margin-right: 10px; /* Khoảng cách giữa icon và text */
+    font-size: 1.1rem; /* Kích thước icon sidebar */
+}
+.d-flex.flex-column.px-3.gap-3 a.btn:hover,
+.d-flex.flex-column.px-3.gap-3 a.btn.active { /* Thêm active state cho sidebar */
+    background-color: var(--galactic-light-blue) !important;
+    color: var(--galactic-text-white) !important;
+    border-color: var(--galactic-accent-gold) !important;
+    transform: translateX(5px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* 5. Footer */
+/* -------------------------------------------------------------------------- */
+footer .bg-primary {
+    background-color: var(--galactic-medium-blue) !important;
+    box-shadow: 0px -8px 16px rgba(0, 0, 0, 0.4);
+    padding: 1rem 0;
+}
+footer div {
+    color: var(--galactic-text-white-70);
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 6. Khu Vực Nội Dung Chính (Main Content Area) */
+/* -------------------------------------------------------------------------- */
+/* Áp dụng cho cả col-10 và col-12/md-9/lg-10 */
+.col-10.mt-4,
+.col-12.col-md-9.col-lg-10.pt-3 {
+    padding: 1.5rem 2rem; /* Đồng bộ padding trên dưới và trái phải */
+    min-height: calc(100vh - 56px - 100px); /* Đảm bảo nội dung kéo dài */
+    background-color: rgba(15, 18, 58, 0.9); /* Hơi trong suốt để thấy ảnh nền tổng thể */
+    border-radius: 10px; /* Bo góc nhẹ cho khu vực nội dung */
+    margin-left: auto; /* Căn giữa nếu cần */
+    margin-right: auto;
+}
+
+/* Tiêu đề trang (h2/h3) */
+.col-10 h2,
+.col-12.col-md-9.col-lg-10 h2,
+.col-md-9.col-lg-10.pt-3 h3 { /* Cả h2 và h3 của Accounts page */
+    color: var(--galactic-accent-gold);
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    font-size: 2.2rem; /* Kích thước lớn hơn cho tiêu đề chính */
+    margin-bottom: 1.5rem; /* Khoảng cách dưới tiêu đề */
+    display: flex;
+    align-items: center;
+}
+.col-10 h2 i.bi,
+.col-12.col-md-9.col-lg-10 h2 i.bi,
+.col-md-9.col-lg-10.pt-3 h3 i.bi {
+    font-size: 2.5rem;
+    color: var(--galactic-accent-orange);
+    margin-right: 1rem; /* Khoảng cách giữa icon và text */
+}
+
+/* -------------------------------------------------------------------------- */
+/* 7. Các Nút Hành Động Chung (General Buttons) */
+/* -------------------------------------------------------------------------- */
+/* Nút thêm mới (ví dụ: Thêm mới trong Accounts, Facilities, Plans) */
+.btn-primary.px-4.py-2.rounded-pill { /* Specific selector for main add button */
+    background-color: var(--galactic-accent-gold) !important;
+    border-color: var(--galactic-accent-gold) !important;
+    color: var(--galactic-dark-blue) !important;
+    font-weight: bold;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+.btn-primary.px-4.py-2.rounded-pill:hover {
+    background-color: #FFC107 !important;
+    border-color: #FFC107 !important;
+    transform: translateY(-2px); /* Nhấn nhá hơn khi hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Nút thành công (Thêm mới trong các tab của Accounts) */
+.btn-success {
+    background-color: #4CAF50 !important;
+    border-color: #4CAF50 !important;
+    color: var(--galactic-text-white) !important;
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+.btn-success:hover {
+    background-color: #388E3C !important;
+    border-color: #388E3C !important;
+}
+
+/* Nút cảnh báo (Sửa) */
+.btn-warning {
+    background-color: var(--galactic-accent-orange) !important;
+    border-color: var(--galactic-accent-orange) !important;
+    color: var(--galactic-text-white) !important;
+    transition: all 0.2s ease-in-out;
+}
+.btn-warning:hover {
+    background-color: #E67E00 !important;
+    border-color: #E67E00 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Nút nguy hiểm (Xoá) */
+.btn-danger {
+    background-color: #DC3545 !important;
+    border-color: #DC3545 !important;
+    color: var(--galactic-text-white) !important;
+    transition: all 0.2s ease-in-out;
+}
+.btn-danger:hover {
+    background-color: #C82333 !important;
+    border-color: #C82333 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Nút nhỏ trong bảng (Sửa/Xóa) */
+.table .btn-sm {
+    padding: 5px 8px;
+    font-size: 0.8rem;
+    border-radius: 5px;
+    transition: all 0.2s ease;
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* 8. Table Styles */
+/* -------------------------------------------------------------------------- */
+.table {
+    background-color: rgba(26, 35, 126, 0.5); /* Nền xanh tím nhẹ, hơi trong suốt cho toàn bảng */
+    border: 1px solid var(--galactic-divider);
+    border-radius: 10px;
+    overflow: hidden; /* Đảm bảo nội dung không tràn ra ngoài góc bo */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+    color: var(--galactic-text-white); /* Màu chữ chung cho toàn bảng */
+}
+
+.table thead {
+    background-color: var(--galactic-medium-blue) !important; /* Nền đậm hơn cho header bảng */
+    color: var(--galactic-text-white) !important; /* Chữ trắng cho header */
+}
+
+.table th {
+    border-color: var(--galactic-divider) !important;
+    padding: 15px 10px; /* Tăng padding */
+    text-align: center; /* Căn giữa tiêu đề cột */
+    font-weight: bold;
+    font-size: 1rem;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.table tbody tr {
+    transition: background-color 0.3s ease;
+    border-color: var(--galactic-divider); /* Viền giữa các hàng */
+}
+.table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Nền khi hover */
+}
+
+.table td {
+    border-color: var(--galactic-divider) !important;
+    padding: 12px;
+    vertical-align: middle;
+    font-size: 0.95rem;
+    color: var(--galactic-text-white-70); /* Chữ mờ hơn cho nội dung bảng */
+}
+
+/* Các ô ID/Số thứ tự */
+.table td.text-center {
+    color: var(--galactic-text-white); /* Chữ ID, # vẫn là trắng đậm */
+    font-weight: 500;
+}
+
+/* Thông báo không có dữ liệu */
+.table td.text-muted {
+    color: var(--galactic-text-white-70) !important;
+    font-style: italic;
+    padding: 20px;
+}
+
+/* Ngăn các nút hành động xuống dòng */
+.table td:last-child {
+    white-space: nowrap;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 9. Styles Cụ Thể cho Trang Quản Lý Tài Khoản (Account Management Page) */
+/* -------------------------------------------------------------------------- */
+
+/* Tabs */
+.account-tabs {
+    border-bottom: 2px solid var(--galactic-divider);
+    padding-bottom: 5px;
+    margin-bottom: 20px;
+}
+
+.account-tabs button {
+    background-color: transparent !important;
+    border: none !important;
+    color: var(--galactic-text-white-70) !important;
+    padding: 10px 20px;
+    transition: all 0.3s ease;
+    border-radius: 8px 8px 0 0;
+    margin-right: 5px;
+    font-weight: 500;
+    font-size: 1.05rem;
+}
+.account-tabs button:hover {
+    background-color: var(--galactic-light-blue) !important;
+    color: var(--galactic-text-white) !important;
+}
+.account-tabs button.active {
+    font-weight: bold !important;
+    color: var(--galactic-accent-orange) !important;
+    border-bottom: 3px solid var(--galactic-accent-orange) !important;
+    background-color: var(--galactic-light-blue) !important;
+    box-shadow: 0 -3px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Tab Content */
+.tab-content {
+    background-color: rgba(26, 35, 126, 0.5);
+    border: 1px solid var(--galactic-divider);
+    border-top: none;
+    padding: 25px;
+    border-radius: 0 0 15px 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.tab-content h4 {
+    color: var(--galactic-accent-gold);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+    margin-bottom: 20px;
+}
+
+/* Màu chữ trạng thái kích hoạt/không kích hoạt */
+.text-success {
+    color: #4CAF50 !important;
+    font-weight: bold;
+}
+.text-danger {
+    color: #F44336 !important;
+    font-weight: bold;
+}

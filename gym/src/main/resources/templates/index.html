@@ -1,27 +1,70 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="UTF-8">
-        <title th:replace="init :: title">Danh sách kế hoạch</title>
+<head>
+    <meta charset="UTF-8">
+    <title>Trang chủ</title>
     <th:block th:replace="init :: styles"></th:block>
 </head>
 <body>
     <div th:replace="init :: header"></div>
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar chỉ hiện trên màn hình md trở lên -->
-            <div class="col-md-3 col-lg-2 d-none d-md-block bg-light border-end vh-100 sticky-top pt-3">
+            <div class="col-12 col-md-3 col-lg-2 bg-light border-end pt-3">
                 <div th:replace="init :: sidebar"></div>
             </div>
-            </div>
-
 
             <div class="col-md-9 col-lg-10 pt-3">
-                <h1>Quảng cáo</h1>
+                <div class="jumbotron jumbotron-fluid bg-dark text-white rounded-3 shadow-lg mb-4"
+                     style="background-image: url('https://via.placeholder.com/1500x400?text=Vũ+trụ+huấn+luyện'); background-size: cover; background-position: center; padding: 4rem 2rem;">
+                    <div class="container text-center">
+                        <h1 class="display-4 fw-bold text-warning mb-3" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.7);">
+                            Chào mừng đến với GALACTIC FITNESS!
+                        </h1>
+                        <p class="lead mb-4" style="font-size: 1.25rem; text-shadow: 1px 1px 3px rgba(0,0,0,0.6);">
+                            Nơi bạn biến đổi bản thân, phá vỡ mọi giới hạn và vươn tới sức mạnh vũ trụ.
+                            Hãy sẵn sàng cho hành trình rèn luyện thể chất không tưởng!
+                        </p>
+                        <hr class="my-4 bg-light w-50 mx-auto">
+                        <p class="mb-4">
+                            Khám phá các khóa học độc quyền, phòng tập hiện đại bậc nhất và đội ngũ huấn luyện viên phi hành gia tận tâm.
+                        </p>
+                        <a class="btn btn-warning btn-lg me-2" href="#" role="button">
+                            <i class="fas fa-rocket me-2"></i>Khám phá khóa học
+                        </a>
+                        <a class="btn btn-outline-light btn-lg" href="#" role="button">
+                            <i class="fas fa-calendar-alt me-2"></i>Xem lịch trình
+                        </a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="card text-white bg-primary mb-3">
+                            <div class="card-header">Cơ sở vật chất</div>
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="fas fa-flask"></i> Công nghệ tiên tiến</h5>
+                                <p class="card-text">Trải nghiệm phòng tập được trang bị các thiết bị hiện đại, mô phỏng môi trường không trọng lực và công nghệ VR tiên tiến.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card text-white bg-success mb-3">
+                            <div class="card-header">Đội ngũ chuyên gia</div>
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="fas fa-users"></i> Huấn luyện viên phi hành gia</h5>
+                                <p class="card-text">Được hướng dẫn bởi những phi hành gia hàng đầu, những người đã chinh phục không gian và hiểu rõ giới hạn cơ thể.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-5 mb-3">
+                    <p class="lead text-muted">
+                        "Vượt ra ngoài giới hạn, chinh phục vũ trụ bên trong bạn."
+                    </p>
+                </div>
             </div>
         </div>
     </div>
-
 
     <div th:replace="init :: footer"></div>
 </body>
