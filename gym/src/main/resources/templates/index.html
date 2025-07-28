@@ -1,45 +1,50 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Danh sách kế hoạch</title>
+    <head>
+        <meta charset="UTF-8">
+        <title th:replace="init :: title">Danh sách kế hoạch</title>
+    <th:block th:replace="init :: styles"></th:block>
 </head>
 <body>
-    <h1>Danh sách kế hoạch</h1>
+    <div th:replace="init :: header"></div>
+    <div class="container mt-4">
+        <h1 class="mb-3">Danh sách kế hoạch</h1>
 
-    <div th:if="${plan != null}">
-        <!-- Hiển thị 1 plan -->
-        <h2>Chi tiết gói:</h2>
-        <p><strong>ID:</strong> <span th:text="${plan.id}"></span></p>
-        <p><strong>Tên:</strong> <span th:text="${plan.name}"></span></p>
-        <p><strong>Giá:</strong> <span th:text="${plan.price} + ' VNĐ'"></span></p>
-        <p><strong>Thời hạn:</strong> <span th:text="${plan.durationDays} + ' ngày'"></span></p>
-        <p><strong>Mô tả:</strong> <span th:text="${plan.description}"></span></p>
-        <a href="/plans">Quay lại danh sách</a>
+        <div th:if="${plan != null}">
+            <h2>Chi tiết gói:</h2>
+            <p><strong>ID:</strong> <span th:text="${plan.id}"></span></p>
+            <p><strong>Tên:</strong> <span th:text="${plan.name}"></span></p>
+            <p><strong>Giá:</strong> <span th:text="${plan.price} + ' VNĐ'"></span></p>
+            <p><strong>Thời hạn:</strong> <span th:text="${plan.durationDays} + ' ngày'"></span></p>
+            <p><strong>Mô tả:</strong> <span th:text="${plan.description}"></span></p>
+            <a th:href="@{/plans}" class="btn btn-secondary">Quay lại danh sách</a>
+        </div>
+
+        <div th:if="${plans != null}">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên</th>
+                        <th>Giá</th>
+                        <th>Thời hạn</th>
+                        <th>Chi tiết</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="plan : ${plans}">
+                        <td th:text="${plan.id}"></td>
+                        <td th:text="${plan.name}"></td>
+                        <td th:text="${plan.price} + ' VNĐ'"></td>
+                        <td th:text="${plan.durationDays} + ' ngày'"></td>
+                        <td><a th:href="@{'/plans/' + ${plan.id}}" class="btn btn-sm btn-info">Xem</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <div th:if="${plans != null}">
-        <!-- Hiển thị danh sách plans -->
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Tên</th>
-                    <th>Giá</th>
-                    <th>Thời hạn</th>
-                    <th>Chi tiết</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="plan : ${plans}">
-                    <td th:text="${plan.id}"></td>
-                    <td th:text="${plan.name}"></td>
-                    <td th:text="${plan.price}"></td>
-                    <td th:text="${plan.durationDays} + ' ngày'"></td>
-                    <td><a th:href="@{'/plans/' + ${plan.id}}">Xem</a></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+
+    <div th:replace="init :: footer"></div>
 </body>
 </html>
