@@ -1,10 +1,10 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
-<!--sec:authorize="isAuthenticated()"-->
+    <!--sec:authorize="isAuthenticated()"-->
     <head>
         <title th:fragment="title"></title>
-        <th:block th:fragment="styles"> 
+    <th:block th:fragment="styles"> 
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
@@ -44,6 +44,28 @@
         </nav>
     </header>
 
+    <div th:fragment="sidebar">
+        <div class="d-flex flex-column px-3 gap-3">
+            <!-- Admin -->
+            <a th:href="@{/accounts}" class="btn btn-outline-success text-start">Quản lý tài khoản</a>
+            <a th:href="@{/facilities}" class="btn btn-outline-success text-start">Quản lý cơ sở</a>
+            <a th:href="@{/plans}" class="btn btn-outline-success text-start">Quản lý gói tập</a>
+            <a th:href="@{/shifts}" class="btn btn-outline-success text-start">Quản lý ca làm việc</a>
+            <a th:href="@{/staffTypes}" class="btn btn-outline-success text-start">Quản lý chức vụ</a>
+            <a th:href="@{/rooms}" class="btn btn-outline-success text-start">Quản lý phòng xông hơi</a>
+            <a th:href="@{/saunas}" class="btn btn-outline-success text-start">Quản lý đăng ký xông hơi</a>
+            <a th:href="@{/messages}" class="btn btn-outline-success text-start">Quản lý tin nhắn</a>
+
+             <!--Customer--> 
+            <a th:href="@{/customerSchedules}" class="btn btn-outline-success text-start">Quản lý lịch tập luyện</a>
+            <a th:href="@{/payCustomers}" class="btn btn-outline-success text-start">Lịch sử thanh toán</a>
+
+             <!--Staff--> 
+            <a th:href="@{/staffSchedules}" class="btn btn-outline-success text-start">Quản lý lịch làm việc</a>
+            <a th:href="@{/staffDayOffs}" class="btn btn-outline-success text-start">Quản lý nghỉ phép</a>                    
+            <a th:href="@{/salaries}" class="btn btn-outline-success text-start">Quản lý bảng lương</a>
+        </div>
+    </div>
     <footer th:fragment="footer">
         <div class="mt-4 p-5 bg-primary text-white rounded">
             <div>Hệ thống phòng gym &copy; 2025</div>

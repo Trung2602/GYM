@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Quản lý tài khoản</title>
+    <th:block th:replace="init :: styles"></th:block>
+    <style>
+        .account-tabs button.active {
+            font-weight: bold;
+            border-bottom: 2px solid #007bff;
+            background-color: #e9ecef;
+        }
+        .tab-content {
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-top: none;
+        }
+        .table td, .table th {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="init :: header"></div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar luôn hiển thị -->
+            <div class="col-12 col-md-3 col-lg-2 bg-light border-end vh-100 pt-3">
+                <div th:replace="init :: sidebar"></div>
+            </div>
+
+            <!-- Nội dung -->
+            <div class="col-12 col-md-9 col-lg-10 pt-3">
+                <h3 class="mb-3">Quản lý tài khoản</h3>
+
+                <!-- Tabs -->
+                <div class="account-tabs mb-3">
+                    <button class="btn btn-outline-primary me-2 active" onclick="showTab(event, 'adminTab')">
+                        <i class="bi bi-person-gear me-1"></i> Admin
+                    </button>
+                    <button class="btn btn-outline-success me-2" onclick="showTab(event, 'customerTab')">
+                        <i class="bi bi-people me-1"></i> Customer
+                    </button>
+                    <button class="btn btn-outline-warning" onclick="showTab(event, 'staffTab')">
+                        <i class="bi bi-person-badge me-1"></i> Staff
+                    </button>
+                </div>
+
+                <!-- Admin Tab -->
+                <div id="adminTab" class="tab-content">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h4>Danh sách Admin</h4>
+                        <button class="btn btn-sm btn-success"><i class="bi bi-plus-circle"></i> Thêm mới</button>
+                    </div>
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ID</th><th>Username</th><th>Họ tên</th><th>Email</th><th>Giới tính</th><th>Ngày sinh</th><th>Kích hoạt</th><th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="a : ${admins}">
+                                <td th:text="${a.id}"></td>
+                                <td th:text="${a.username}"></td>
+                                <td th:text="${a.name}"></td>
+                                <td th:text="${a.mail}"></td>
+                                <td th:text="${a.gender == 1 ? 'Nam' : 'Nữ'}"></td>
+                                <td th:text="${#dates.format(a.birthday, 'dd/MM/yyyy')}"></td>
+                                <td>
+                                    <span th:text="${a.isActive ? 'Có' : 'Không'}"
+                                          th:classappend="${a.isActive} ? 'text-success' : 'text-danger'"></span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary"><i class="bi bi-pencil-square"></i></button>
+                                    <button class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(admins)}">
+                                <td colspan="8" class="text-center text-muted">Không có admin nào.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Customer Tab -->
+                <div id="customerTab" class="tab-content d-none">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h4>Danh sách Customer</h4>
+                        <button class="btn btn-sm btn-success"><i class="bi bi-plus-circle"></i> Thêm mới</button>
+                    </div>
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ID</th><th>Username</th><th>Họ tên</th><th>Email</th><th>Giới tính</th><th>Ngày sinh</th><th>Hạn dùng</th><th>Số lượt xông hơi</th><th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="c : ${customers}">
+                                <td th:text="${c.id}"></td>
+                                <td th:text="${c.username}"></td>
+                                <td th:text="${c.name}"></td>
+                                <td th:text="${c.mail}"></td>
+                                <td th:text="${c.gender == 1 ? 'Nam' : 'Nữ'}"></td>
+                                <td th:text="${#dates.format(c.birthday, 'dd/MM/yyyy')}"></td>
+                                <td th:text="${#dates.format(c.expiryDate, 'dd/MM/yyyy')}"></td>
+                                <td th:text="${c.quantitySauna}"></td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary"><i class="bi bi-pencil-square"></i></button>
+                                    <button class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(customers)}">
+                                <td colspan="9" class="text-center text-muted">Không có khách hàng nào.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Staff Tab -->
+                <div id="staffTab" class="tab-content d-none">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h4>Danh sách Staff</h4>
+                        <button class="btn btn-sm btn-success"><i class="bi bi-plus-circle"></i> Thêm mới</button>
+                    </div>
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ID</th><th>Username</th><th>Họ tên</th><th>Email</th><th>Giới tính</th><th>Ngày sinh</th><th>Ngày vào làm</th><th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="s : ${staffs}">
+                                <td th:text="${s.id}"></td>
+                                <td th:text="${s.username}"></td>
+                                <td th:text="${s.name}"></td>
+                                <td th:text="${s.mail}"></td>
+                                <td th:text="${s.gender == 1 ? 'Nam' : 'Nữ'}"></td>
+                                <td th:text="${#dates.format(s.birthday, 'dd/MM/yyyy')}"></td>
+                                <td th:text="${#dates.format(s.createdDate, 'dd/MM/yyyy')}"></td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary"><i class="bi bi-pencil-square"></i></button>
+                                    <button class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(staffs)}">
+                                <td colspan="8" class="text-center text-muted">Không có nhân viên nào.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="init :: footer"></div>
+
+    <script>
+        function showTab(event, tabId) {
+            const tabs = ["adminTab", "customerTab", "staffTab"];
+            tabs.forEach(id => document.getElementById(id).classList.add("d-none"));
+            document.getElementById(tabId).classList.remove("d-none");
+
+            const buttons = document.querySelectorAll(".account-tabs button");
+            buttons.forEach(btn => btn.classList.remove("active"));
+            event.target.classList.add("active");
+        }
+    </script>
+</body>
+</html>

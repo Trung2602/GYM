@@ -27,17 +27,16 @@ public class PlanController {
     private PlanService planService;
 
     @GetMapping("/plans")
-    public String viewHomePage(Model model) {
-        List<Plan> plans = planService.getAllPlans();
-        model.addAttribute("plans", plans);
-        return "index";
+    public String listFacilities(Model model) {
+        model.addAttribute("plans", planService.getAllPlans());
+        return "plans";
     }
 
     @GetMapping("/plan/{id}")
     public String getPlan(@PathVariable("id") Integer id, Model model) {
         Plan plan = planService.getPlanById(id);
         model.addAttribute("plan", plan);
-        return "index";
+        return "plans";
     }
 
 }
