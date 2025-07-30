@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Quản lý tài khoản</title>
+    <head>
+        <meta charset="UTF-8">
+        <title>Quản lý tài khoản</title>
     <th:block th:replace="init :: styles"></th:block>
-    </head>
+</head>
 
 <body>
     <div th:replace="init :: header"></div>
@@ -31,7 +31,9 @@
                 <div id="adminTab" class="tab-content">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <h4>Danh sách Admin</h4>
-                        <button class="btn btn-sm btn-success"><i class="bi bi-plus-circle"></i> Thêm mới</button>
+                        <a th:href="@{/admin/add}" class="btn btn-primary px-4 py-2 rounded-pill">
+                            <i class="bi bi-plus-circle me-1"></i> Thêm mới
+                        </a>
                     </div>
                     <div class="table-responsive"> <table class="table table-bordered">
                             <thead>
@@ -67,7 +69,9 @@
                 <div id="customerTab" class="tab-content d-none">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <h4>Danh sách Customer</h4>
-                        <button class="btn btn-sm btn-success"><i class="bi bi-plus-circle"></i> Thêm mới</button>
+                        <a th:href="@{/customer/add}" class="btn btn-primary px-4 py-2 rounded-pill">
+                            <i class="bi bi-plus-circle me-1"></i> Thêm mới
+                        </a>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-bordered">
@@ -102,7 +106,9 @@
                 <div id="staffTab" class="tab-content d-none">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <h4>Danh sách Staff</h4>
-                        <button class="btn btn-sm btn-success"><i class="bi bi-plus-circle"></i> Thêm mới</button>
+                        <a th:href="@{/staff/add}" class="btn btn-primary px-4 py-2 rounded-pill">
+                            <i class="bi bi-plus-circle me-1"></i> Thêm mới
+                        </a>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-bordered">

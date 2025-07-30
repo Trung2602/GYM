@@ -9,24 +9,23 @@
 
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar -->
-            <div class="col-2 bg-light">
+            <div class="col-12 col-md-3 col-lg-2 bg-light border-end pt-3">
                 <th:block th:replace="init :: sidebar"></th:block>
             </div>
 
-            <!-- Main content -->
-            <div class="col-10 mt-4">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h2><i class="bi bi-person-badge me-2"></i>Quản lý chức vụ</h2>
-                    <a th:href="@{/StaffTypes/add}" class="btn btn-primary">
-                        <i class="bi bi-plus-circle"></i> Thêm mới
+            <div class="col-12 col-md-9 col-lg-10 pt-3">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="text-shadow"><i class="bi bi-person-badge me-2"></i>Quản lý chức vụ</h2>
+                    <a th:href="@{/Shifts/add}" class="btn btn-primary px-4 py-2 rounded-pill">
+                        <i class="bi bi-plus-circle me-1"></i> Thêm mới
                     </a>
                 </div>
 
-                <table class="table table-bordered table-striped">
-                    <thead class="table-dark text-center">
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
                         <tr>
-                            <th>#</th>
+                            <th>STT</th>
                             <th>Tên loại</th>
                             <th>Lương cơ bản</th>
                             <th>Số ngày nghỉ</th>
@@ -42,7 +41,7 @@
                             <td th:text="${st.dayOff} + ' ngày'"></td>
                             <td th:text="${st.description}"></td>
                             <td class="text-center">
-                                <a th:href="@{|/StaffTypes/edit/${st.id}|}" class="btn btn-warning btn-sm me-1">
+                                <a th:href="@{|/StaffTypes/edit/${st.id}|}" class="btn btn-warning btn-sm">
                                     <i class="bi bi-pencil-square"></i> Sửa
                                 </a>
                                 <a th:href="@{|/StaffTypes/delete/${st.id}|}" class="btn btn-danger btn-sm"

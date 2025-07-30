@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Ngày nghỉ nhân viên</title>
+    <head>
+        <title>Ngày nghỉ nhân viên</title>
     <th:block th:replace="init :: styles"></th:block>
 </head>
 <body>
@@ -9,54 +9,53 @@
 
 <div class="container-fluid">
     <div class="row">
-        <!-- Sidebar -->
-        <div class="col-2 bg-light">
+        <div class="col-12 col-md-3 col-lg-2 bg-light border-end pt-3">
             <th:block th:replace="init :: sidebar"></th:block>
         </div>
 
-        <!-- Main content -->
-        <div class="col-10 mt-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2><i class="bi bi-calendar-x me-2"></i>Danh sách ngày nghỉ nhân viên</h2>
-                <a th:href="@{/StaffDayOffs/add}" class="btn btn-primary">
-                    <i class="bi bi-plus-circle"></i> Thêm ngày nghỉ
+        <div class="col-12 col-md-9 col-lg-10 pt-3">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="text-shadow"><i class="bi bi-calendar-x me-2"></i>Danh sách ngày nghỉ nhân viên</h2>
+                <a th:href="@{/StaffDayOffs/add}" class="btn btn-primary px-4 py-2 rounded-pill">
+                    <i class="bi bi-plus-circle me-1"></i> Thêm mới
                 </a>
             </div>
 
-            <table class="table table-bordered table-hover">
-                <thead class="table-dark text-center">
-                    <tr>
-                        <th>#</th>
-                        <th>Ngày nghỉ</th>
-                        <th>Nhân viên</th>
-                        <th>Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="sdo, iter : ${staffDayOffs}">
-                        <td th:text="${iter.count}" class="text-center"></td>
-                        <td th:text="${#dates.format(sdo.date, 'dd/MM/yyyy')}"></td>
-                        <td th:text="${sdo.staffId.name}"></td>
-                        <td class="text-center">
-                            <a th:href="@{|/StaffDayOffs/edit/${sdo.id}|}" class="btn btn-warning btn-sm me-1">
-                                <i class="bi bi-pencil-square"></i> Sửa
-                            </a>
-                            <a th:href="@{|/StaffDayOffs/delete/${sdo.id}|}" class="btn btn-danger btn-sm"
-                               onclick="return confirm('Bạn có chắc chắn muốn xoá ngày nghỉ này?')">
-                                <i class="bi bi-trash3"></i> Xoá
-                            </a>
-                        </td>
-                    </tr>
-                    <tr th:if="${#lists.isEmpty(staffDayOffs)}">
-                        <td colspan="4" class="text-center text-muted">Không có dữ liệu ngày nghỉ</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Ngày nghỉ</th>
+                            <th>Nhân viên</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="sdo, iter : ${staffDayOffs}">
+                            <td th:text="${iter.count}" class="text-center"></td>
+                            <td th:text="${#dates.format(sdo.date, 'dd/MM/yyyy')}"></td>
+                            <td th:text="${sdo.staffId.name}"></td>
+                            <td class="text-center">
+                                <a th:href="@{|/StaffDayOffs/edit/${sdo.id}|}" class="btn btn-warning btn-sm me-1">
+                                    <i class="bi bi-pencil-square"></i> Sửa
+                                </a>
+                                <a th:href="@{|/StaffDayOffs/delete/${sdo.id}|}" class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Bạn có chắc chắn muốn xoá ngày nghỉ này?')">
+                                    <i class="bi bi-trash3"></i> Xoá
+                                </a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(staffDayOffs)}">
+                            <td colspan="4" class="text-center text-muted">Không có dữ liệu ngày nghỉ</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</div>
 
-<th:block th:replace="init :: footer"></th:block>
+    <th:block th:replace="init :: footer"></th:block>
 </body>
 </html>
 
