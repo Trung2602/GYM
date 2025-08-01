@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Trang quản lý account</title>
+    <th:block th:replace="init :: styles"> </th:block>
+</head>
+
+<body>
+    <div th:replace="init :: header"></div>
+    
+    
+    
+    
+    <div class="container my-4">
+        <!-- FORM -->
+        <form th:action="@{/account-add}" th:object="${account}" method="post" enctype="multipart/form-data">
+
+            <!-- Avatar ở trên cùng, căn giữa và hình tròn -->
+<!--            <div style="text-align: center; margin-bottom: 20px;">
+                <img th:if="${account.avatar != null}" 
+                     th:src="${account.avatar}" 
+                     alt="Ảnh đại diện hiện tại" 
+                     style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 2px solid #ccc; display: block; margin: 0 auto 10px auto;" />
+
+                <input type="file" class="form-control" th:field="*{file}" id="avatar" 
+                       style="width: 220px; margin: 0 auto; padding: 3px 6px; font-size: 0.9rem;" />
+            </div>-->
+
+            <input type="hidden" th:field="*{id}" id="id" />
+
+            <div class="mb-3">
+                <label for="username" class="form-label">Tên đăng nhập</label>
+                <input type="text" class="form-control" th:field="*{username}" id="username" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Mật khẩu</label>
+                <input type="password" class="form-control" th:field="*{password}" id="password"
+                       th:required="${account.id == null}" />
+            </div>
+
+            <div class="mb-3">
+                <label for="name" class="form-label">Họ tên</label>
+                <input type="text" class="form-control" th:field="*{name}" id="name" />
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" th:field="*{email}"  id="email" />
+            </div>
+
+            
+
+
+            <button type="submit" class="btn btn-primary">Lưu</button>
+        </form>
+    </div>
+    <div th:replace="init :: footer"></div>
+</body>
+
+</html>
+
+
