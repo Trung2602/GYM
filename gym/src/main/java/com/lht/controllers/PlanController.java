@@ -31,8 +31,13 @@ public class PlanController {
     private PlanService planService;
 
     @GetMapping("/plans")
-    public String listPlans(Model model) {
-        model.addAttribute("plans", planService.getAllPlans());
+    public String listPlans(Model model,
+            @RequestParam(defaultValue = "id") String sortField,
+            @RequestParam(defaultValue = "asc") String sortDir) {
+        //Nếu không có sortField thì sẽ sắp xếp theo "id" và thứ tự tăng dần "asc"
+        model.addAttribute("plans", planService.getAllSort(sortField, sortDir));
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
         return "plans";
     }
 
@@ -44,13 +49,13 @@ public class PlanController {
     }
 
     @GetMapping("/plan/add")
-    public String convertPlanForm (@RequestParam(name = "id", required = false) Integer id, Model model) {   
-        model.addAttribute("plan", (id != null) ? planService.getPlanById(id) : new Plan() );
+    public String convertPlanForm(@RequestParam(name = "id", required = false) Integer id, Model model) {
+        model.addAttribute("plan", (id != null) ? planService.getPlanById(id) : new Plan());
         return "plan-add";
     }
-    
+
     @PostMapping("/plan-update")
-    public String updatePlan (@ModelAttribute(value = "plan") Plan p, BindingResult result,
+    public String updatePlan(@ModelAttribute(value = "plan") Plan p, BindingResult result,
             Model model) {
         if (this.planService.addOrUpdatePlan(p) != null) {
             return "redirect:/plans";
@@ -59,9 +64,10 @@ public class PlanController {
     }
 
     @DeleteMapping("/plan-delete/{id}")
-    public String destroyPlan (@PathVariable("id") Integer id, Model model) {
-        if (id != null)
+    public String destroyPlan(@PathVariable("id") Integer id, Model model) {
+        if (id != null) {
             this.planService.deletePlan(id);
+        }
         return "redirect:/plans";
     }
 }

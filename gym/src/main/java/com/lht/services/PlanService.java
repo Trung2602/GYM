@@ -23,4 +23,7 @@ public interface PlanService {
     Plan addOrUpdatePlan(Plan p);
 
     boolean deletePlan(Integer id);
+
+    public List<Plan> getAllSort(String sortField, String sortDir);
+
 }

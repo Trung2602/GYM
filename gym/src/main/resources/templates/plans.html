@@ -28,8 +28,22 @@
                         <tr>
                             <th>STT</th>
                             <th>Tên gói</th>
-                            <th>Giá</th>
-                            <th>Thời gian (ngày)</th>
+                            <th>
+                                <a th:href="@{/plans(sortField='price', sortDir=${sortField == 'price' and sortDir == 'asc' ? 'desc' : 'asc'})}"
+                                   class="text-white text-decoration-none">
+                                    Giá
+                                    <i th:if="${sortField == 'price'}"
+                                       th:class="${sortDir == 'asc' ? 'bi bi-caret-up-fill ms-1 text-white' : 'bi bi-caret-down-fill ms-1 text-white'}"></i>
+                                </a>
+                            </th>
+                            <th>
+                                <a th:href="@{/plans(sortField='durationDays', sortDir=${sortField == 'durationDays' and sortDir == 'asc' ? 'desc' : 'asc'})}"
+                                   class="text-white text-decoration-none">
+                                    Thời gian (ngày)
+                                    <i th:if="${sortField == 'durationDays'}"
+                                       th:class="${sortDir == 'asc' ? 'bi bi-caret-up-fill ms-1 text-white' : 'bi bi-caret-down-fill ms-1 text-white'}"></i>
+                                </a>
+                            </th>
                             <th>Mô tả</th>
                             <th>Thao tác</th>
                         </tr>

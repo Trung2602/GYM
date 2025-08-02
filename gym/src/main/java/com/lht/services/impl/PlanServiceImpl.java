@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -97,5 +98,13 @@ public class PlanServiceImpl implements PlanService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public List<Plan> getAllSort(String sortField, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("asc")
+                ? Sort.by(sortField).ascending()
+                : Sort.by(sortField).descending();
+        return planRepository.findAll(sort);
     }
 }
