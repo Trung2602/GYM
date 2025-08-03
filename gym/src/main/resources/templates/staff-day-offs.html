@@ -26,7 +26,14 @@
                     <thead>
                         <tr>
                             <th>STT</th>
-                            <th>Ngày nghỉ</th>
+                            <th>
+                                <a th:href="@{/staff-day-offs(sortField='date', sortDir=${sortField == 'date' and sortDir == 'asc' ? 'desc' : 'asc'})}"
+                                   class="text-white text-decoration-none">
+                                    Ngày nghỉ
+                                    <i th:if="${sortField == 'date'}"
+                                       th:class="${sortDir == 'asc' ? 'bi bi-caret-up-fill ms-1 text-white' : 'bi bi-caret-down-fill ms-1 text-white'}"></i>
+                                </a>
+                            </th>
                             <th>Nhân viên</th>
                             <th>Thao tác</th>
                         </tr>

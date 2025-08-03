@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
         <title>Lịch sử thanh toán</title>
@@ -27,9 +27,23 @@
 
                         <tr>
                             <th>STT</th>
-                            <th>Ngày thanh toán</th>
+                            <th>
+                                <a th:href="@{/pay-customers(sortField='date', sortDir=${sortField == 'date' and sortDir == 'asc' ? 'desc' : 'asc'})}"
+                                   class="text-white text-decoration-none">
+                                    Ngày thanh toán
+                                    <i th:if="${sortField == 'date'}"
+                                       th:class="${sortDir == 'asc' ? 'bi bi-caret-up-fill ms-1 text-white' : 'bi bi-caret-down-fill ms-1 text-white'}"></i>
+                                </a>
+                            </th>
                             <th>Khách hàng</th>
-                            <th>Gói tập</th>
+                            <th>
+                                <a th:href="@{/pay-customers(sortField='planId', sortDir=${sortField == 'planId' and sortDir == 'asc' ? 'desc' : 'asc'})}"
+                                   class="text-white text-decoration-none">
+                                    Gói tập
+                                    <i th:if="${sortField == 'planId'}"
+                                       th:class="${sortDir == 'asc' ? 'bi bi-caret-up-fill ms-1 text-white' : 'bi bi-caret-down-fill ms-1 text-white'}"></i>
+                                </a>
+                            </th>
                             <th>Giá</th>
                             <th>Thao tác</th>
                         </tr>

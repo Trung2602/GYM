@@ -49,11 +49,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="p, iterStat : ${plans}">
-                            <td th:text="${iterStat.count}" class="text-center"></td>
+                        <tr th:each="p, stt : ${plans}">
+                            <td th:text="${stt.count}" class="text-center"></td> <!-- Biến stt đếm vòng lặp như i trong for -->
                             <td th:text="${p.name}"></td>
                             <td th:text="${#numbers.formatInteger(p.price, 3, 'COMMA')} + ' VND'"></td>
-                            <td th:text="${p.durationDays}" class="text-center"></td> <td th:text="${p.description}"></td>
+                            <!-- #numbers: Gọi utility object của Thymeleaf để xử lý số -->
+                            <!-- COMMA: dấu phẩy ngăn cách hàng nghìn -->
+                            <td th:text="${p.durationDays}" class="text-center"></td> 
+                            <td th:text="${p.description}"></td>
                             <td class="text-center">
                                 <a th:href="@{'/plan/add?id='+${p.id} }" class="btn btn-warning btn-sm me-2"> 
                                     <i class="bi bi-pencil-square"></i> Sửa

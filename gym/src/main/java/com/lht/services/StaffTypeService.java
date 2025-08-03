@@ -23,4 +23,6 @@ public interface StaffTypeService {
     StaffType addOrUpdateStaffType(StaffType st);
 
     boolean deleteStaffType(Integer id);
+    
+    public List<StaffType> getAllSort(String sortField, String sortDir);
 }

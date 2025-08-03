@@ -23,4 +23,6 @@ public interface SaunaService {
     Sauna addOrUpdateSauna(Sauna s);
 
     boolean deleteSauna(Integer id);
+    
+    public List<Sauna> getAllSort(String sortField, String sortDir);
 }

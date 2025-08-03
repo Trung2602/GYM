@@ -23,4 +23,6 @@ public interface StaffDayOffService {
     StaffDayOff addOrUpdateStaffDayOff(StaffDayOff sdo);
 
     boolean deleteStaffDayOff(Integer id);
+    
+    public List<StaffDayOff> getAllSort(String sortField, String sortDir);
 }

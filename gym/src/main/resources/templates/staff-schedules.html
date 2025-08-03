@@ -27,7 +27,14 @@
 
                         <tr>
                             <th>STT</th>
-                            <th>Ngày</th>
+                            <th>
+                                <a th:href="@{/staff-schedules(sortField='date', sortDir=${sortField == 'date' and sortDir == 'asc' ? 'desc' : 'asc'})}"
+                                   class="text-white text-decoration-none">
+                                    Ngày
+                                    <i th:if="${sortField == 'date'}"
+                                       th:class="${sortDir == 'asc' ? 'bi bi-caret-up-fill ms-1 text-white' : 'bi bi-caret-down-fill ms-1 text-white'}"></i>
+                                </a>
+                            </th>
                             <th>Checkin</th>
                             <th>Checkout</th>
                             <th>Nhân viên</th>

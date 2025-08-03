@@ -4,11 +4,18 @@
  */
 package com.lht.controllers;
 
+import com.lht.pojo.PayCustomer;
 import com.lht.services.PayCustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  *
@@ -21,9 +28,43 @@ public class PayCustomerController {
     private PayCustomerService payCustomerService;
 
     @GetMapping("/pay-customers")
-    public String listPayCustomers(Model model) {
-        model.addAttribute("payCustomers", payCustomerService.getAllPayCustomers());
+    public String listPayCustomers(Model model,
+            @RequestParam(defaultValue = "id") String sortField,
+            @RequestParam(defaultValue = "asc") String sortDir) {
+        model.addAttribute("payCustomers", payCustomerService.getAllSort(sortField, sortDir));
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
         return "pay-customers";
+    }
+
+    @GetMapping("/pay-customer/{id}")
+    public String getPayCustomer(@PathVariable("id") Integer id, Model model) {
+        PayCustomer payCustomer = payCustomerService.getPayCustomerById(id);
+        model.addAttribute("payCustomer", payCustomer);
+        return "pay-customers";
+    }
+
+    @GetMapping("/pay-customer/add")
+    public String convertPayCustomerForm(@RequestParam(name = "id", required = false) Integer id, Model model) {
+        model.addAttribute("payCustomer", (id != null) ? payCustomerService.getPayCustomerById(id) : new PayCustomer());
+        return "pay-customer-add";
+    }
+
+    @PostMapping("/pay-customer-update")
+    public String updatePayCustomer(@ModelAttribute(value = "payCustomer") PayCustomer pc, BindingResult result,
+            Model model) {
+        if (this.payCustomerService.addOrUpdatePayCustomer(pc) != null) {
+            return "redirect:/pay-customers";
+        }
+        return "pay-customer-add";
+    }
+
+    @DeleteMapping("/pay-customer-delete/{id}")
+    public String destroyPayCustomer(@PathVariable("id") Integer id, Model model) {
+        if (id != null) {
+            this.payCustomerService.deletePayCustomer(id);
+        }
+        return "redirect:/pay-customers";
     }
 
 }

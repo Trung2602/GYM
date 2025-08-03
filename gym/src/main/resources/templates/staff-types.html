@@ -27,8 +27,22 @@
                         <tr>
                             <th>STT</th>
                             <th>Tên loại</th>
-                            <th>Lương cơ bản</th>
-                            <th>Số ngày nghỉ</th>
+                            <th>
+                                <a th:href="@{/staff-types(sortField='salary', sortDir=${sortField == 'salary' and sortDir == 'asc' ? 'desc' : 'asc'})}"
+                                   class="text-white text-decoration-none">
+                                    Lương cơ bản
+                                    <i th:if="${sortField == 'salary'}"
+                                       th:class="${sortDir == 'asc' ? 'bi bi-caret-up-fill ms-1 text-white' : 'bi bi-caret-down-fill ms-1 text-white'}"></i>
+                                </a>
+                            </th>
+                            <th>
+                                <a th:href="@{/staff-types(sortField='dayOff', sortDir=${sortField == 'dayOff' and sortDir == 'asc' ? 'desc' : 'asc'})}"
+                                   class="text-white text-decoration-none">
+                                    Số ngày nghỉ phép
+                                    <i th:if="${sortField == 'dayOff'}"
+                                       th:class="${sortDir == 'asc' ? 'bi bi-caret-up-fill ms-1 text-white' : 'bi bi-caret-down-fill ms-1 text-white'}"></i>
+                                </a>
+                            </th>
                             <th>Mô tả</th>
                             <th>Thao tác</th>
                         </tr>

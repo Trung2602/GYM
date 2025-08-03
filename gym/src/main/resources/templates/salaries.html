@@ -26,11 +26,39 @@
                     <thead>
                         <tr>
                             <th>STT</th>
-                            <th>Ngày</th>
+                            <th>
+                                <a th:href="@{/salaries(sortField='date', sortDir=${sortField == 'date' and sortDir == 'asc' ? 'desc' : 'asc'})}"
+                                   class="text-white text-decoration-none">
+                                    Ngày
+                                    <i th:if="${sortField == 'date'}"
+                                       th:class="${sortDir == 'asc' ? 'bi bi-caret-up-fill ms-1 text-white' : 'bi bi-caret-down-fill ms-1 text-white'}"></i>
+                                </a>
+                            </th>
                             <th>Nhân viên</th>
-                            <th>Thời lượng (giờ)</th>
-                            <th>Ngày nghỉ</th>
-                            <th>Tổng tiền (VNĐ)</th>
+                            <th>
+                                <a th:href="@{/salaries(sortField='duration', sortDir=${sortField == 'duration' and sortDir == 'asc' ? 'desc' : 'asc'})}"
+                                   class="text-white text-decoration-none">
+                                    Thời lượng (giờ)
+                                    <i th:if="${sortField == 'duration'}"
+                                       th:class="${sortDir == 'asc' ? 'bi bi-caret-up-fill ms-1 text-white' : 'bi bi-caret-down-fill ms-1 text-white'}"></i>
+                                </a>
+                            </th>
+                            <th>
+                                <a th:href="@{/salaries(sortField='dayOff', sortDir=${sortField == 'dayOff' and sortDir == 'asc' ? 'desc' : 'asc'})}"
+                                   class="text-white text-decoration-none">
+                                    Tổng số ngày nghỉ
+                                    <i th:if="${sortField == 'dayOff'}"
+                                       th:class="${sortDir == 'asc' ? 'bi bi-caret-up-fill ms-1 text-white' : 'bi bi-caret-down-fill ms-1 text-white'}"></i>
+                                </a>
+                            </th>
+                            <th>
+                                <a th:href="@{/salaries(sortField='price', sortDir=${sortField == 'price' and sortDir == 'asc' ? 'desc' : 'asc'})}"
+                                   class="text-white text-decoration-none">
+                                    Tổng tiền (VNĐ)
+                                    <i th:if="${sortField == 'price'}"
+                                       th:class="${sortDir == 'asc' ? 'bi bi-caret-up-fill ms-1 text-white' : 'bi bi-caret-down-fill ms-1 text-white'}"></i>
+                                </a>
+                            </th>
                             <th>Thao tác</th>
                         </tr>
                     </thead>

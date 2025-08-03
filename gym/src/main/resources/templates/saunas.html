@@ -27,11 +27,32 @@
                     <thead>
                         <tr>
                             <th>STT</th>
-                            <th>Ngày</th>
-                            <th>Giờ vào</th>
+                            <th>
+                                <a th:href="@{/saunas(sortField='date', sortDir=${sortField == 'date' and sortDir == 'asc' ? 'desc' : 'asc'})}"
+                                   class="text-white text-decoration-none">
+                                    Ngày đăng ký
+                                    <i th:if="${sortField == 'date'}"
+                                       th:class="${sortDir == 'asc' ? 'bi bi-caret-up-fill ms-1 text-white' : 'bi bi-caret-down-fill ms-1 text-white'}"></i>
+                                </a>
+                            </th>
+                            <th>
+                                <a th:href="@{/saunas(sortField='checkin', sortDir=${sortField == 'checkin' and sortDir == 'asc' ? 'desc' : 'asc'})}"
+                                   class="text-white text-decoration-none">
+                                    Giờ vào
+                                    <i th:if="${sortField == 'checkin'}"
+                                       th:class="${sortDir == 'asc' ? 'bi bi-caret-up-fill ms-1 text-white' : 'bi bi-caret-down-fill ms-1 text-white'}"></i>
+                                </a>
+                            </th>
                             <th>Khách hàng</th>
                             <th>Phòng</th>
-                            <th>Đã thanh toán</th>
+                            <th>
+                                <a th:href="@{/saunas(sortField='isPaid', sortDir=${sortField == 'isPaid' and sortDir == 'asc' ? 'desc' : 'asc'})}"
+                                   class="text-white text-decoration-none">
+                                    Đã thanh toán
+                                    <i th:if="${sortField == 'isPaid'}"
+                                       th:class="${sortDir == 'asc' ? 'bi bi-caret-up-fill ms-1 text-white' : 'bi bi-caret-down-fill ms-1 text-white'}"></i>
+                                </a>
+                            </th>
                             <th>Thao tác</th>
                         </tr>
                     </thead>

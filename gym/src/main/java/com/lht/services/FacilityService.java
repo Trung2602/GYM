@@ -23,5 +23,7 @@ public interface FacilityService {
     Facility addOrUpdateFacility(Facility f);
 
     boolean deleteFacility(Integer id);
+    
+    public List<Facility> getAllSort(String sortField, String sortDir);
 
 }

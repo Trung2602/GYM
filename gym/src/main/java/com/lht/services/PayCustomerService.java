@@ -23,4 +23,6 @@ public interface PayCustomerService {
     PayCustomer addOrUpdatePayCustomer(PayCustomer pc);
 
     boolean deletePayCustomer(Integer id);
+    
+    public List<PayCustomer> getAllSort(String sortField, String sortDir);
 }

@@ -27,9 +27,30 @@
 
                         <tr>
                             <th>STT</th>
-                            <th>Ngày</th>
-                            <th>Giờ vào</th>
-                            <th>Giờ ra</th>
+                            <th>
+                                <a th:href="@{/customer-schedules(sortField='date', sortDir=${sortField == 'date' and sortDir == 'asc' ? 'desc' : 'asc'})}"
+                                   class="text-white text-decoration-none">
+                                    Ngày
+                                    <i th:if="${sortField == 'date'}"
+                                       th:class="${sortDir == 'asc' ? 'bi bi-caret-up-fill ms-1 text-white' : 'bi bi-caret-down-fill ms-1 text-white'}"></i>
+                                </a>
+                            </th>
+                            <th>
+                                <a th:href="@{/customer-schedules(sortField='checkin', sortDir=${sortField == 'checkin' and sortDir == 'asc' ? 'desc' : 'asc'})}"
+                                   class="text-white text-decoration-none">
+                                    Giờ vào
+                                    <i th:if="${sortField == 'checkin'}"
+                                       th:class="${sortDir == 'asc' ? 'bi bi-caret-up-fill ms-1 text-white' : 'bi bi-caret-down-fill ms-1 text-white'}"></i>
+                                </a>
+                            </th>
+                            <th>
+                                <a th:href="@{/customer-schedules(sortField='checkout', sortDir=${sortField == 'checkout' and sortDir == 'asc' ? 'desc' : 'asc'})}"
+                                   class="text-white text-decoration-none">
+                                    Giờ ra
+                                    <i th:if="${sortField == 'checkout'}"
+                                       th:class="${sortDir == 'asc' ? 'bi bi-caret-up-fill ms-1 text-white' : 'bi bi-caret-down-fill ms-1 text-white'}"></i>
+                                </a>
+                            </th>
                             <th>Khách hàng</th>
                             <th>Cơ sở</th>
                             <th>Nhân viên</th>

@@ -23,4 +23,6 @@ public interface ShiftService {
     Shift addOrUpdateShift(Shift s);
 
     boolean deleteShift(Integer id);
+    
+    public List<Shift> getAllSort(String sortField, String sortDir);
 }

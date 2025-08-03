@@ -23,4 +23,6 @@ public interface RoomService {
     Room addOrUpdateRoom(Room r);
 
     boolean deleteRoom(Integer id);
+    
+    public List<Room> getAllSort(String sortField, String sortDir);
 }
