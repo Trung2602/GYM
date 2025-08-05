@@ -11,17 +11,17 @@
         <form th:action="@{/plan-update}" th:object="${plan}" method="post">
             <div class="form-group">
                 <label for="des">Tên gói tập:</label>
-                <input type="text" class="form-control" id="name" th:field="*{name}" placeholder="Nhập tên gói tập" />
+                <input type="text" class="form-control" id="name" th:field="*{name}" placeholder="Nhập tên gói tập" required/>
             </div>
             
             <div class="form-group">
                 <label for="date">Giá gói tập:</label>
-                <input type="number" class="form-control" id="price" th:field="*{price}" />
+                <input type="number" class="form-control" id="price" th:field="*{price}" required/>
             </div>
 
             <div class="form-group">
                 <label for="date">Số ngày gia hạn:</label>
-                <input type="number" class="form-control" id="durationDays" th:field="*{durationDays}" />
+                <input type="number" class="form-control" id="durationDays" th:field="*{durationDays}" required/>
             </div>
             
             <div class="form-group">
@@ -30,7 +30,7 @@
             </div>
             
             <div class="col-12 d-flex justify-content-between align-items-center mt-4">
-                <input type="hidden" class="form-control" th:field="*{id}"  />
+                <input type="hidden" class="form-control" th:field="*{id}" />
                 <a href="/plans" class="btn btn-secondary">← Quay lại</a>
                 <button class="btn btn-success mt-1" type="submit">
                     <span th:if="${plan.id == null}">Thêm sản phẩm</span>

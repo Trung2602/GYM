@@ -21,6 +21,7 @@ import jakarta.persistence.TemporalType;
 import java.io.Serializable;
 import java.time.LocalTime;
 import java.util.Date;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  *
@@ -44,12 +45,15 @@ public class CustomerSchedule implements Serializable {
     private Integer id;
     @Column(name = "date")
     @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date date;
     @Column(name = "checkin")
-    @Temporal(TemporalType.TIME)
+//    @Temporal(TemporalType.TIME)
+    @DateTimeFormat(pattern = "HH:mm")
     private LocalTime checkin;
     @Column(name = "checkout")
-    @Temporal(TemporalType.TIME)
+//    @Temporal(TemporalType.TIME)
+    @DateTimeFormat(pattern = "HH:mm")
     private LocalTime checkout;
     
     @JoinColumn(name = "customer_id", referencedColumnName = "id")

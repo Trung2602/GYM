@@ -5,7 +5,9 @@
 package com.lht.controllers;
 
 import com.lht.pojo.StaffSchedule;
+import com.lht.services.ShiftService;
 import com.lht.services.StaffScheduleService;
+import com.lht.services.StaffService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,6 +28,12 @@ public class StaffScheduleController {
 
     @Autowired
     private StaffScheduleService staffScheduleService;
+    
+    @Autowired
+    private StaffService staffService;
+    
+    @Autowired
+    private ShiftService shiftService;
 
     @GetMapping("/staff-schedules")
     public String listStaffSchedules(Model model,
@@ -47,6 +55,8 @@ public class StaffScheduleController {
     @GetMapping("/staff-schedule/add")
     public String convertStaffScheduleForm(@RequestParam(name = "id", required = false) Integer id, Model model) {
         model.addAttribute("staffSchedule", (id != null) ? staffScheduleService.getStaffScheduleById(id) : new StaffSchedule());
+        model.addAttribute("staffs", this.staffService.getAllStaffs());
+        model.addAttribute("shifts", this.shiftService.getAllShifts());
         return "staff-schedule-add";
     }
 

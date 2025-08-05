@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Trang quản lý cơ sở</title>
+    <th:block th:replace="init :: styles"> </th:block>
+</head>
+
+<body>
+    <div th:replace="init :: header"></div>
+    <div class="container">
+        <form th:action="@{/facility-update}" th:object="${facility}" method="post">
+            <div class="form-group">
+                <label for="name">Tên cơ sở:</label>
+                <input type="text" class="form-control" id="name" th:field="*{name}" placeholder="Nhập tên cơ sở" />
+            </div>
+
+            <div class="form-group">
+                <label for="address">Địa chỉ:</label>
+                <input type="text" class="form-control" id="address" th:field="*{address}" placeholder="Nhập địa chỉ" />
+            </div>
+
+            <div class="col-12 d-flex justify-content-between align-items-center mt-4">
+                <input type="hidden" th:field="*{id}" />
+                <a href="/facilities" class="btn btn-secondary">← Quay lại</a>
+                <button class="btn btn-success mt-1" type="submit">
+                    <span th:if="${facility.id == null}">Thêm cơ sở</span>
+                    <span th:unless="${facility.id == null}">Cập nhật</span>
+                </button>
+            </div>
+        </form>
+    </div>
+    <div th:replace="init :: footer"></div>
+</body>
+</html>

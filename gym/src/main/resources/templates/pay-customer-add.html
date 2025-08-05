@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Thanh toán gói tập</title>
+    <th:block th:replace="init :: styles"></th:block>
+</head>
+<body>
+    <div th:replace="init :: header"></div>
+    <div class="container">
+        <form th:action="@{/pay-customer-update}" th:object="${payCustomer}" method="post">
+            <div class="form-group">
+                <label for="date">Ngày thanh toán:</label>
+                <input type="date" class="form-control" id="date" th:field="*{date}" required />
+            </div>
+
+            <div class="form-group">
+                <label for="customerId">Khách hàng:</label>
+                <select class="form-control" id="customerId" th:field="*{customerId}" required>
+                    <option th:each="c : ${customers}" 
+                            th:value="${c.id}" 
+                            th:text="${c.name}">Chọn khách hàng</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="planId">Gói tập:</label>
+                <select class="form-control" id="planId" th:field="*{planId}" required>
+                    <option th:each="p : ${plans}" 
+                            th:value="${p.id}" 
+                            th:text="${p.name}">Chọn gói tập</option>
+                </select>
+            </div>
+
+            <div class="col-12 d-flex justify-content-between align-items-center mt-4">
+                <input type="hidden" th:field="*{id}" />
+                <a href="/pay-customers" class="btn btn-secondary">← Quay lại</a>
+                <button type="submit" class="btn btn-success">
+                    <span th:if="${payCustomer.id == null}">Thêm thanh toán</span>
+                    <span th:unless="${payCustomer.id == null}">Cập nhật</span>
+                </button>
+            </div>
+        </form>
+    </div>
+    <div th:replace="init :: footer"></div>
+</body>
+</html>
+

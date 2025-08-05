@@ -6,6 +6,8 @@ package com.lht.controllers;
 
 import com.lht.pojo.Salary;
 import com.lht.services.SalaryService;
+import com.lht.services.StaffDayOffService;
+import com.lht.services.StaffService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,6 +28,12 @@ public class SalaryController {
 
     @Autowired
     private SalaryService salaryService;
+    
+    @Autowired
+    private StaffService staffService;
+    
+    @Autowired
+    private StaffDayOffService staffDayOffService;
 
     @GetMapping("/salaries")
     public String listSalaries(Model model,
@@ -47,6 +55,8 @@ public class SalaryController {
     @GetMapping("/salary/add")
     public String convertSalaryForm(@RequestParam(name = "id", required = false) Integer id, Model model) {
         model.addAttribute("salary", (id != null) ? salaryService.getSalaryById(id) : new Salary());
+        model.addAttribute("staffs", this.staffService.getAllStaffs());
+        model.addAttribute("dayOffs", this.staffDayOffService.getAllStaffDayOffs());
         return "salary-add";
     }
 
@@ -67,4 +77,13 @@ public class SalaryController {
         return "redirect:/salaries";
     }
 
+//    @PostMapping("/salary-update")
+//    public String updateSalaryAllStaffs(@ModelAttribute(value = "salary") Salary s, BindingResult result,
+//            Model model) {
+//        if (this.salaryService.addOrUpdateSalary(s) != null) {
+//            return "redirect:/salaries";
+//        }
+//        return "salary-add";
+//    }
+    
 }

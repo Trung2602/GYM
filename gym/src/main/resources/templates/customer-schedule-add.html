@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Quản lý lịch khách hàng</title>
+    <th:block th:replace="init :: styles"></th:block>
+</head>
+<body>
+<div th:replace="init :: header"></div>
+
+<div class="container">
+    <form th:action="@{/customer-schedule-update}" th:object="${customerSchedule}" method="post">
+        <!-- Ngày tập -->
+        <div class="form-group">
+            <label for="date">Ngày tập:</label>
+            <input type="date" class="form-control" id="date" th:field="*{date}" required />
+        </div>
+
+        <!-- Giờ checkin -->
+        <div class="form-group">
+            <label for="checkin">Giờ vào:</label>
+            <input type="time" class="form-control" id="checkin" th:field="*{checkin}" required />
+        </div>
+
+        <!-- Giờ checkout -->
+        <div class="form-group">
+            <label for="checkout">Giờ ra:</label>
+            <input type="time" class="form-control" id="checkout" th:field="*{checkout}" required />
+        </div>
+
+        <!-- Chọn khách hàng -->
+        <div class="form-group">
+            <label for="customerId">Khách hàng:</label>
+            <select class="form-control" id="customerId" th:field="*{customerId.id}">
+                <option th:each="c : ${customers}" th:value="${c.id}" th:text="${c.name}"></option>
+            </select>
+        </div>
+
+        <!-- Chọn nhân viên -->
+        <div class="form-group">
+            <label for="staffId">Nhân viên:</label>
+            <select class="form-control" id="staffId" th:field="*{staffId.id}">
+                <option th:each="s : ${staffs}" th:value="${s.id}" th:text="${s.name}"></option>
+            </select>
+        </div>
+
+        <!-- Chọn cơ sở -->
+        <div class="form-group">
+            <label for="facilityId">Cơ sở:</label>
+            <select class="form-control" id="facilityId" th:field="*{facilityId.id}">
+                <option th:each="f : ${facilities}" th:value="${f.id}" th:text="${f.name}"></option>
+            </select>
+        </div>
+
+        <!-- Nút thao tác -->
+        <div class="col-12 d-flex justify-content-between align-items-center mt-4">
+            <input type="hidden" th:field="*{id}" />
+            <a href="/customer-schedules" class="btn btn-secondary">← Quay lại</a>
+            <button class="btn btn-success" type="submit">
+                <span th:if="${customerSchedule.id == null}">Thêm lịch</span>
+                <span th:unless="${customerSchedule.id == null}">Cập nhật</span>
+            </button>
+        </div>
+    </form>
+</div>
+
+<div th:replace="init :: footer"></div>
+</body>
+</html>
+

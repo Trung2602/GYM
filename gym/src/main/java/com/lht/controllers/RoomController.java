@@ -5,6 +5,7 @@
 package com.lht.controllers;
 
 import com.lht.pojo.Room;
+import com.lht.services.FacilityService;
 import com.lht.services.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,6 +27,8 @@ public class RoomController {
 
     @Autowired
     private RoomService roomService;
+    @Autowired
+    private FacilityService facilityService;
 
     @GetMapping("/rooms")
     public String listRooms(Model model,
@@ -48,14 +51,15 @@ public class RoomController {
     @GetMapping("/room/add")
     public String convertRoomForm(@RequestParam(name = "id", required = false) Integer id, Model model) {
         model.addAttribute("room", (id != null) ? roomService.getRoomById(id) : new Room());
+        model.addAttribute("facilities", facilityService.getAllFacilities());
         return "room-add"; // Trang form thêm/sửa
     }
 
-    @PostMapping("/rooms-update")
+    @PostMapping("/room-update")
     public String updateRoom(@ModelAttribute(value = "room") Room p, BindingResult result,
             Model model) {
         if(roomService.addOrUpdateRoom(p) != null) {
-            return "redirect:/facilities";
+            return "redirect:/rooms";
         }
         return "room-add";
     }

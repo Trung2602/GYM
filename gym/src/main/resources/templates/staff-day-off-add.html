@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Quản lý ngày nghỉ nhân viên</title>
+    <th:block th:replace="init :: styles"></th:block>
+</head>
+<body>
+<div th:replace="init :: header"></div>
+
+<div class="container">
+    <form th:action="@{/staff-day-off-update}" th:object="${staffDayOff}" method="post">
+        <div class="form-group">
+            <label for="staffId">Nhân viên nghỉ:</label>
+            <select class="form-control" id="staffId" th:field="*{staffId}" required>
+                <option value="">-- Chọn nhân viên --</option>
+                <option th:each="staff : ${staffs}" th:value="${staff.id}" th:text="${staff.name}"></option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="date">Ngày nghỉ:</label>
+            <input type="date" class="form-control" id="date" th:field="*{date}" required />
+        </div>
+
+        <div class="col-12 d-flex justify-content-between align-items-center mt-4">
+            <input type="hidden" class="form-control" th:field="*{id}" />
+            <a href="/staff-day-offs" class="btn btn-secondary">← Quay lại</a>
+            <button class="btn btn-success" type="submit">
+                <span th:if="${staffDayOff.id == null}">Thêm ngày nghỉ</span>
+                <span th:unless="${staffDayOff.id == null}">Cập nhật</span>
+            </button>
+        </div>
+    </form>
+</div>
+
+<div th:replace="init :: footer"></div>
+</body>
+</html>
+

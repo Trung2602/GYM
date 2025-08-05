@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Trang quản lý ca làm việc</title>
+    <th:block th:replace="init :: styles"> </th:block>
+</head>
+
+<body>
+    <div th:replace="init :: header"></div>
+    <div class="container">
+        <form th:action="@{/shift-update}" th:object="${shift}" method="post">
+            <div class="form-group">
+                <label for="name">Tên</label>
+                <input type="text" class="form-control" id="name" th:field="*{name}" placeholder="Nhập tên ca làm việc" required/>
+            </div>
+            
+            <div class="form-group">
+                <label for="checkin">Giờ bắt đầu (check-in):</label>
+                <input type="time" class="form-control" id="checkin" th:field="*{checkin}" required />
+            </div>
+
+            <div class="form-group">
+                <label for="checkout">Giờ kết thúc (check-out):</label>
+                <input type="time" class="form-control" id="checkout" th:field="*{checkout}" required />
+            </div>
+
+            <div class="form-group">
+                <label for="duration">Thời lượng (giờ):</label>
+                <input type="number" class="form-control" id="duration" th:field="*{duration}" readonly />
+            </div>
+
+            <div class="col-12 d-flex justify-content-between align-items-center mt-4">
+                <input type="hidden" class="form-control" th:field="*{id}" />
+                <a href="/shifts" class="btn btn-secondary">← Quay lại</a>
+                <button class="btn btn-success mt-1" type="submit">
+                    <span th:if="${shift.id == null}">Thêm phòng</span>
+                    <span th:unless="${shift.id == null}">Cập nhật</span>
+                </button>
+            </div>
+        </form>
+    </div>
+    <div th:replace="init :: footer"></div>
+
+    <script>
+        function updateDuration() {
+            const checkin = document.getElementById("checkin").value;
+            const checkout = document.getElementById("checkout").value;
+
+            if (checkin && checkout) {
+                const [inHour, inMin] = checkin.split(":").map(Number);
+                const [outHour, outMin] = checkout.split(":").map(Number);
+                //Đổi ra phút
+                const checkinMinutes = inHour * 60 + inMin;
+                const checkoutMinutes = outHour * 60 + outMin;
+
+                let duration = checkoutMinutes - checkinMinutes;
+                
+                if (duration <= 0) {
+                    duration += 24 * 60; //Trường hợp qua ngày
+                }
+                //Đổi ngươc ra giờ để hiển thị
+                const durationHours = (duration / 60).toFixed(2);
+                document.getElementById("duration").value = durationHours;
+            }
+        }
+
+        //Gọi lại khi load nếu đang sửa shift
+        window.onload = updateDuration;
+        
+        //Bắt sự kiện khi thay đổi checkin và checkout
+        document.getElementById("checkin").addEventListener("change", updateDuration);
+        document.getElementById("checkout").addEventListener("change", updateDuration);
+    </script>
+
+</body>
+</html>
+
+

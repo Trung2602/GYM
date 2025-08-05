@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Trang quản lý phòng tập</title>
+    <th:block th:replace="init :: styles"> </th:block>
+</head>
+
+<body>
+    <div th:replace="init :: header"></div>
+    <div class="container">
+        <form th:action="@{/room-update}" th:object="${room}" method="post">
+            <div class="form-group">
+                <label for="roomNumber">Số phòng:</label>
+                <input type="text" class="form-control" id="roomNumber" th:field="*{roomNumber}" placeholder="Nhập số phòng" required/>
+            </div>
+
+            <div class="form-group">
+                <label for="facilityId">Cơ sở:</label>
+                <select class="form-control" id="facilityId" th:field="*{facilityId}">
+                    <option th:each="f : ${facilities}" th:value="${f.id}" th:text="${f.name}"></option>
+                </select>
+            </div>
+
+            <div class="col-12 d-flex justify-content-between align-items-center mt-4">
+                <input type="hidden" class="form-control" th:field="*{id}" />
+                <a href="/rooms" class="btn btn-secondary">← Quay lại</a>
+                <button class="btn btn-success mt-1" type="submit">
+                    <span th:if="${room.id == null}">Thêm phòng</span>
+                    <span th:unless="${room.id == null}">Cập nhật</span>
+                </button>
+            </div>
+        </form>
+    </div>
+    <div th:replace="init :: footer"></div>
+</body>
+</html>
+

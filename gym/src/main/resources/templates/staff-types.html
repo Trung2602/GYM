@@ -16,7 +16,7 @@
             <div class="col-12 col-md-9 col-lg-10 pt-3">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2 class="text-shadow"><i class="bi bi-person-badge me-2"></i>Quản lý chức vụ</h2>
-                    <a th:href="@{/Shifts/add}" class="btn btn-primary px-4 py-2 rounded-pill">
+                    <a th:href="@{/staff-type/add}" class="btn btn-primary px-4 py-2 rounded-pill">
                         <i class="bi bi-plus-circle me-1"></i> Thêm mới
                     </a>
                 </div>
@@ -55,13 +55,16 @@
                             <td th:text="${st.dayOff} + ' ngày'"></td>
                             <td th:text="${st.description}"></td>
                             <td class="text-center">
-                                <a th:href="@{|/StaffTypes/edit/${st.id}|}" class="btn btn-warning btn-sm">
+                                <a th:href="@{'/staff-type/add?id='+${st.id} }" class="btn btn-warning btn-sm">
                                     <i class="bi bi-pencil-square"></i> Sửa
                                 </a>
-                                <a th:href="@{|/StaffTypes/delete/${st.id}|}" class="btn btn-danger btn-sm"
-                                   onclick="return confirm('Bạn có chắc chắn muốn xoá?')">
-                                    <i class="bi bi-trash3"></i> Xoá
-                                </a>
+                                <form th:action="@{'/staff-type-delete/'+${st.id}}" method="post" style="display: inline">
+                                    <input type="hidden" name="_method" value="delete"/>
+                                    <button type="submit" class="btn btn-danger btn-sm"
+                                            onclick="return confirm('Bạn có chắc chắn muốn xoá?')">
+                                        <i class="bi bi-trash3"></i> Xoá
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(staffTypes)}">

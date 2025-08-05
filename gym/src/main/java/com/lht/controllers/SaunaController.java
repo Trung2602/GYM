@@ -5,6 +5,8 @@
 package com.lht.controllers;
 
 import com.lht.pojo.Sauna;
+import com.lht.services.CustomerService;
+import com.lht.services.RoomService;
 import com.lht.services.SaunaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,6 +28,12 @@ public class SaunaController {
 
     @Autowired
     private SaunaService saunaService;
+    
+    @Autowired
+    private RoomService roomService;
+    
+    @Autowired
+    private CustomerService customerService;
 
     @GetMapping("/saunas")
     public String listSaunas(Model model,
@@ -47,6 +55,8 @@ public class SaunaController {
     @GetMapping("/sauna/add")
     public String convertSaunaForm(@RequestParam(name = "id", required = false) Integer id, Model model) {
         model.addAttribute("sauna", (id != null) ? saunaService.getSaunaById(id) : new Sauna());
+        model.addAttribute("rooms", this.roomService.getAllRooms());
+        model.addAttribute("customers", this.customerService.getAllCustomers());
         return "sauna-add";
     }
 

@@ -5,7 +5,9 @@
 package com.lht.controllers;
 
 import com.lht.pojo.PayCustomer;
+import com.lht.services.CustomerService;
 import com.lht.services.PayCustomerService;
+import com.lht.services.PlanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,6 +28,12 @@ public class PayCustomerController {
 
     @Autowired
     private PayCustomerService payCustomerService;
+    
+    @Autowired
+    private CustomerService customerService;
+    
+    @Autowired
+    private PlanService planService;
 
     @GetMapping("/pay-customers")
     public String listPayCustomers(Model model,
@@ -47,6 +55,8 @@ public class PayCustomerController {
     @GetMapping("/pay-customer/add")
     public String convertPayCustomerForm(@RequestParam(name = "id", required = false) Integer id, Model model) {
         model.addAttribute("payCustomer", (id != null) ? payCustomerService.getPayCustomerById(id) : new PayCustomer());
+        model.addAttribute("customers", this.customerService.getAllCustomers());
+        model.addAttribute("plans", this.planService.getAllPlans());
         return "pay-customer-add";
     }
 

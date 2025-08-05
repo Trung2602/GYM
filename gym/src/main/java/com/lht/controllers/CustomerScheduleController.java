@@ -6,6 +6,9 @@ package com.lht.controllers;
 
 import com.lht.pojo.CustomerSchedule;
 import com.lht.services.CustomerScheduleService;
+import com.lht.services.CustomerService;
+import com.lht.services.FacilityService;
+import com.lht.services.StaffService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,6 +29,15 @@ public class CustomerScheduleController {
 
     @Autowired
     private CustomerScheduleService customerScheduleService;
+    
+    @Autowired
+    private CustomerService customerService;
+    
+    @Autowired
+    private StaffService staffService;
+    
+    @Autowired
+    private FacilityService facilityService;
 
     @GetMapping("/customer-schedules")
     public String listCustomerSchedules(Model model,
@@ -47,6 +59,9 @@ public class CustomerScheduleController {
     @GetMapping("/customer-schedule/add")
     public String convertCustomerScheduleForm(@RequestParam(name = "id", required = false) Integer id, Model model) {
         model.addAttribute("customerSchedule", (id != null) ? customerScheduleService.getCustomerScheduleById(id) : new CustomerSchedule());
+        model.addAttribute("customers", this.customerService.getAllCustomers());
+        model.addAttribute("staffs", this.staffService.getAllStaffs());
+        model.addAttribute("facilities", this.facilityService.getAllFacilities());
         return "customer-schedule-add";
     }
 

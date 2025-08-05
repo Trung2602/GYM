@@ -6,6 +6,7 @@ package com.lht.controllers;
 
 import com.lht.pojo.StaffDayOff;
 import com.lht.services.StaffDayOffService;
+import com.lht.services.StaffService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,6 +27,9 @@ public class StaffDayOffController {
 
     @Autowired
     private StaffDayOffService staffDayOffService;
+    
+    @Autowired
+    private StaffService staffService;
 
     @GetMapping("/staff-day-offs")
     public String listStaffDayOffs(Model model,
@@ -47,6 +51,7 @@ public class StaffDayOffController {
     @GetMapping("/staff-day-off/add")
     public String convertStaffDayOffForm(@RequestParam(name = "id", required = false) Integer id, Model model) {
         model.addAttribute("staffDayOff", (id != null) ? staffDayOffService.getStaffDayOffById(id) : new StaffDayOff());
+        model.addAttribute("staffs", this.staffService.getAllStaffs());
         return "staff-day-off-add";
     }
 

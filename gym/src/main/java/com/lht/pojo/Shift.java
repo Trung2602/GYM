@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.time.LocalTime;
 import java.util.Date;
 import java.util.Set;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  *
@@ -42,14 +43,18 @@ public class Shift implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
+    @Column(name = "name")
+    private String name;
     @Column(name = "checkin")
-    @Temporal(TemporalType.TIME)
+//    @Temporal(TemporalType.TIME)
+    @DateTimeFormat(pattern = "HH:mm")
     private LocalTime checkin;
     @Column(name = "checkout")
-    @Temporal(TemporalType.TIME)
+//    @Temporal(TemporalType.TIME)
+    @DateTimeFormat(pattern = "HH:mm")
     private LocalTime checkout;
     @Column(name = "duration")
-    private Integer duration;
+    private Double duration;
     
     @OneToMany(mappedBy = "shiftId")
     @JsonIgnore
@@ -69,7 +74,15 @@ public class Shift implements Serializable {
     public void setId(Integer id) {
         this.id = id;
     }
+    
+    public String getName() {
+        return name;
+    }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+    
     public LocalTime getCheckin() {
         return checkin;
     }
@@ -86,11 +99,11 @@ public class Shift implements Serializable {
         this.checkout = checkout;
     }
 
-    public Integer getDuration() {
+    public Double getDuration() {
         return duration;
     }
 
-    public void setDuration(Integer duration) {
+    public void setDuration(Double duration) {
         this.duration = duration;
     }
 

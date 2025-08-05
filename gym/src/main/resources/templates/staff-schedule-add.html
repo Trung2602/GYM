@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lịch làm việc nhân viên</title>
+    <th:block th:replace="init :: styles"></th:block>
+</head>
+<body>
+    <div th:replace="init :: header"></div>
+    <div class="container">
+        <form th:action="@{/staff-schedule-update}" th:object="${staffSchedule}" method="post">
+            
+            <!-- Ngày làm -->
+            <div class="form-group">
+                <label for="date">Ngày làm việc:</label>
+                <input type="date" class="form-control" id="date" th:field="*{date}" required />
+            </div>
+
+            <!-- Nhân viên -->
+            <div class="form-group">
+                <label for="staffId">Nhân viên:</label>
+                <select class="form-control" id="staffId" th:field="*{staffId}" required>
+                    <option value="" disabled selected>-- Chọn nhân viên --</option>
+                    <option th:each="s : ${staffs}" th:value="${s.id}" th:text="${s.name}"></option>
+                </select>
+            </div>
+
+            <!-- Ca làm -->
+            <div class="form-group">
+                <label for="shiftId">Ca làm:</label>
+                <select class="form-control" id="shiftId" th:field="*{shiftId}" required>
+                    <option value="" disabled selected>-- Chọn ca làm --</option>
+                    <option th:each="s : ${shifts}" th:value="${s.id}" th:text="${s.name}"></option>
+                </select>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <a href="/staff-schedules" class="btn btn-secondary">← Quay lại</a>
+                <input type="hidden" th:field="*{id}" />
+                <button type="submit" class="btn btn-primary">
+                    <span th:if="${staffSchedule.id == null}">Thêm mới</span>
+                    <span th:unless="${staffSchedule.id == null}">Cập nhật</span>
+                </button>
+            </div>
+        </form>
+    </div>
+    <div th:replace="init :: footer"></div>
+</body>
+</html>
+

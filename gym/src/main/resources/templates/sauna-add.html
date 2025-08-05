@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Thêm lượt xông hơi</title>
+    <th:block th:replace="init :: styles"></th:block>
+</head>
+<body>
+<div th:replace="init :: header"></div>
+<div class="container">
+    <form th:action="@{/sauna-update}" th:object="${sauna}" method="post">
+        <div class="form-group">
+            <label for="date">Ngày xông hơi:</label>
+            <input type="date" class="form-control" id="date" th:field="*{date}" required />
+        </div>
+
+        <div class="form-group">
+            <label for="checkin">Giờ vào</label>
+            <input type="time" class="form-control" id="checkin" th:field="*{checkin}" required/>
+        </div>
+
+        <div class="form-group">
+            <label for="isPaid">Đã thanh toán:</label>
+            <select class="form-control" id="isPaid" th:field="*{isPaid}">
+                <option th:value="true">Đã thanh toán</option>
+                <option th:value="false">Chưa thanh toán</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="customerId">Khách hàng:</label>
+            <select class="form-control" id="customerId" th:field="*{customerId}">
+                <option th:each="c : ${customers}" th:value="${c.id}" th:text="${c.name}"></option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="roomId">Phòng xông hơi:</label>
+            <select class="form-control" id="roomId" th:field="*{roomId}">
+                <option th:each="r : ${rooms}" th:value="${r.id}" th:text="${r.roomNumber}"></option>
+            </select>
+        </div>
+
+        <div class="col-12 d-flex justify-content-between align-items-center mt-4">
+            <input type="hidden" th:field="*{id}" />
+            <a href="/saunas" class="btn btn-secondary">← Quay lại</a>
+            <button class="btn btn-success mt-1" type="submit">
+                <span th:if="${sauna.id == null}">Thêm lượt</span>
+                <span th:unless="${sauna.id == null}">Cập nhật</span>
+            </button>
+        </div>
+    </form>
+</div>
+<div th:replace="init :: footer"></div>
+</body>
+</html>
+

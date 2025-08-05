@@ -6,6 +6,9 @@ package com.lht.services.impl;
 
 import com.lht.pojo.Salary;
 import com.lht.reponsitories.SalaryRepository;
+import com.lht.reponsitories.StaffDayOffRepository;
+import com.lht.reponsitories.StaffRepository;
+import com.lht.reponsitories.StaffScheduleRepository;
 import com.lht.services.SalaryService;
 
 import jakarta.persistence.criteria.Predicate;
@@ -32,6 +35,15 @@ public class SalaryServiceImpl implements SalaryService {
 
     @Autowired
     private SalaryRepository salaryRepository;
+    
+    @Autowired
+    private StaffRepository staffRepository;
+
+    @Autowired
+    private StaffDayOffRepository staffDayOffRepository;
+
+    @Autowired
+    private StaffScheduleRepository staffScheduleRepository;
 
     @Override
     public List<Salary> getAllSalaries() {
@@ -106,4 +118,55 @@ public class SalaryServiceImpl implements SalaryService {
         return salaryRepository.findAll(sort);
     }
 
+    
+//=================================================================================
+
+//    public void calculateMonthlySalaries(int month, int year) {
+//        List<Staff> staffList = staffRepository.findAll();
+//
+//        for (Staff staff : staffList) {
+//            StaffType type = staff.getStaffType();
+//            int typeId = type.getId();
+//
+//            // Lấy số ngày nghỉ trong tháng
+//            List<StaffDayOff> dayOffs = staffDayOffRepository.findByStaffIdAndMonthYear(staff.getId(), month, year);
+//            int totalDayOff = dayOffs.size();
+//
+//            double duration = 0;
+//            double totalSalary = 0;
+//
+//            if (typeId == 1) { // FullTime
+//                duration = 160; // giả sử 160h/tháng (có thể tuỳ chỉnh nếu cần)
+//                int allowedDayOff = type.getDayOff();
+//                int extraDayOff = Math.max(totalDayOff - allowedDayOff, 0);
+//                double penalty = extraDayOff * 500;
+//                totalSalary = type.getSalary() - penalty;
+//
+//            } else if (typeId == 2 || typeId == 3) { // PartTime hoặc Intern
+//                // Tính tổng số giờ từ các lịch làm
+//                List<StaffSchedule> schedules = staffScheduleRepository.findByStaffIdAndMonthYear(staff.getId(), month, year);
+//                for (StaffSchedule s : schedules) {
+//                    duration += s.getShift().getDuration();
+//                }
+//                totalSalary = type.getSalary() * duration;
+//            }
+//
+//            // Tạo bản ghi Salary
+//            Salary salary = new Salary();
+//            salary.setStaffId(staff);
+//            salary.setDate(LocalDate.of(year, month, 10)); // Ví dụ ngày chốt lương là mùng 10
+//            salary.setDuration(duration);
+//            salary.setDayOff(totalDayOff);
+//            salary.setPrice(totalSalary);
+//
+//            salaryRepository.save(salary);
+//        }
+//    }
+
+//    @Override
+//    public Salary calculateMonthlySalaries() {
+//        
+//        
+//        return salaryRepository.save(s);
+//    }
 }

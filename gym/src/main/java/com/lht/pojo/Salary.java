@@ -20,6 +20,7 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import java.io.Serializable;
 import java.util.Date;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  *
@@ -44,13 +45,14 @@ public class Salary implements Serializable {
     private Integer id;
     @Column(name = "date")
     @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date date;
     @Column(name = "duration")
-    private Integer duration;
+    private Double duration;
     @Column(name = "day_off")
     private Integer dayOff;
     @Column(name = "price")
-    private Integer price;
+    private Double price;
     
     @JoinColumn(name = "staff_id", referencedColumnName = "id")
     @ManyToOne
@@ -80,11 +82,11 @@ public class Salary implements Serializable {
         this.date = date;
     }
 
-    public Integer getDuration() {
+    public Double getDuration() {
         return duration;
     }
 
-    public void setDuration(Integer duration) {
+    public void setDuration(Double duration) {
         this.duration = duration;
     }
 
@@ -96,11 +98,11 @@ public class Salary implements Serializable {
         this.dayOff = dayOff;
     }
 
-    public Integer getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(Integer price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 

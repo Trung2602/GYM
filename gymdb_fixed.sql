@@ -54,9 +54,9 @@ CREATE TABLE Staff_type (
     description TEXT
 );
 INSERT INTO Staff_type (name, salary, day_off, description) VALUES
-('Fulltime', 15000000, 2, 'Nhân viên toàn thời gian'),
-('PartTime', 30000, 0, 'Nhân viên bán thời gian'),
-('Intern', 19000, 0, 'Thực tập sinh');
+('Fulltime', 15000000, 2, 'Nhân viên toàn thời gian, lương tính theo tháng.'),
+('PartTime', 30000, 0, 'Nhân viên bán thời gian, lương tính theo giờ.'),
+('Intern', 19000, 0, 'Thực tập sinh, lương tính theo giờ.');
 
 -- Staff kế thừa Account
 CREATE TABLE Staff (
@@ -90,20 +90,21 @@ INSERT INTO Staff_day_off (date, staff_id) VALUES
 -- Ca làm việc
 CREATE TABLE Shift (
     id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(50),
     checkin TIME,
     checkout TIME,
-    duration INT
+    duration DOUBLE
 );
 
-INSERT INTO Shift (checkin, checkout, duration) VALUES
-('05:00:00', '21:00:00', 16),
-('05:00:00', '13:00:00', 8),
-('13:00:00', '21:00:00', 8),
-('21:00:00', '05:00:00', 8),
-('05:00:00', '09:00:00', 4),
-('09:00:00', '13:00:00', 4),
-('13:00:00', '17:00:00', 4),
-('17:00:00', '21:00:00', 4);
+INSERT INTO Shift (name, checkin, checkout, duration) VALUES
+('Làm hành chính', '05:00:00', '21:00:00', 16),
+('Ca sáng', '05:00:00', '13:00:00', 8),
+('Ca chiều', '13:00:00', '21:00:00', 8),
+('Ca tối', '21:00:00', '05:00:00', 8),
+('Ca gãy sáng', '05:00:00', '09:00:00', 4),
+('Ca gãy trưa', '09:00:00', '13:00:00', 4),
+('Ca gãy chiều', '13:00:00', '17:00:00', 4),
+('Ca gãy tối', '17:00:00', '21:00:00', 4);
 
 -- Lịch làm việc parttime/intern
 CREATE TABLE Staff_schedule (
@@ -123,9 +124,9 @@ INSERT INTO Staff_schedule (date, shift_id, staff_id) VALUES
 CREATE TABLE Salary (
     id INT PRIMARY KEY AUTO_INCREMENT,
     date DATE,
-    duration INT,
+    duration DOUBLE,
     day_off INT,
-    price INT,
+    price DOUBLE,
     staff_id INT,
     FOREIGN KEY (staff_id) REFERENCES Staff(id)
 );
@@ -159,7 +160,7 @@ CREATE TABLE Plan (
 );
 
 INSERT INTO Plan (name, price, duration_days, description) VALUES
-('Gói sinh viên', 297000, 30, 'Điều kiện và học sinh và sinh viên dưới 22 tuổi'),
+('Gói sinh viên', 269000, 30, 'Điều kiện và học sinh và sinh viên dưới 22 tuổi'),
 ('Gói tháng', 299000, 30, 'Gói tập 1 tháng, không giới hạn lượt tập'),
 ('Gói 3 tháng', 829000, 91, 'Gói tập 3 tháng, tặng 1 lần xông hơi'),
 ('Gói 6 tháng', 1499000, 186, 'Gói tập 3 tháng, tặng 10 lần xông hơi'),
