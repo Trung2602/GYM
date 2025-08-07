@@ -45,7 +45,7 @@ public class RoomController {
         if  (id != null) {
             model.addAttribute("room", roomService.getRoomById(id));
         }       
-        return "rooms"; // Trỏ tới facility.html
+        return "rooms";
     }
     
     @GetMapping("/room/add")

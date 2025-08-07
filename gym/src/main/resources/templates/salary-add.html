@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Trang quản lý lương nhân viên</title>
+    <head>
+        <title>Trang quản lý lương nhân viên</title>
     <th:block th:replace="init :: styles"> </th:block>
 </head>
 
@@ -26,7 +26,11 @@
 
             <div class="form-group">
                 <label for="price">Tổng lương:</label>
-                <input type="number" class="form-control" id="price" th:field="*{price}" />
+                <input type="number" class="form-control" id="price" th:field="*{price}" name="price"/>
+                <!--                <input type="text" class="form-control" id="price"
+                                       th:value="${#numbers.formatDecimal(salary.price, 0, '', 0, '')}"
+                                       name="price"
+                                       oninput="this.value = this.value.replace(/[^0-9]/g, '')" />-->
             </div>
 
             <div class="form-group">
@@ -47,5 +51,21 @@
         </form>
     </div>
     <div th:replace="init :: footer"></div>
+
+    <input type="number" class="form-control" id="price"
+           th:value="${salary.price}" name="price" step="1" />
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let priceInput = document.getElementById("price");
+            if (priceInput) {
+                let val = parseFloat(priceInput.value);
+                if (!isNaN(val)) {
+                    priceInput.value = val.toFixed(0);  // đảm bảo không hiển thị dạng E
+                }
+            }
+        });
+    </script>
+
 </body>
 </html>

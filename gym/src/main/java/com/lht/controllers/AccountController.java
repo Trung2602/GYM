@@ -49,7 +49,7 @@ public class AccountController {
             model.addAttribute("account", new Account());
         }
        
-        return "account-edit"; // accounts.html
+        return "account-add"; // accounts.html
     }
     
     @PostMapping("/account-add")

@@ -31,7 +31,7 @@
                 <div id="adminTab" class="tab-content">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <h4>Danh sách Admin</h4>
-                        <a th:href="@{/account/add}" class="btn btn-primary px-4 py-2 rounded-pill">
+                        <a th:href="@{/admin/add}" class="btn btn-primary px-4 py-2 rounded-pill">
                             <i class="bi bi-plus-circle me-1"></i> Thêm mới
                         </a>
                     </div>
@@ -55,7 +55,13 @@
                                     </td>
                                     <td>
                                         <button class="btn btn-sm btn-primary"><i class="bi bi-pencil-square"></i></button>
-                                        <button class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
+                                        <form th:action="@{'/admin-delete/'+${a.id}}" method="post" style="display:inline">
+                                            <input type="hidden" name="_method" value="delete"/>
+                                            <button type="submit" class="btn btn-danger btn-sm"
+                                                    onclick="return confirm('Bạn có chắc chắn muốn xoá?')">
+                                                <i class="bi bi-trash3"></i> Xoá
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                                 <tr th:if="${#lists.isEmpty(admins)}">

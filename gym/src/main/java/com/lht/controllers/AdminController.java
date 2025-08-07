@@ -9,9 +9,13 @@ import com.lht.services.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  *
@@ -19,20 +23,49 @@ import org.springframework.web.bind.annotation.PostMapping;
  */
 @Controller
 public class AdminController {
+    @Autowired
+    private AdminService adminService;
     
-//    @Autowired
-//    private AdminService adminService;
-//    
-//    @GetMapping("/admin/add")
-//    public String adminAdd(Model model) {
-//        model.addAttribute("admin", new Admin());
-//        return "account-edit";
-//    }
-//    
-//    @PostMapping("/admin-add")
-//    public String addOrUpdateAdmin(@ModelAttribute("admin") Admin a) {
-//        this.adminService.addOrUpdateAdmin(a);
-//        return "redirect:/accounts"; // quay về trang danh sách tài khoản
-//    }
+    @GetMapping("/admins")
+    public String listAdmins(Model model,
+            @RequestParam(defaultValue = "id") String sortField,
+            @RequestParam(defaultValue = "asc") String sortDir) {
+        model.addAttribute("admins", this.adminService.getAllAdmins());
+        //model.addAttribute("rooms", this.adminService.getAllAdmins(sortField, sortDir));
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+        return "accounts";
+    }
+
+    @GetMapping("/admin/{id}")
+    public String getAdmin(@PathVariable("id") Integer id, Model model) {
+        if  (id != null) {
+            model.addAttribute("admin", this.adminService.getAdminById(id));
+        }       
+        return "accounts";
+    }
+    
+    @GetMapping("/admin/add")
+    public String convertAdminForm(@RequestParam(name = "id", required = false) Integer id, Model model) {
+        model.addAttribute("admin", (id != null) ? this.adminService.getAdminById(id) : new Admin());
+        return "account-add";
+    }
+
+    @PostMapping("/admin-update")
+    public String updateAdmin(@ModelAttribute(value = "admin") Admin p, BindingResult result,
+            Model model) {
+        if(this.adminService.addOrUpdateAdmin(p) != null) {
+            return "redirect:/accounts";
+        }
+        return "account-add";
+    }
+
+    @DeleteMapping("/admin-delete/{id}")
+    public String destroyAdmin(@PathVariable("id") Integer id, Model model) {
+        if (id != null) {
+            this.adminService.deleteAdmin(id);
+        }
+        return "redirect:/accounts";
+    }
     
 }

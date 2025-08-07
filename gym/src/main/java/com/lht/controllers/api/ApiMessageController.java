@@ -4,10 +4,15 @@
  */
 package com.lht.controllers.api;
 
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 /**
  *
  * @author admin
  */
+@RestController
+@RequestMapping("/api")
 public class ApiMessageController {
     
 }
