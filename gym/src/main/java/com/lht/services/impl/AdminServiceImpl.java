@@ -50,15 +50,21 @@ public class AdminServiceImpl implements AdminService {
         if (a.getId() != null) {
             currentAccount = this.getAdminById(a.getId());
         }
-        if (currentAccount != null){
-            a.setAvatar(currentAccount.getAvatar());
-        } else if (a.getFile() != null && !a.getFile().isEmpty()) {
+        if (a.getFile() != null && !a.getFile().isEmpty()) {
             try {
                 Map res = cloudinary.uploader().upload(a.getFile().getBytes(),
                         ObjectUtils.asMap("resource_type", "auto"));
                 a.setAvatar(res.get("secure_url").toString());
             } catch (IOException ex) {
                 Logger.getLogger(AdminServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            if (currentAccount != null) {
+                // Update mà không đổi ảnh
+                a.setAvatar(currentAccount.getAvatar());
+            } else {
+                // Tạo mới mà không có ảnh
+                a.setAvatar("/images/default-avatar.png");
             }
         }
         return adminRepository.save(a);
