@@ -32,6 +32,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @NamedQueries({
     @NamedQuery(name = "Shift.findAll", query = "SELECT s FROM Shift s"),
     @NamedQuery(name = "Shift.findById", query = "SELECT s FROM Shift s WHERE s.id = :id"),
+    @NamedQuery(name = "Shift.findByName", query = "SELECT s FROM Shift s WHERE s.name = :name"),
     @NamedQuery(name = "Shift.findByCheckin", query = "SELECT s FROM Shift s WHERE s.checkin = :checkin"),
     @NamedQuery(name = "Shift.findByCheckout", query = "SELECT s FROM Shift s WHERE s.checkout = :checkout"),
     @NamedQuery(name = "Shift.findByDuration", query = "SELECT s FROM Shift s WHERE s.duration = :duration")})

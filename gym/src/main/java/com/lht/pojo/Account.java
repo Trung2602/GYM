@@ -23,9 +23,12 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -61,6 +64,7 @@ public class Account implements Serializable {
     private String name;
     @Column(name = "birthday")
     @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date birthday;
     @Column(name = "gender")
     private Boolean gender;
@@ -233,4 +237,21 @@ public class Account implements Serializable {
         return "com.lht.pojo.Account[ id=" + id + " ]";
     }
     
+    
+    @Transient
+    private MultipartFile file;
+
+    /**
+     * @return the file
+     */
+    public MultipartFile getFile() {
+        return file;
+    }
+
+    /**
+     * @param file the file to set
+     */
+    public void setFile(MultipartFile file) {
+        this.file = file;
+    }
 }

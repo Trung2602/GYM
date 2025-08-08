@@ -19,6 +19,7 @@ import jakarta.persistence.TemporalType;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  *
@@ -40,6 +41,7 @@ public class Customer extends Account implements Serializable {
 //    private Integer id;
     @Column(name = "expiry_date")
     @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date expiryDate;
     @Column(name = "quantity_sauna")
     private Integer quantitySauna;

@@ -38,7 +38,14 @@
                     <div class="table-responsive"> <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th>ID</th><th>Username</th><th>Họ tên</th><th>Email</th><th>Giới tính</th><th>Ngày sinh</th><th>Kích hoạt</th><th>Hành động</th>
+                                    <th>ID</th>
+                                    <th>Username</th>
+                                    <th>Họ tên</th>
+                                    <th>Giới tính</th>
+                                    <th>Ngày sinh</th>
+                                    <th>Email</th>
+                                    <th>Trạng thái</th>
+                                    <th>Hành động</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -46,15 +53,17 @@
                                     <td th:text="${a.id}"></td>
                                     <td th:text="${a.username}"></td>
                                     <td th:text="${a.name}"></td>
-                                    <td th:text="${a.mail}"></td>
                                     <td th:text="${a.gender == 1 ? 'Nam' : 'Nữ'}"></td>
                                     <td th:text="${#dates.format(a.birthday, 'dd/MM/yyyy')}"></td>
+                                    <td th:text="${a.mail}"></td>
                                     <td>
-                                        <span th:text="${a.isActive ? 'Có' : 'Không'}"
+                                        <span th:text="${a.isActive ? 'Hoạt động' : 'Không hoạt động'}"
                                               th:classappend="${a.isActive} ? 'text-success' : 'text-danger'"></span>
                                     </td>
-                                    <td>
-                                        <button class="btn btn-sm btn-primary"><i class="bi bi-pencil-square"></i></button>
+                                    <td class="text-center">
+                                        <a th:href="@{'/admin/add?id='+${a.id} }" class="btn btn-warning btn-sm me-2"> 
+                                            <i class="bi bi-pencil-square"></i> Sửa
+                                        </a>
                                         <form th:action="@{'/admin-delete/'+${a.id}}" method="post" style="display:inline">
                                             <input type="hidden" name="_method" value="delete"/>
                                             <button type="submit" class="btn btn-danger btn-sm"
@@ -83,7 +92,16 @@
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th>ID</th><th>Username</th><th>Họ tên</th><th>Email</th><th>Giới tính</th><th>Ngày sinh</th><th>Hạn dùng</th><th>Số lượt xông hơi</th><th>Hành động</th>
+                                    <th>ID</th>
+                                    <th>Username</th>
+                                    <th>Họ tên</th>
+                                    <th>Giới tính</th>
+                                    <th>Ngày sinh</th>
+                                    <th>Email</th>
+                                    <th>Số lượt xông hơi</th>
+                                    <th>Hạn dùng</th>
+                                    <th>Trạng thái</th>
+                                    <th>Hành động</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -91,14 +109,26 @@
                                     <td th:text="${c.id}"></td>
                                     <td th:text="${c.username}"></td>
                                     <td th:text="${c.name}"></td>
-                                    <td th:text="${c.mail}"></td>
                                     <td th:text="${c.gender == 1 ? 'Nam' : 'Nữ'}"></td>
                                     <td th:text="${#dates.format(c.birthday, 'dd/MM/yyyy')}"></td>
-                                    <td th:text="${#dates.format(c.expiryDate, 'dd/MM/yyyy')}"></td>
+                                    <td th:text="${c.mail}"></td>
                                     <td th:text="${c.quantitySauna}"></td>
+                                    <td th:text="${#dates.format(c.expiryDate, 'dd/MM/yyyy')}"></td>
                                     <td>
-                                        <button class="btn btn-sm btn-primary"><i class="bi bi-pencil-square"></i></button>
-                                        <button class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
+                                        <span th:text="${c.isActive ? 'Hoạt động' : 'Không hoạt động'}"
+                                              th:classappend="${c.isActive} ? 'text-success' : 'text-danger'"></span>
+                                    </td>
+                                    <td class="text-center">
+                                        <a th:href="@{'/customer/add?id='+${c.id} }" class="btn btn-warning btn-sm me-2"> 
+                                            <i class="bi bi-pencil-square"></i> Sửa
+                                        </a>
+                                        <form th:action="@{'/customer-delete/'+${c.id}}" method="post" style="display:inline">
+                                            <input type="hidden" name="_method" value="delete"/>
+                                            <button type="submit" class="btn btn-danger btn-sm"
+                                                    onclick="return confirm('Bạn có chắc chắn muốn xoá?')">
+                                                <i class="bi bi-trash3"></i> Xoá
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                                 <tr th:if="${#lists.isEmpty(customers)}">
@@ -120,7 +150,15 @@
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th>ID</th><th>Username</th><th>Họ tên</th><th>Email</th><th>Giới tính</th><th>Ngày sinh</th><th>Ngày vào làm</th><th>Hành động</th>
+                                    <th>ID</th>
+                                    <th>Username</th>
+                                    <th>Họ tên</th>
+                                    <th>Giới tính</th>
+                                    <th>Ngày sinh</th>
+                                    <th>Email</th>
+                                    <th>Ngày vào làm</th>
+                                    <th>Trạng thái</th>
+                                    <th>Hành động</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -128,13 +166,25 @@
                                     <td th:text="${s.id}"></td>
                                     <td th:text="${s.username}"></td>
                                     <td th:text="${s.name}"></td>
-                                    <td th:text="${s.mail}"></td>
                                     <td th:text="${s.gender == 1 ? 'Nam' : 'Nữ'}"></td>
                                     <td th:text="${#dates.format(s.birthday, 'dd/MM/yyyy')}"></td>
+                                    <td th:text="${s.mail}"></td>
                                     <td th:text="${#dates.format(s.createdDate, 'dd/MM/yyyy')}"></td>
                                     <td>
-                                        <button class="btn btn-sm btn-primary"><i class="bi bi-pencil-square"></i></button>
-                                        <button class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
+                                        <span th:text="${s.isActive ? 'Hoạt động' : 'Không hoạt động'}"
+                                              th:classappend="${s.isActive} ? 'text-success' : 'text-danger'"></span>
+                                    </td>
+                                    <td class="text-center">
+                                        <a th:href="@{'/staff/add?id='+${s.id} }" class="btn btn-warning btn-sm me-2"> 
+                                            <i class="bi bi-pencil-square"></i> Sửa
+                                        </a>
+                                        <form th:action="@{'/staff-delete/'+${s.id}}" method="post" style="display:inline">
+                                            <input type="hidden" name="_method" value="delete"/>
+                                            <button type="submit" class="btn btn-danger btn-sm"
+                                                    onclick="return confirm('Bạn có chắc chắn muốn xoá?')">
+                                                <i class="bi bi-trash3"></i> Xoá
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                                 <tr th:if="${#lists.isEmpty(staffs)}">

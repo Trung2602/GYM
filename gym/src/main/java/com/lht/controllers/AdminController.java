@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -23,38 +24,37 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @Controller
 public class AdminController {
+
     @Autowired
     private AdminService adminService;
-    
+
     @GetMapping("/admins")
-    public String listAdmins(Model model,
-            @RequestParam(defaultValue = "id") String sortField,
-            @RequestParam(defaultValue = "asc") String sortDir) {
+    public String listAdmins(Model model) {
         model.addAttribute("admins", this.adminService.getAllAdmins());
-        //model.addAttribute("rooms", this.adminService.getAllAdmins(sortField, sortDir));
-        model.addAttribute("sortField", sortField);
-        model.addAttribute("sortDir", sortDir);
         return "accounts";
     }
 
     @GetMapping("/admin/{id}")
     public String getAdmin(@PathVariable("id") Integer id, Model model) {
-        if  (id != null) {
+        if (id != null) {
             model.addAttribute("admin", this.adminService.getAdminById(id));
-        }       
+        }
         return "accounts";
     }
-    
+
     @GetMapping("/admin/add")
     public String convertAdminForm(@RequestParam(name = "id", required = false) Integer id, Model model) {
-        model.addAttribute("admin", (id != null) ? this.adminService.getAdminById(id) : new Admin());
+        model.addAttribute("account", (id != null) ? this.adminService.getAdminById(id) : new Admin());
+        model.addAttribute("formAction", "/admin-update");
+        model.addAttribute("role", "admin");
+
         return "account-add";
     }
 
     @PostMapping("/admin-update")
     public String updateAdmin(@ModelAttribute(value = "admin") Admin p, BindingResult result,
             Model model) {
-        if(this.adminService.addOrUpdateAdmin(p) != null) {
+        if (this.adminService.addOrUpdateAdmin(p) != null) {
             return "redirect:/accounts";
         }
         return "account-add";
@@ -67,5 +67,5 @@ public class AdminController {
         }
         return "redirect:/accounts";
     }
-    
+
 }

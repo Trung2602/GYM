@@ -7,6 +7,7 @@ package com.lht.services;
 import com.lht.pojo.Admin;
 import java.util.List;
 import java.util.Map;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *

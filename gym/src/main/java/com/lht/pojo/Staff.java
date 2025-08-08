@@ -22,6 +22,7 @@ import jakarta.persistence.TemporalType;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  *
@@ -42,6 +43,7 @@ public class Staff extends Account implements Serializable {
 //    private Integer id;
     @Column(name = "created_date")
     @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date createdDate;
     
     @OneToMany(mappedBy = "staffId")

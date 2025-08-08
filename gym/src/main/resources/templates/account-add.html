@@ -7,53 +7,93 @@
 
 <body>
     <div th:replace="init :: header"></div>
-    
-    
-    
-    
+
+
+
+
     <div class="container my-4">
-        <!-- FORM -->
-        <form th:action="@{/account-add}" th:object="${admin}" method="post" enctype="multipart/form-data">
-
-            <!-- Avatar ở trên cùng, căn giữa và hình tròn -->
-<!--            <div style="text-align: center; margin-bottom: 20px;">
-                <img th:if="${account.avatar != null}" 
-                     th:src="${account.avatar}" 
-                     alt="Ảnh đại diện hiện tại" 
-                     style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 2px solid #ccc; display: block; margin: 0 auto 10px auto;" />
-
-                <input type="file" class="form-control" th:field="*{file}" id="avatar" 
-                       style="width: 220px; margin: 0 auto; padding: 3px 6px; font-size: 0.9rem;" />
-            </div>-->
-
-            <input type="hidden" th:field="*{id}" id="id" />
-
-            <div class="mb-3">
-                <label for="username" class="form-label">Tên đăng nhập</label>
-                <input type="text" class="form-control" th:field="*{username}" id="username" required />
-            </div>
-
-            <div class="mb-3">
-                <label for="password" class="form-label">Mật khẩu</label>
-                <input type="password" class="form-control" th:field="*{password}" id="password"
-                       th:required="${account.id == null}" />
-            </div>
-
-            <div class="mb-3">
-                <label for="name" class="form-label">Họ tên</label>
-                <input type="text" class="form-control" th:field="*{name}" id="name" />
-            </div>
-
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" th:field="*{email}"  id="email" />
-            </div>
-
+        <form th:action="@{${formAction}}" th:object="${account}" method="post" enctype="multipart/form-data">
             
 
+            <div class="col-md-12">
+                <label for="avatar" class="form-label"><strong>Ảnh:</strong></label>
+                <input type="file" class="form-control" th:field="*{file}" placeholder="URL ảnh" /> 
+                <img th:if="${account.avatar != null}"  alt="Ảnh minh họa" th:src="${account.avatar}" style="max-width: 150px; max-height: 150px;" class="mb-2" />
+            </div>
+            
+            <div class="mb-3">
+                <label for="username">Tên đăng nhập</label>
+                <input type="text" id="username" th:field="*{username}" class="form-control" required />
+            </div>
 
-            <button type="submit" class="btn btn-primary">Lưu</button>
+            <div class="mb-3">
+                <label for="password">Mật khẩu</label>
+                <input type="password" id="password" th:field="*{password}" class="form-control"
+                       th:required="*{id} == null" />
+            </div>
+
+            <div class="mb-3">
+                <label for="name">Họ tên</label>
+                <input type="text" id="name" th:field="*{name}" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label for="birthday">Ngày sinh</label>
+                <input type="date" id="birthday" th:field="*{birthday}" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label for="gender">Giới tính</label>
+                <select id="gender" defaultValue={true} th:field="*{gender}" class="form-control">
+                    <option th:value="true">Nam</option>
+                    <option th:value="false">Nữ</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="mail">Email</label>
+                <input type="email" id="mail" th:field="*{mail}" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label for="isActive">Trạng thái</label>
+                <select id="isActive" defaultValue={true} th:field="*{isActive}" class="form-control">
+                    <option th:value="true">Hoạt động</option>
+                    <option th:value="false">Không hoạt động</option>
+                </select>
+            </div>
+
+            <!-- Field riêng cho Customer -->
+            <div th:if="${role == 'customer'}">
+                <div class="mb-3">
+                    <label for="expiryDate">Hạn dùng</label>
+                    <input type="date" id="expiryDate" th:field="*{expiryDate}" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label for="quantitySauna">Số lượt xông hơi</label>
+                    <input type="number" id="quantitySauna" th:field="*{quantitySauna}" class="form-control" />
+                </div>
+            </div>
+
+            <!-- Field riêng cho Staff -->
+            <div th:if="${role == 'staff'}">
+                <div class="mb-3">
+                    <label for="createdDate">Ngày vào làm</label>
+                    <input type="date" id="createdDate" th:field="*{createdDate}" class="form-control" />
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <input type="hidden" class="form-control" th:field="*{id}" />
+                <input type="hidden" class="form-control" th:field="*{avatar}" />
+                <a href="/accounts" class="btn btn-secondary">← Quay lại</a>
+                <button type="submit" class="btn btn-success">
+                    <span th:if="*{id} == null">Thêm mới</span>
+                    <span th:unless="*{id} == null">Cập nhật</span>
+                </button>
+            </div>
         </form>
+
     </div>
     <div th:replace="init :: footer"></div>
 </body>
