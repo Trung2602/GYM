@@ -4,6 +4,8 @@
  */
 package com.lht.services.impl;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.lht.pojo.Customer;
 import com.lht.reponsitories.CustomerRepository;
 import com.lht.services.CustomerService;
@@ -12,10 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import jakarta.persistence.criteria.Predicate;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +35,13 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private CustomerRepository customerRepository;
+    
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private Cloudinary cloudinary;
+
 
     @Override
     public List<Customer> getAllCustomers() {
@@ -68,7 +81,49 @@ public class CustomerServiceImpl implements CustomerService {
             c.setQuantitySauna(0);
         }
 
-        return customerRepository.save(c);
+        Customer currentAccount = null;
+        if (c.getId() != null) {
+            currentAccount = this.getCustomerById(c.getId());
+        }
+        if (c.getId() == null) {
+            // Trường hợp thêm mới: mã hóa password bắt buộc
+            c.setRole("Customer");
+            c.setPassword(this.passwordEncoder.encode(c.getPassword()));
+        } else {
+            // Trường hợp update: kiểm tra nếu password khác null và khác rỗng, encode lại
+            c.setRole(c.getRole());
+            if (c.getPassword() != null && !c.getPassword().isEmpty()) {
+                // Có thể kiểm tra nếu khác mật khẩu hiện tại mới encode (tùy logic)
+                c.setPassword(this.passwordEncoder.encode(c.getPassword()));
+            } else {
+                // Giữ nguyên password cũ
+                c.setPassword(currentAccount.getPassword());
+            }
+        }
+        if (c.getFile() != null && !c.getFile().isEmpty()) {
+            try {
+                Map res = cloudinary.uploader().upload(c.getFile().getBytes(),
+                        ObjectUtils.asMap("resource_type", "auto"));
+                c.setAvatar(res.get("secure_url").toString());
+            } catch (IOException ex) {
+                Logger.getLogger(AdminServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            if (currentAccount != null) {
+                // Update mà không đổi ảnh
+                c.setAvatar(currentAccount.getAvatar());
+            } else {
+                // Tạo mới mà không có ảnh
+                c.setAvatar("/images/image1.png");
+            }
+        }
+
+        try {
+            return customerRepository.save(c);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @Override

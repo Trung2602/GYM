@@ -4,10 +4,13 @@
  */
 package com.lht.services.impl;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.lht.pojo.Staff;
 import com.lht.reponsitories.StaffRepository;
 import com.lht.services.StaffService;
 import jakarta.persistence.criteria.Predicate;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -15,8 +18,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +36,12 @@ public class StaffServiceImpl implements StaffService {
 
     @Autowired
     private StaffRepository staffRepository;
+    
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private Cloudinary cloudinary;
 
     @Override
     public List<Staff> getAllStaffs() {
@@ -80,7 +92,52 @@ public class StaffServiceImpl implements StaffService {
 
     @Override
     public Staff addOrUpdateStaff(Staff s) {
-        return staffRepository.save(s);
+        Staff currentAccount = null;
+        if (s.getId() != null) {
+            currentAccount = this.getStaffById(s.getId());
+        }
+
+        if (s.getId() == null) {
+            // Trường hợp thêm mới: mã hóa password bắt buộc
+            s.setRole("Staff");
+            s.setPassword(this.passwordEncoder.encode(s.getPassword()));
+        } else {
+            // Trường hợp update: kiểm tra nếu password khác null và khác rỗng, encode lại
+            s.setRole(s.getRole());
+            if (s.getPassword() != null && !s.getPassword().isEmpty()) {
+                // Có thể kiểm tra nếu khác mật khẩu hiện tại mới encode (tùy logic)
+                s.setPassword(this.passwordEncoder.encode(s.getPassword()));
+            } else {
+                // Giữ nguyên password cũ
+                s.setPassword(currentAccount.getPassword());
+            }
+        }
+
+        if (s.getFile() != null && !s.getFile().isEmpty()) {
+            try {
+                Map res = cloudinary.uploader().upload(s.getFile().getBytes(),
+                        ObjectUtils.asMap("resource_type", "auto"));
+                s.setAvatar(res.get("secure_url").toString());
+            } catch (IOException ex) {
+                Logger.getLogger(AdminServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            if (currentAccount != null) {
+                // Update mà không đổi ảnh
+                s.setAvatar(currentAccount.getAvatar());
+            } else {
+                // Tạo mới mà không có ảnh
+                s.setAvatar("/images/image1.png");
+            }
+        }
+
+        try {
+            return staffRepository.save(s);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+
     }
 
     @Override

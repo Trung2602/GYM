@@ -18,16 +18,17 @@
                 <div class="d-flex align-items-center">
                     <a class="navbar-brand fw-bold me-3 d-flex align-items-center" th:href="@{/}">
                         <i class="bi bi-rocket-takeoff-fill me-2 text-warning"></i> GALACTIC FITNESS </a>
-                    <a class="nav-link text-light d-flex align-items-center" th:href="@{/}" >
+                    <a class="nav-link text-light d-flex align-items-center" th:href="@{/}" sec:authorize="isAuthenticated()">
                         <i class="bi bi-house-door-fill me-1"></i> Trang chủ
                     </a>
                 </div>
 
-                <ul class="navbar-nav d-flex align-items-center gap-3" >
+                <ul class="navbar-nav d-flex align-items-center gap-3" sec:authorize="isAuthenticated()">
                     <li class="nav-item">
                         <span class="navbar-text text-light fw-semibold d-flex align-items-center">
                             <i class="bi bi-person-circle me-1"></i>
-                            Xin chào, <!--<span th:text="${#authentication.name}">Phi Hành Gia</span> </span> -->
+                            Xin chào,<span th:text="${#authentication.name}">Phi Hành Gia</span> 
+                        </span>
                     </li>
                     <li class="nav-item">
                         <a class="btn btn-outline-light btn-sm d-flex align-items-center" th:href="@{/logout}">

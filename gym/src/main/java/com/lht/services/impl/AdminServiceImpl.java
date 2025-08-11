@@ -34,7 +34,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
-    
+
     @Autowired
     private Cloudinary cloudinary;
 
@@ -56,9 +56,11 @@ public class AdminServiceImpl implements AdminService {
         }
         if (a.getId() == null) {
             // Trường hợp thêm mới: mã hóa password bắt buộc
+            a.setRole("Admin");
             a.setPassword(this.passwordEncoder.encode(a.getPassword()));
         } else {
             // Trường hợp update: kiểm tra nếu password khác null và khác rỗng, encode lại
+            a.setRole(a.getRole());
             if (a.getPassword() != null && !a.getPassword().isEmpty()) {
                 // Có thể kiểm tra nếu khác mật khẩu hiện tại mới encode (tùy logic)
                 a.setPassword(this.passwordEncoder.encode(a.getPassword()));
@@ -84,7 +86,13 @@ public class AdminServiceImpl implements AdminService {
                 a.setAvatar("/images/image1.png");
             }
         }
-        return adminRepository.save(a);
+
+        try {
+            return adminRepository.save(a);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @Override

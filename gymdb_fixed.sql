@@ -32,12 +32,12 @@ CREATE TABLE Account (
 );
 
 INSERT INTO Account (id, username, password, name, birthday, gender, role, mail, avatar, is_active) VALUES
-(1, 'Admin123', '$2a$10$Okh2cGnAQ1jAGnUnxhEqluSm.FhhJn6JMMe7hOdGZjz2iaUjcdOMG', 'Admin', '1990-01-01', 0, 'Admin', 'admin@gmail.com', NULL, TRUE),
-(2, 'Trung2602', '$2a$10$Okh2cGnAQ1jAGnUnxhEqluSm.FhhJn6JMMe7hOdGZjz2iaUjcdOMG', 'Lư Hiếu Trung', '1995-06-15', 1, 'Staff', 'luduahau@gmail.com', NULL, TRUE),
-(3, 'ThanhTu01', '$2a$10$Okh2cGnAQ1jAGnUnxhEqluSm.FhhJn6JMMe7hOdGZjz2iaUjcdOMG', 'Đinh Thanh Tú', '1998-03-22', 0, 'Staff', 'tuthanh@gmail.com', NULL, TRUE),
-(4, 'Chuong1305', '$2a$10$Okh2cGnAQ1jAGnUnxhEqluSm.FhhJn6JMMe7hOdGZjz2iaUjcdOMG', 'Trương Nguyên Chương', '2000-08-10', 1, 'Staff', 'chuong1305@gmail.com', NULL, TRUE),
-(5, 'Duc123', '$2a$10$Okh2cGnAQ1jAGnUnxhEqluSm.FhhJn6JMMe7hOdGZjz2iaUjcdOMG', 'Nguyễn Văn Đức', '1992-12-05', 0, 'Customer', 'ngvanduc@gmail.com', NULL, TRUE),
-(6, 'Tuan123', '$2a$10$Okh2cGnAQ1jAGnUnxhEqluSm.FhhJn6JMMe7hOdGZjz2iaUjcdOMG', 'Kiều Minh Tuấn', '1992-12-05', 1, 'Customer', 'tuankieu@gmail.com', NULL, TRUE);
+(1, 'Admin123', '$2a$10$Okh2cGnAQ1jAGnUnxhEqluSm.FhhJn6JMMe7hOdGZjz2iaUjcdOMG', 'Admin', '1990-01-01', 0, 'Admin', 'admin@gmail.com', 'https://res.cloudinary.com/dxgc9wwrd/image/upload/v1754928114/nzoi1xjxasxfvsut1azv.jpg', TRUE),
+(2, 'Trung2602', '$2a$10$Okh2cGnAQ1jAGnUnxhEqluSm.FhhJn6JMMe7hOdGZjz2iaUjcdOMG', 'Lư Hiếu Trung', '1995-06-15', 1, 'Staff', 'luduahau@gmail.com', 'https://res.cloudinary.com/dxgc9wwrd/image/upload/v1754928114/nzoi1xjxasxfvsut1azv.jpg', TRUE),
+(3, 'ThanhTu01', '$2a$10$Okh2cGnAQ1jAGnUnxhEqluSm.FhhJn6JMMe7hOdGZjz2iaUjcdOMG', 'Đinh Thanh Tú', '1998-03-22', 0, 'Staff', 'tuthanh@gmail.com', 'https://res.cloudinary.com/dxgc9wwrd/image/upload/v1754928114/nzoi1xjxasxfvsut1azv.jpg', TRUE),
+(4, 'Chuong1305', '$2a$10$Okh2cGnAQ1jAGnUnxhEqluSm.FhhJn6JMMe7hOdGZjz2iaUjcdOMG', 'Trương Nguyên Chương', '2000-08-10', 1, 'Staff', 'chuong1305@gmail.com', 'https://res.cloudinary.com/dxgc9wwrd/image/upload/v1754928114/nzoi1xjxasxfvsut1azv.jpg', TRUE),
+(5, 'Duc123', '$2a$10$Okh2cGnAQ1jAGnUnxhEqluSm.FhhJn6JMMe7hOdGZjz2iaUjcdOMG', 'Nguyễn Văn Đức', '1992-12-05', 0, 'Customer', 'ngvanduc@gmail.com', 'https://res.cloudinary.com/dxgc9wwrd/image/upload/v1754928114/nzoi1xjxasxfvsut1azv.jpg', TRUE),
+(6, 'Tuan123', '$2a$10$Okh2cGnAQ1jAGnUnxhEqluSm.FhhJn6JMMe7hOdGZjz2iaUjcdOMG', 'Kiều Minh Tuấn', '1992-12-05', 1, 'Customer', 'tuankieu@gmail.com', 'https://res.cloudinary.com/dxgc9wwrd/image/upload/v1754928114/nzoi1xjxasxfvsut1azv.jpg', TRUE);
 
 -- Admin kế thừa từ Account
 CREATE TABLE Admin (
