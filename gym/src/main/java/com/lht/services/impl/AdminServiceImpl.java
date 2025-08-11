@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,6 +32,9 @@ public class AdminServiceImpl implements AdminService {
     @Autowired
     private AdminRepository adminRepository;
 
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+    
     @Autowired
     private Cloudinary cloudinary;
 
@@ -49,6 +53,19 @@ public class AdminServiceImpl implements AdminService {
         Admin currentAccount = null;
         if (a.getId() != null) {
             currentAccount = this.getAdminById(a.getId());
+        }
+        if (a.getId() == null) {
+            // Trường hợp thêm mới: mã hóa password bắt buộc
+            a.setPassword(this.passwordEncoder.encode(a.getPassword()));
+        } else {
+            // Trường hợp update: kiểm tra nếu password khác null và khác rỗng, encode lại
+            if (a.getPassword() != null && !a.getPassword().isEmpty()) {
+                // Có thể kiểm tra nếu khác mật khẩu hiện tại mới encode (tùy logic)
+                a.setPassword(this.passwordEncoder.encode(a.getPassword()));
+            } else {
+                // Giữ nguyên password cũ
+                a.setPassword(currentAccount.getPassword());
+            }
         }
         if (a.getFile() != null && !a.getFile().isEmpty()) {
             try {

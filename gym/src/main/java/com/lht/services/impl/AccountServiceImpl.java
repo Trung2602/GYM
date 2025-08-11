@@ -5,8 +5,12 @@
 package com.lht.services.impl;
 
 import com.lht.pojo.Account;
+import com.lht.pojo.Admin;
+import com.lht.pojo.Customer;
 import com.lht.pojo.Plan;
+import com.lht.pojo.Staff;
 import com.lht.reponsitories.AccountRepository;
+import com.lht.reponsitories.AdminRepository;
 import com.lht.services.AccountService;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -17,10 +21,18 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +46,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Override
     public List<Account> getAllAccounts() {
@@ -106,14 +121,45 @@ public class AccountServiceImpl implements AccountService {
     public boolean changeIsActive(Integer id) {
         Account acc = accountRepository.findById(id).orElse(null);
         if (acc != null) {
-            if(acc.getIsActive())
+            if (acc.getIsActive()) {
                 acc.setIsActive(Boolean.FALSE);
-            else
+            } else {
                 acc.setIsActive(Boolean.TRUE);
+            }
             return true;
         }
         return false;
 
+    }
+
+    @Override
+    public boolean authenticate(String username, String password) {
+        Optional<Account> acc = this.accountRepository.findByUsername(username);
+        if (acc.isPresent()) {
+            Account user = acc.get();
+            return passwordEncoder.matches(password, user.getPassword());
+        }
+        return false;
+    }
+
+    public Account getAccountByUsername(String username) {
+        Optional<Account> user = this.accountRepository.findByUsername(username);
+        return user.orElse(null);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Account acc = accountRepository.findByUsername(username)
+        .orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy tài khoản: " + username));
+        
+        if (acc == null) {
+            throw new UsernameNotFoundException("Invalid username");
+        }
+        Set<GrantedAuthority> authorities = new HashSet<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + acc.getRole()));
+
+        return new org.springframework.security.core.userdetails.User(
+                acc.getUsername(), acc.getPassword(), authorities);
     }
 
 }

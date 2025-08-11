@@ -68,6 +68,8 @@ public class Account implements Serializable {
     private Date birthday;
     @Column(name = "gender")
     private Boolean gender;
+    @Column(name = "role")
+    private String role;
     @Column(name = "mail")
     private String mail;
     @Column(name = "avatar")
@@ -145,6 +147,14 @@ public class Account implements Serializable {
         return gender;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+    
     public void setGender(Boolean gender) {
         this.gender = gender;
     }

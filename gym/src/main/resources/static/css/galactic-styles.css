@@ -343,3 +343,32 @@ footer div {
     color: #F44336 !important;
     font-weight: bold;
 }
+
+/* -------------------------------------------------------------------------- */
+/* 10. Styles cho Trang Đăng Nhập (Login Page) */
+/* -------------------------------------------------------------------------- */
+.login-card {
+    background-color: rgba(26, 35, 126, 0.7);
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    padding: 3rem; /* Tăng padding để form trông rộng rãi hơn */
+}
+
+.login-card .form-control {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--galactic-divider);
+    color: var(--galactic-text-white);
+    transition: all 0.3s ease;
+}
+
+.login-card .form-control:focus {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: var(--galactic-accent-orange);
+    box-shadow: 0 0 0 0.25rem rgba(255, 171, 64, 0.25);
+    color: var(--galactic-text-white);
+}
+
+.login-card .form-label {
+    color: var(--galactic-text-white-70);
+    font-weight: 500;
+}

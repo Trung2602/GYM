@@ -33,6 +33,13 @@ public class AccountController {
     @Autowired
     private CustomerService customerService;
 
+    @GetMapping("/login")
+    public String loginView() {
+        return "login";
+    }
+    
+    
+    
     @GetMapping("/accounts")
     public String showAccounts(Model model) {
         model.addAttribute("admins", adminService.getAllAdmins());

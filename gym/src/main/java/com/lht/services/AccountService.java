@@ -7,12 +7,13 @@ package com.lht.services;
 import com.lht.pojo.Account;
 import java.util.List;
 import java.util.Map;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 /**
  *
  * @author admin
  */
-public interface AccountService {
+public interface AccountService extends UserDetailsService{
     List<Account> getAccounts(Map<String, String> params);
 
     List<Account> getAllAccounts();
@@ -24,4 +25,7 @@ public interface AccountService {
     boolean deleteAccount(Integer id);
     
     boolean changeIsActive (Integer id);
+    
+    public boolean authenticate(String username, String password);
+    
 }
