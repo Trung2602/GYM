@@ -27,5 +27,6 @@ public interface AccountService extends UserDetailsService{
     boolean changeIsActive (Integer id);
     
     public boolean authenticate(String username, String password);
-    
+
+    public Account getAccountByUsername(String username);    
 }

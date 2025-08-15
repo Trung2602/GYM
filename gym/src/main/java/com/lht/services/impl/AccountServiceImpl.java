@@ -142,6 +142,7 @@ public class AccountServiceImpl implements AccountService {
         return false;
     }
 
+    @Override
     public Account getAccountByUsername(String username) {
         Optional<Account> user = this.accountRepository.findByUsername(username);
         return user.orElse(null);

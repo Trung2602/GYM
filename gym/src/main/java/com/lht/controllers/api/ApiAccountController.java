@@ -4,15 +4,19 @@
  */
 package com.lht.controllers.api;
 
+import com.lht.dto.AccountDTO;
 import com.lht.pojo.Account;
 import com.lht.services.AccountService;
-import com.lht.utils.JwtUtils;
+import com.lht.jwt.JwtUtils;
+import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,7 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api")
 public class ApiAccountController {
-    
+
     @Autowired
     private AccountService accountService;
 
@@ -50,10 +54,11 @@ public class ApiAccountController {
     @GetMapping("/account/{id}")
     public ResponseEntity<Account> getAccountById(@PathVariable Integer id) {
         Account a = accountService.getAccountById(id);
-        if (a != null)
+        if (a != null) {
             return ResponseEntity.ok(a);
-        else
+        } else {
             return ResponseEntity.notFound().build();
+        }
     }
 
     // POST /api/account
@@ -67,21 +72,23 @@ public class ApiAccountController {
     @DeleteMapping("/account/{id}")
     public ResponseEntity<?> deleteAccount(@PathVariable Integer id) {
         boolean success = accountService.deleteAccount(id);
-        if (success)
+        if (success) {
             return ResponseEntity.ok().build();
-        else
+        } else {
             return ResponseEntity.notFound().build();
+        }
     }
-    
+
     @GetMapping("/account/isActive/{id}")
     public ResponseEntity<Account> changeIsActive(@PathVariable Integer id) {
         boolean success = accountService.changeIsActive(id);
-        if (success)
+        if (success) {
             return ResponseEntity.ok().build();
-        else
+        } else {
             return ResponseEntity.notFound().build();
+        }
     }
-    
+
     //==============================================
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Account u) {
@@ -100,10 +107,20 @@ public class ApiAccountController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Sai thông tin đăng nhập");
     }
 
-//    @RequestMapping("/secure/profile")
-//    @ResponseBody
-//    @CrossOrigin
-//    public ResponseEntity<User> getProfile(Principal principal) {
-//        return new ResponseEntity<>(this.userSer.getUserByUsername(principal.getName()), HttpStatus.OK);
-//    }
+    @GetMapping("/account/me")
+    public ResponseEntity<?> getCurrentAccount(Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Chưa đăng nhập");
+        }
+
+        // principal.getName() chính là username trong token
+        String username = principal.getName();
+
+        Account acc = accountService.getAccountByUsername(username);
+        if (acc == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(new AccountDTO(acc));
+    }
 }

@@ -6,6 +6,7 @@ package com.lht.configs;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.lht.jwt.JwtFilter;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -15,6 +16,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -39,7 +41,7 @@ public class SecurityConfig {
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
+            
     @Bean
     @Order(0)
     public StandardServletMultipartResolver multipartResolver() {
@@ -55,6 +57,7 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/css/**", "/js/**").permitAll()
                         // Cho phép truy cập API đăng nhập nếu bạn có một API riêng
                         .requestMatchers("/api/login").permitAll()
+                        .requestMatchers("/api/account/me").permitAll()
                         // Mọi yêu cầu khác đều phải được xác thực
                         .anyRequest().authenticated())
                 // Cấu hình form đăng nhập
@@ -62,6 +65,7 @@ public class SecurityConfig {
                 .loginProcessingUrl("/login")
                 .defaultSuccessUrl("/", true)
                 .failureUrl("/login?error=true").permitAll())
+                .addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class)
                 .logout(logout -> logout.logoutSuccessUrl("/login").permitAll());
         return http.build();
     }
