@@ -35,7 +35,7 @@ public class SalaryServiceImpl implements SalaryService {
 
     @Autowired
     private SalaryRepository salaryRepository;
-    
+
     @Autowired
     private StaffRepository staffRepository;
 
@@ -70,6 +70,17 @@ public class SalaryServiceImpl implements SalaryService {
                     predicates.add(cb.equal(root.get("date"), date));
                 } catch (ParseException e) {
                     throw new IllegalArgumentException("Invalid date format, expected yyyy-MM-dd");
+                }
+            }
+
+            if (params.containsKey("startDate") && params.containsKey("endDate")) {
+                try {
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                    Date start = df.parse(params.get("startDate"));
+                    Date end = df.parse(params.get("endDate"));
+                    predicates.add(cb.between(root.get("date"), start, end));
+                } catch (ParseException e) {
+                    throw new IllegalArgumentException("Invalid date format");
                 }
             }
 
@@ -118,9 +129,7 @@ public class SalaryServiceImpl implements SalaryService {
         return salaryRepository.findAll(sort);
     }
 
-    
 //=================================================================================
-
 //    public void calculateMonthlySalaries(int month, int year) {
 //        List<Staff> staffList = staffRepository.findAll();
 //
@@ -162,7 +171,6 @@ public class SalaryServiceImpl implements SalaryService {
 //            salaryRepository.save(salary);
 //        }
 //    }
-
 //    @Override
 //    public Salary calculateMonthlySalaries() {
 //        

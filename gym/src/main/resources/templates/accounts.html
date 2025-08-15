@@ -98,7 +98,6 @@
                                     <th>Giới tính</th>
                                     <th>Ngày sinh</th>
                                     <th>Email</th>
-                                    <th>Số lượt xông hơi</th>
                                     <th>Hạn dùng</th>
                                     <th>Trạng thái</th>
                                     <th>Hành động</th>
@@ -112,7 +111,6 @@
                                     <td th:text="${c.gender == 1 ? 'Nam' : 'Nữ'}"></td>
                                     <td th:text="${#dates.format(c.birthday, 'dd/MM/yyyy')}"></td>
                                     <td th:text="${c.mail}"></td>
-                                    <td th:text="${c.quantitySauna}"></td>
                                     <td th:text="${#dates.format(c.expiryDate, 'dd/MM/yyyy')}"></td>
                                     <td>
                                         <span th:text="${c.isActive ? 'Hoạt động' : 'Không hoạt động'}"

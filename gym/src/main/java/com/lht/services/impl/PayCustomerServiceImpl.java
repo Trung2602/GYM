@@ -75,6 +75,17 @@ public class PayCustomerServiceImpl implements PayCustomerService {
                 }
             }
 
+            if (params.containsKey("startDate") && params.containsKey("endDate")) {
+                try {
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                    Date start = df.parse(params.get("startDate"));
+                    Date end = df.parse(params.get("endDate"));
+                    predicates.add(cb.between(root.get("date"), start, end));
+                } catch (ParseException e) {
+                    throw new IllegalArgumentException("Invalid date format");
+                }
+            }
+
             return cb.and(predicates.toArray(new Predicate[0]));
         };
         return payCustomerRepository.findAll(spec);

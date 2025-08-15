@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Thống Kê Tài Chính</title>
+    <th:block th:replace="init :: styles"></th:block>
+    <style>
+        .card {
+            background-color: var(--galactic-medium-blue); /* hoặc màu bạn muốn */
+            color: #fff;
+        }
+        /* Các CSS tùy chỉnh cho trang */
+        .card-stat {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            border-left: 5px solid transparent; /* Tạo viền động */
+        }
+        .card-stat:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        /* Sử dụng các biến màu Galactic */
+        .card-stat.border-start-primary {
+            border-left-color: var(--galactic-light-blue) !important;
+        }
+        .card-stat.border-start-success {
+            border-left-color: #1cc88a !important; /* Giữ lại màu xanh lá cây mặc định */
+        }
+        .card-stat.border-start-warning {
+            border-left-color: var(--galactic-accent-orange) !important;
+        }
+
+        /* Style cho nút lọc/đặt lại */
+        .btn-filter-group .btn {
+            min-width: 100px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div th:replace="init :: header"></div>
+
+    <div class="container-fluid py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-primary fw-bold"><i class="bi bi-bar-chart-line me-2"></i>Thống Kê Tài Chính</h2>
+        </div>
+
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-light py-3">
+                <h6 class="m-0 fw-bold text-dark">Bộ Lọc Thời Gian</h6>
+            </div>
+            <div class="card-body">
+                <form class="row g-3 align-items-end" th:action="@{/statistical}" method="get">
+                    <div class="col-md-4 col-lg-3">
+                        <label for="startDate" class="form-label text-muted">Từ ngày</label>
+                        <input type="date" class="form-control" id="startDate" name="startDate" th:value="${startDate}">
+                    </div>
+                    <div class="col-md-4 col-lg-3">
+                        <label for="endDate" class="form-label text-muted">Đến ngày</label>
+                        <input type="date" class="form-control" id="endDate" name="endDate" th:value="${endDate}">
+                    </div>
+                    <div class="col-md-4 col-lg-6 d-flex justify-content-end btn-filter-group">
+                        <button type="submit" class="btn btn-primary me-2">
+                            <i class="bi bi-funnel me-1"></i> Lọc
+                        </button>
+                        <a th:href="@{/statistical}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-counterclockwise me-1"></i> Đặt lại
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card card-stat border-start-primary shadow h-100">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col me-2">
+                                <div class="text-xs fw-bold text-primary text-uppercase mb-1">
+                                    Tổng doanh thu khách hàng
+                                </div>
+                                <div class="h5 mb-0 fw-bold">
+                                    <span th:text="${#numbers.formatDecimal(totalPayCustomerRevenue, 0, 'COMMA', 2, 'POINT')}"></span> VNĐ
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="bi bi-cash-stack fs-2 text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card card-stat border-start-success shadow h-100">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col me-2">
+                                <div class="text-xs fw-bold text-success text-uppercase mb-1">
+                                    Tổng số lần thanh toán
+                                </div>
+                                <div class="h5 mb-0 fw-bold text-gray-800" th:text="${totalPayCustomerCount}"></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="bi bi-coin fs-2 text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card card-stat border-start-warning shadow h-100">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col me-2">
+                                <div class="text-xs fw-bold text-warning text-uppercase mb-1">
+                                    Tổng lương nhân viên
+                                </div>
+                                <div class="h5 mb-0 fw-bold text-gray-800">
+                                    <span th:text="${#numbers.formatDecimal(totalSalary, 0, 'COMMA', 2, 'POINT')}"></span> VNĐ
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="bi bi-wallet2 fs-2 text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow h-100">
+                    <div class="card-header py-3 bg-primary text-white">
+                        <h6 class="m-0 fw-bold">Doanh thu khách hàng theo thời gian</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="payCustomerOverTimeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow h-100">
+                    <div class="card-header py-3 bg-success text-white">
+                        <h6 class="m-0 fw-bold">Doanh thu theo gói tập</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="payCustomerByPlanChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-lg-12 mb-4">
+                <div class="card shadow h-100">
+                    <div class="card-header py-3 bg-warning text-white">
+                        <h6 class="m-0 fw-bold">Lương nhân viên theo thời gian</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="salaryOverTimeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex justify-content-between align-items-center bg-dark text-white">
+                <h6 class="m-0 fw-bold">Danh sách thanh toán khách hàng</h6>
+                <div>
+                    <a th:href="@{/statistical/export-pay(
+                       startDate=${#temporals.format(startDate, 'yyyy-MM-dd')}, 
+                       endDate=${#temporals.format(endDate, 'yyyy-MM-dd')})}" 
+                       class="btn btn-success btn-sm">
+                        <i class="fas fa-file-excel"></i> Xuất Excel
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>STT</th>
+                                <th>Khách hàng</th>
+                                <th>Gói tập</th>
+                                <th>Ngày thanh toán</th>
+                                <th class="text-end">Giá (VNĐ)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="pay, iterStat : ${payCustomerList}">
+                                <td th:text="${iterStat.count}"></td>
+                                <td th:text="${pay.customerId.name}"></td>
+                                <td th:text="${pay.planId.name}"></td>
+                                <td th:text="${#dates.format(pay.date,'dd/MM/yyyy')}"></td>
+                                <td class="text-end" 
+                                    th:text="${#numbers.formatDecimal(pay.planId.price, 0, 'COMMA', 2, 'POINT')}"></td>
+                            </tr>
+                            <tr th:if="${payCustomerList.isEmpty()}">
+                                <td colspan="5" class="text-center text-muted py-3">Không có dữ liệu</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="init :: footer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        document.addEventListener('DOMContentLoaded', function () {
+        // Cấu hình chung cho Chart.js
+        Chart.defaults.font.family = 'Arial, sans-serif';
+        Chart.defaults.font.size = 14;
+        // Dữ liệu Pay_customer theo tháng/năm
+        const payTimeData = {
+        labels: [[${payByTime.keySet()}]],
+                values: [[${payByTime.values()}]],
+                backgroundColor: 'rgba(78, 115, 223, 0.7)',
+                borderColor: 'rgba(78, 115, 223, 1)'
+        };
+        const payCustomerOverTimeCtx = document.getElementById('payCustomerOverTimeChart').getContext('2d');
+        new Chart(payCustomerOverTimeCtx, {
+        type: 'bar',
+                data: {
+                labels: payTimeData.labels,
+                        datasets: [{
+                        label: 'Doanh thu (VNĐ)',
+                                data: payTimeData.values,
+                                backgroundColor: payTimeData.backgroundColor,
+                                borderColor: payTimeData.borderColor,
+                                borderWidth: 1
+                        }]
+                },
+                options: {
+                responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                        y: {
+                        beginAtZero: true,
+                                title: {
+                                display: true,
+                                        text: 'Doanh thu (VNĐ)',
+                                },
+                                ticks: {
+                                callback: val => val.toLocaleString('vi-VN') + ' VNĐ'
+                                }
+                        },
+                                x: {
+                                title: {
+                                display: true,
+                                        text: 'Thời gian',
+                                }
+                                }
+                        },
+                        plugins: {
+                        legend: { display: false },
+                                tooltip: {
+                                callbacks: {
+                                label: context => `${context.dataset.label}: ${context.raw.toLocaleString('vi-VN')} VNĐ`
+                                }
+                                }
+                        }
+                }
+        });
+        // Dữ liệu Pay_customer theo Plan
+        const payPlanData = {
+        labels: [[${payByPlan.keySet()}]],
+                values: [[${payByPlan.values()}]],
+                colors: ['#4e73df', '#1cc88a', '#f6c23e', '#e74a3b', '#36b9cc', '#858796'] // Màu sắc chuyên nghiệp hơn
+        };
+        const payCustomerByPlanCtx = document.getElementById('payCustomerByPlanChart').getContext('2d');
+        new Chart(payCustomerByPlanCtx, {
+        type: 'doughnut',
+                data: {
+                labels: payPlanData.labels,
+                        datasets: [{
+                        data: payPlanData.values,
+                                backgroundColor: payPlanData.colors,
+                                hoverBackgroundColor: payPlanData.colors,
+                                hoverBorderColor: "rgba(234, 236, 244, 1)",
+                        }]
+                },
+                options: {
+                responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                        legend: { position: 'right' },
+                                tooltip: {
+                                callbacks: {
+                                label: (context) => {
+                                const label = context.label || '';
+                                const value = context.raw;
+                                const total = context.chart._getDatasetMeta(0).total;
+                                const percentage = ((value / total) * 100).toFixed(2);
+                                return `${label}: ${value.toLocaleString('vi-VN')} VNĐ (${percentage}%)`;
+                                }
+                                }
+                                }
+                        }
+                }
+        });
+        // Dữ liệu Salary theo tháng/năm
+        const salaryData = {
+        labels: [[${salaryByTime.keySet()}]],
+                values: [[${salaryByTime.values()}]],
+                backgroundColor: 'rgba(255, 159, 64, 0.7)',
+                borderColor: 'rgba(255, 159, 64, 1)'
+        };
+        const salaryOverTimeCtx = document.getElementById('salaryOverTimeChart').getContext('2d');
+        new Chart(salaryOverTimeCtx, {
+        type: 'bar',
+                data: {
+                labels: salaryData.labels,
+                        datasets: [{
+                        label: 'Tổng lương (VNĐ)',
+                                data: salaryData.values,
+                                backgroundColor: salaryData.backgroundColor,
+                                borderColor: salaryData.borderColor,
+                                borderWidth: 1
+                        }]
+                },
+                options: {
+                responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                        y: {
+                        beginAtZero: true,
+                                title: {
+                                display: true,
+                                        text: 'Tổng lương (VNĐ)',
+                                },
+                                ticks: {
+                                callback: val => val.toLocaleString('vi-VN') + ' VNĐ'
+                                }
+                        },
+                                x: {
+                                title: {
+                                display: true,
+                                        text: 'Thời gian',
+                                }
+                                }
+                        },
+                        plugins: {
+                        legend: { display: false },
+                                tooltip: {
+                                callbacks: {
+                                label: context => `${context.dataset.label}: ${context.raw.toLocaleString('vi-VN')} VNĐ`
+                                }
+                                }
+                        }
+                }
+        });
+        });
+        /*]]>*/
+    </script>
+</body>
+</html>
