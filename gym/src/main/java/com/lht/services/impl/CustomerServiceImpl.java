@@ -58,11 +58,6 @@ public class CustomerServiceImpl implements CustomerService {
         Specification<Customer> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            String quantitySauna = params.get("quantitySauna");
-            if (quantitySauna != null) {
-                predicates.add(cb.equal(root.get("quantitySauna"), Integer.parseInt(quantitySauna)));
-            }
-
             return cb.and(predicates.toArray(new Predicate[0]));
         };
 
@@ -77,10 +72,6 @@ public class CustomerServiceImpl implements CustomerService {
             cal.add(Calendar.MONTH, 1); // cộng 1 tháng
             c.setExpiryDate(cal.getTime()); // set lại
         }
-        if (c.getQuantitySauna() == null) {
-            c.setQuantitySauna(0);
-        }
-
         Customer currentAccount = null;
         if (c.getId() != null) {
             currentAccount = this.getCustomerById(c.getId());

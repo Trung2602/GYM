@@ -48,9 +48,6 @@ public class Facility implements Serializable {
     @OneToMany(mappedBy = "facilityId")
     @JsonIgnore
     private Set<Staff> staffSet;
-    @OneToMany(mappedBy = "facilityId")
-    @JsonIgnore
-    private Set<Room> roomSet;
 
     public Facility() {
     }
@@ -97,14 +94,6 @@ public class Facility implements Serializable {
 
     public void setStaffSet(Set<Staff> staffSet) {
         this.staffSet = staffSet;
-    }
-
-    public Set<Room> getRoomSet() {
-        return roomSet;
-    }
-
-    public void setRoomSet(Set<Room> roomSet) {
-        this.roomSet = roomSet;
     }
 
     @Override

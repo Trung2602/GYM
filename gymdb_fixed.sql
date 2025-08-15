@@ -146,9 +146,9 @@ CREATE TABLE Customer (
     quantity_sauna INT,
     FOREIGN KEY (id) REFERENCES Account(id)
 );
-INSERT INTO Customer (id, expiry_date, quantity_sauna) VALUES
-(5, '2026-06-10', 29),
-(6, '2025-08-02', 0);
+INSERT INTO Customer (id, expiry_date) VALUES
+(5, '2026-06-10'),
+(6, '2025-08-02');
 
 
 -- Gói tập
@@ -201,55 +201,3 @@ INSERT INTO Customer_schedule (date, checkin, checkout, facility_id, staff_id, c
 ('2024-07-13', '08:00:00', '09:30:00', 1, 2, 5),
 ('2024-07-14', '10:00:00', '11:30:00', 2, 2, 6);
 
--- Phòng xông hơi
-CREATE TABLE Room (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    room_number VARCHAR(20),
-    facility_id INT,
-    FOREIGN KEY (facility_id) REFERENCES Facility(id)
-);
-
-INSERT INTO Room (room_number, facility_id) VALUES
-('XH01', 1),
-('XH02', 1),
-('XH03', 1),
-('COL01', 2),
-('HP01', 3),
-('HP02', 3),
-('TD01', 4),
-('TD02', 4),
-('TD03', 4),
-('TD04', 4);
-
--- Lịch sử xông hơi
-CREATE TABLE Sauna (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    date DATE,
-    checkin TIME,
-    room_id INT,
-    is_paid BOOLEAN,
-    customer_id INT,
-    FOREIGN KEY (room_id) REFERENCES Room(id),
-    FOREIGN KEY (customer_id) REFERENCES Customer(id)
-);
-
-INSERT INTO Sauna (date, checkin, room_id, is_paid, customer_id) VALUES
-('2025-05-10', '09:45:00', 1, TRUE, 5),
-('2025-06-20', '11:45:00', 1, FALSE, 6),
-('2025-06-24', '15:45:00', 1, FALSE, 6),
-('2025-07-12', '06:45:00', 1, FALSE, 5);
-
--- Bảng tin nhắn
-CREATE TABLE Message (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    sender_id INT,
-    receiver_id INT,
-    content TEXT,
-    timestamp DATETIME,
-    FOREIGN KEY (sender_id) REFERENCES Account(id),
-    FOREIGN KEY (receiver_id) REFERENCES Account(id)
-);
-
-INSERT INTO Message (sender_id, receiver_id, content, timestamp) VALUES
-(4, 2, 'Chào huấn luyện viên, tôi muốn hỏi về bài tập bụng.', '2024-07-13 20:15:00'),
-(2, 4, 'Bạn nên tập plank mỗi ngày nhé!', '2024-07-13 20:20:00');

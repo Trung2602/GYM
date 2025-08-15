@@ -77,25 +77,6 @@ public class Account implements Serializable {
     @Column(name = "is_active")
     private Boolean isActive;
     
-    
-//    @OneToOne(cascade = CascadeType.ALL, mappedBy = "account")
-//    @JsonIgnore
-//    private Admin admin;
-//    @OneToOne(cascade = CascadeType.ALL, mappedBy = "account")
-//    @JsonIgnore
-//    private Staff staff;
-//    @OneToOne(cascade = CascadeType.ALL, mappedBy = "account")
-//    @JsonIgnore
-//    private Customer customer;
-    
-    @OneToMany(mappedBy = "senderId")
-    @JsonIgnore
-    private Set<Message> messageSet;
-    @OneToMany(mappedBy = "receiverId")
-    @JsonIgnore
-    private Set<Message> messageSet1;
-    
-
     public Account() {
     }
 
@@ -181,45 +162,6 @@ public class Account implements Serializable {
 
     public void setIsActive(Boolean isActive) {
         this.isActive = isActive;
-    }
-
-//    public Admin getAdmin() {
-//        return admin;
-//    }
-//
-//    public void setAdmin(Admin admin) {
-//        this.admin = admin;
-//    }
-//
-//    public Staff getStaff() {
-//        return staff;
-//    }
-//
-//    public void setStaff(Staff staff) {
-//        this.staff = staff;
-//    }
-//    public Customer getCustomer() {
-//        return customer;
-//    }
-//
-//    public void setCustomer(Customer customer) {
-//        this.customer = customer;
-//    }
-
-    public Set<Message> getMessageSet() {
-        return messageSet;
-    }
-
-    public void setMessageSet(Set<Message> messageSet) {
-        this.messageSet = messageSet;
-    }
-
-    public Set<Message> getMessageSet1() {
-        return messageSet1;
-    }
-
-    public void setMessageSet1(Set<Message> messageSet1) {
-        this.messageSet1 = messageSet1;
     }
 
     @Override

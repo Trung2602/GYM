@@ -31,21 +31,14 @@ import org.springframework.format.annotation.DateTimeFormat;
 @NamedQueries({
     @NamedQuery(name = "Customer.findAll", query = "SELECT c FROM Customer c"),
     @NamedQuery(name = "Customer.findById", query = "SELECT c FROM Customer c WHERE c.id = :id"),
-    @NamedQuery(name = "Customer.findByExpiryDate", query = "SELECT c FROM Customer c WHERE c.expiryDate = :expiryDate"),
-    @NamedQuery(name = "Customer.findByQuantitySauna", query = "SELECT c FROM Customer c WHERE c.quantitySauna = :quantitySauna")})
+    @NamedQuery(name = "Customer.findByExpiryDate", query = "SELECT c FROM Customer c WHERE c.expiryDate = :expiryDate")})
 public class Customer extends Account implements Serializable {
 
     private static final long serialVersionUID = 1L;
-//    @Id
-//    @Basic(optional = false)
-//    @Column(name = "id")
-//    private Integer id;
     @Column(name = "expiry_date")
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date expiryDate;
-    @Column(name = "quantity_sauna")
-    private Integer quantitySauna;
     
     @OneToMany(mappedBy = "customerId")
     @JsonIgnore
@@ -53,40 +46,16 @@ public class Customer extends Account implements Serializable {
     @OneToMany(mappedBy = "customerId")
     @JsonIgnore
     private Set<PayCustomer> payCustomerSet;
-    @OneToMany(mappedBy = "customerId")
-    @JsonIgnore
-    private Set<Sauna> saunaSet;
     
-
     public Customer() {
     }
-
-//    public Customer(Integer id) {
-//        this.id = id;
-//    }
-//
-//    public Integer getId() {
-//        return id;
-//    }
-//
-//    public void setId(Integer id) {
-//        this.id = id;
-//    }
-
+    
     public Date getExpiryDate() {
         return expiryDate;
     }
 
     public void setExpiryDate(Date expiryDate) {
         this.expiryDate = expiryDate;
-    }
-
-    public Integer getQuantitySauna() {
-        return quantitySauna;
-    }
-
-    public void setQuantitySauna(Integer quantitySauna) {
-        this.quantitySauna = quantitySauna;
     }
 
     public Set<CustomerSchedule> getCustomerScheduleSet() {
@@ -103,14 +72,6 @@ public class Customer extends Account implements Serializable {
 
     public void setPayCustomerSet(Set<PayCustomer> payCustomerSet) {
         this.payCustomerSet = payCustomerSet;
-    }
-
-    public Set<Sauna> getSaunaSet() {
-        return saunaSet;
-    }
-
-    public void setSaunaSet(Set<Sauna> saunaSet) {
-        this.saunaSet = saunaSet;
     }
 
 //    @Override

@@ -39,10 +39,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class Staff extends Account implements Serializable {
 
     private static final long serialVersionUID = 1L;
-//    @Id
-//    @Basic(optional = false)
-//    @Column(name = "id")
-//    private Integer id;
     @Column(name = "created_date")
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -70,22 +66,9 @@ public class Staff extends Account implements Serializable {
     @JsonIgnoreProperties({"staffSet"})
     private StaffType staffTypeId;
     
-
     public Staff() {
     }
-
-//    public Staff(Integer id) {
-//        this.id = id;
-//    }
-//
-//    public Integer getId() {
-//        return id;
-//    }
-//
-//    public void setId(Integer id) {
-//        this.id = id;
-//    }
-
+    
     public Date getCreatedDate() {
         return createdDate;
     }

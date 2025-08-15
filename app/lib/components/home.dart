@@ -5,6 +5,11 @@ import '../models/Account.dart';
 import '../services/auth_service.dart';
 // Import các màn hình con sau này
 import 'profile.dart';
+import 'day_off.dart';
+import 'pay_customer.dart';
+import 'salary.dart';
+import 'staff_schedule.dart';
+import 'login.dart';
 import 'customer_schedule.dart';
 
 class Home extends StatefulWidget {
@@ -30,12 +35,76 @@ class _HomeState extends State<Home> {
     final account = await authService.getSavedAccount();
     setState(() {
       savedAccount = account;
-      _pages = [
-        const _DashboardScreen(),
-        const CustomerSchedule(),
-        if (savedAccount != null) Profile(account: savedAccount!),
-      ];
+
+      if (savedAccount != null && savedAccount!.role == 'Customer') {
+        _pages = [
+          const _DashboardScreen(),
+          const CustomerSchedule(),
+          const PayCustomer(),
+          Profile(account: savedAccount!),
+        ];
+      } else if (savedAccount != null && savedAccount!.role == 'Staff') {
+        _pages = [
+          const _DashboardScreen(),
+          const StaffSchedule(),
+          const Salary(),
+          const DayOff(),
+          Profile(account: savedAccount!),
+        ];
+      } else {
+        _pages = [const _DashboardScreen()];
+      }
     });
+  }
+
+  List<BottomNavigationBarItem> _buildBottomNavItems() {
+    if (savedAccount == null) return [];
+
+    if (savedAccount!.role == 'Customer') {
+      return const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.dashboard),
+          label: "Trang chủ",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.calendar_today),
+          label: "Lịch Trình",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.payment),
+          label: "Thanh Toán",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person_pin),
+          label: "Hồ Sơ",
+        ),
+      ];
+    } else if (savedAccount!.role == 'Staff') {
+      return const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.dashboard),
+          label: "Trang chủ",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.access_time),
+          label: "Ca Làm",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.attach_money),
+          label: "Bảng Lương",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.beach_access),
+          label: "Xin Nghỉ",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person_pin),
+          label: "Hồ Sơ",
+        ),
+      ];
+    } else {
+      return const [];
+    }
   }
 
   void _onItemTapped(int index) {
@@ -44,6 +113,37 @@ class _HomeState extends State<Home> {
     });
   }
 
+  List<Widget> _buildDrawerItems() {
+    if (savedAccount == null) return [];
+
+    List<Map<String, dynamic>> menuItems = [];
+
+    if (savedAccount!.role == 'Customer') {
+      menuItems = [
+        {'icon': Icons.dashboard, 'title': 'Bảng Điều Khiển Thiên Hà', 'index': 0},
+        {'icon': Icons.person, 'title': 'Hồ Sơ Phi Hành Gia', 'index': 2},
+        {'icon': Icons.fitness_center, 'title': 'Gói Tập', 'index': -1},
+        {'icon': Icons.message, 'title': 'Liên Lạc', 'index': -1},
+        {'icon': Icons.calendar_today, 'title': 'Lịch Trình', 'index': -1},
+      ];
+    } else if (savedAccount!.role == 'Staff') {
+      menuItems = [
+        {'icon': Icons.dashboard, 'title': 'Bảng Điều Khiển Thiên Hà', 'index': 0},
+        {'icon': Icons.person, 'title': 'Hồ Sơ Phi Hành Gia', 'index': 2},
+        {'icon': Icons.access_time, 'title': 'Ca Làm', 'index': -1},
+        {'icon': Icons.beach_access, 'title': 'Xin Nghỉ', 'index': -1},
+        {'icon': Icons.attach_money, 'title': 'Bảng Lương', 'index': -1},
+        {'icon': Icons.message, 'title': 'Liên Lạc', 'index': -1},
+      ];
+    }
+
+    // Thêm luôn logout
+    menuItems.add({'icon': Icons.logout, 'title': 'Rời khỏi Trạm Vũ Trụ', 'index': -1});
+
+    return menuItems.map((item) {
+      return _buildDrawerItem(item['icon'], item['title'], item['index']);
+    }).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,74 +178,50 @@ class _HomeState extends State<Home> {
       ),
 
       // Sidebar điều hướng (Drawer)
-      drawer: Drawer(
-        backgroundColor: const Color(0xFF1A237E), // Màu nền sidebar
+      drawer:savedAccount == null
+          ? null
+          : Drawer(
+        backgroundColor: const Color(0xFF1A237E),
         child: ListView(
           padding: EdgeInsets.zero,
-          children: <Widget>[
+          children: [
             DrawerHeader(
-              decoration: const BoxDecoration(
-                color: Color(0xFF2C318F), // Màu header đậm hơn
-              ),
+              decoration: const BoxDecoration(color: Color(0xFF2C318F)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 30,
-                    backgroundColor: Color(0xFFFFAB40), // Màu avatar như mặt trời
-                    child: Icon(Icons.person, size: 40, color: Colors.white), // Icon người dùng
+                    backgroundImage: (savedAccount?.avatar ?? '').isNotEmpty
+                        ? NetworkImage(savedAccount!.avatar)
+                        : null,
+                    child: (savedAccount?.avatar ?? '').isEmpty
+                        ? const Icon(Icons.person, size: 30, color: Colors.white)
+                        : null,
                   ),
                   const SizedBox(height: 10),
-                  const Text(
-                    'PT Lư Hiếu Trung', // Tên người dùng ví dụ
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Text(
+                    savedAccount?.name ?? '',
+                    style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    'Phi Hành Gia Hướng Dẫn', // Vai trò
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 14,
-                    ),
+                    savedAccount?.role ?? '',
+                    style: const TextStyle(color: Colors.white70, fontSize: 14),
                   ),
                 ],
               ),
             ),
-            _buildDrawerItem(Icons.dashboard, 'Bảng Điều Khiển Thiên Hà', 0),
-            _buildDrawerItem(Icons.person, 'Hồ Sơ Phi Hành Gia', 2), // Tương ứng với index của Profile trên BottomNav
-            _buildDrawerItem(Icons.people, 'Quản Lý Dân Số Vũ Trụ', -1), // Các mục khác không có trên BottomNav
-            _buildDrawerItem(Icons.book, 'Thư Viện Khóa Học Thiên Hà', -1),
-            _buildDrawerItem(Icons.accessibility_new, 'Quản Lý Huấn Luyện Viên Cá Nhân', -1),
-            _buildDrawerItem(Icons.insert_chart, 'Báo Cáo Hoạt Động Vũ Trụ', -1),
-            _buildDrawerItem(Icons.notifications, 'Tin Nhắn Từ Trung Tâm Điều Khiển', -1),
-            const Divider(color: Colors.white38), // Đường phân cách
-            _buildDrawerItem(Icons.logout, 'Rời khỏi Trạm Vũ Trụ', -1),
+            ..._buildDrawerItems(), // hiển thị menu dựa role
           ],
         ),
       ),
 
-      // Nội dung chính của màn hình, thay đổi theo lựa chọn
-      body: _pages[_selectedIndex],
+      body: savedAccount == null || _pages.isEmpty
+          ? const Center(child: CircularProgressIndicator())
+          : _pages[_selectedIndex],
 
-      // Thanh điều hướng dưới cùng (BottomNavigationBar)
       bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard), // Hoặc Icons.rocket_launch
-            label: "Dashboard",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: "Lịch Trình",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_pin),
-            label: "Hồ Sơ",
-          ),
-        ],
+        items: _buildBottomNavItems(),
         currentIndex: _selectedIndex,
         selectedItemColor: const Color(0xFFFFD740),
         unselectedItemColor: Colors.white70,
@@ -154,6 +230,7 @@ class _HomeState extends State<Home> {
         type: BottomNavigationBarType.fixed,
         elevation: 10,
       ),
+
     );
   }
 
@@ -170,13 +247,16 @@ class _HomeState extends State<Home> {
         if (index != -1) { // Nếu là một item có trong BottomNavigationBar, chuyển trang
           _onItemTapped(index);
         } else {
-          // Xử lý các mục khác của Drawer (ví dụ: đăng xuất, quản lý người dùng...)
+          // Xử lý các mục khác của Drawer
           if (title == 'Rời khỏi Trạm Vũ Trụ') {
-            // Xử lý đăng xuất
-            print('Đăng xuất...');
-            // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Login()));
+            // Logout
+            authService.logout().then((_) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const Login()), // Login screen
+              );
+            });
           } else {
-            // Các màn hình quản lý khác có thể được navigate tới đây
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Chức năng "$title" đang được phát triển...')),
             );
@@ -185,6 +265,7 @@ class _HomeState extends State<Home> {
       },
     );
   }
+
 }
 
 // ==========================================================
