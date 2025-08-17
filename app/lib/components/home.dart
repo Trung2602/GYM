@@ -1,8 +1,14 @@
 // home.dart
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../models/Account.dart';
 import '../services/auth_service.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import '../api.dart';
+// Import models
+import '../models/Account.dart';
+import '../models/Plan.dart';
 // Import các màn hình con sau này
 import 'profile.dart';
 import 'day_off.dart';
@@ -389,7 +395,7 @@ class _DashboardScreen extends StatelessWidget {
 
                 // Phần "Khóa học đang diễn ra" hoặc "Lịch trình hôm nay"
                 const Text(
-                  "Lịch Trình Quỹ Đạo Sắp Tới",
+                  "Gói tập",
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 22,
@@ -400,19 +406,42 @@ class _DashboardScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 10), // Giảm khoảng cách
-                _buildScheduleCard(
-                  'Thiền Định Thiên Hà',
-                  'Yoga & Meditation | PT Laura (Học viên Vũ Trụ)',
-                  'Thứ 2, 4, 6 | 6:00 AM - 7:00 AM',
-                  'Khám phá sự bình yên trong vũ trụ nội tại.',
+                FutureBuilder<List<Plan>>(
+                  future: fetchPlans(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text("Lỗi: ${snapshot.error}"));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(child: Text("Không có kế hoạch nào"));
+                    }
+
+                    final plans = snapshot.data!;
+
+                    return ListView.builder(
+                      padding: const EdgeInsets.all(12),
+                      itemCount: plans.length,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(), //không cho ListView tự cuộn
+                      itemBuilder: (context, index) {
+                        final plan = plans[index];
+                        return Column(
+                          children: [
+                            _buildScheduleCard(
+                              plan.name,                // title
+                              plan.description ?? "",   // subtitle
+                              "Thời hạn: ${plan.durationDays.toString()} ngày",// time (bạn có thể format lại)
+                              "Giá: ${plan.price} VNĐ", // description
+                            ),
+                            const SizedBox(height: 10),
+                          ],
+                        );
+                      },
+                    );
+                  }
                 ),
-                const SizedBox(height: 10), // Giảm khoảng cách
-                _buildScheduleCard(
-                  'Năng Lượng Bình Minh Vũ Trụ',
-                  'Cardio & Strength | PT John (Học viên Vũ Trụ)',
-                  'Thứ 3, 5, 7 | 7:00 AM - 8:00 AM',
-                  'Bùng cháy năng lượng như mặt trời mới mọc.',
-                ),
+
                 const SizedBox(height: 30), // Giảm khoảng cách cuối cùng
               ],
             ),
@@ -462,6 +491,36 @@ class _DashboardScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<List<Plan>> fetchPlans() async {
+    final token = await AuthService().getToken();
+    final response = await  http.get(Uri.parse(Api.getPlans),
+        headers: {"Content-Type": "application/json",
+          'Authorization': 'Bearer $token',
+        });
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.map((json) => Plan.fromJson(json)).toList();
+    } else {
+      throw Exception("Failed to load plans");
+    }
+  }
+
+  Future<List<Plan>> fetchShifts() async {
+    final token = await AuthService().getToken();
+    final response = await  http.get(Uri.parse(Api.getPlans),
+        headers: {"Content-Type": "application/json",
+          'Authorization': 'Bearer $token',
+        });
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.map((json) => Plan.fromJson(json)).toList();
+    } else {
+      throw Exception("Failed to load plans");
+    }
   }
 
   // Hàm tiện ích để tạo các thẻ lịch trình
@@ -520,7 +579,7 @@ class _DashboardScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8), // Giảm padding nút
                   textStyle: const TextStyle(fontSize: 13), // Giảm kích thước font nút
                 ),
-                child: const Text("Xem Chi Tiết Quỹ Đạo"),
+                child: const Text("Đăng ký ngày"),
               ),
             ),
           ],

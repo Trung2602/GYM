@@ -31,8 +31,10 @@ dependencies:
   flutter:
     sdk: flutter
 
-  http: ^1.1.0
+  http: ^1.2.1
+  http_parser: ^4.1.0
   dio: ^5.0.0
+  image_picker: ^1.0.7
   flutter_hooks: ^0.20.5
   shared_preferences: ^2.2.2
   intl: ^0.19.0 # Đảm bảo bạn đã có intl nếu dùng DateFormat

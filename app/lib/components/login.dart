@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'home.dart';
+import 'register.dart';
 import '../services/auth_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -174,6 +175,21 @@ class _LoginState extends State<Login> {
                   child: const Text(
                     'Quên mật khẩu?',
                     style: TextStyle(color: Colors.white70),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const Register()),
+                    );
+                  },
+                  child: const Text(
+                    'Chưa có tài khoản? Đăng ký ngay',
+                    style: TextStyle(
+                      color: Color(0xFFFFAB40),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],

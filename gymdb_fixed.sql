@@ -7,8 +7,8 @@ USE gymdb;
 -- Cơ sở (Facility)
 CREATE TABLE Facility (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(100),
-    address VARCHAR(255)
+    name VARCHAR(100) UNIQUE NOT NULL,
+    address VARCHAR(255) NOT NULL
 );
 
 INSERT INTO Facility (name, address) VALUES
@@ -20,15 +20,15 @@ INSERT INTO Facility (name, address) VALUES
 -- Bảng cha: Account
 CREATE TABLE Account (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    username VARCHAR(50) UNIQUE,
-    password VARCHAR(255),
-    name VARCHAR(100),
-    birthday DATE,
-    gender TINYINT,
-    role ENUM('Admin', 'Staff', 'Customer'),
-    mail VARCHAR(100),
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    birthday DATE NOT NULL,
+    gender TINYINT NOT NULL,
+    role ENUM('Admin', 'Staff', 'Customer') NOT NULL,
+    mail VARCHAR(100) UNIQUE NOT NULL,
     avatar VARCHAR(255),
-    is_active BOOLEAN
+    is_active BOOLEAN NOT NULL
 );
 
 INSERT INTO Account (id, username, password, name, birthday, gender, role, mail, avatar, is_active) VALUES
@@ -50,8 +50,8 @@ INSERT INTO Admin (id) VALUES (1);
 CREATE TABLE Staff_type (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(50),
-    salary INT,
-    day_off INT,
+    salary INT NOT NULL,
+    day_off INT NOT NULL,
     description TEXT
 );
 INSERT INTO Staff_type (name, salary, day_off, description) VALUES
@@ -62,9 +62,9 @@ INSERT INTO Staff_type (name, salary, day_off, description) VALUES
 -- Staff kế thừa Account
 CREATE TABLE Staff (
     id INT PRIMARY KEY,
-    created_date DATE,
-    staff_type_id INT,
-    facility_id INT,
+    created_date DATE NOT NULL,
+    staff_type_id INT NOT NULL,
+    facility_id INT NOT NULL,
     FOREIGN KEY (id) REFERENCES Account(id),
     FOREIGN KEY (staff_type_id) REFERENCES Staff_type(id),
     FOREIGN KEY (facility_id) REFERENCES Facility(id)
@@ -78,8 +78,8 @@ INSERT INTO Staff (id, created_date, staff_type_id, facility_id) VALUES
 -- Ngày nghỉ phép
 CREATE TABLE Staff_day_off (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    date DATE,
-    staff_id INT,
+    date DATE NOT NULL,
+    staff_id INT NOT NULL,
     FOREIGN KEY (staff_id) REFERENCES Staff(id)
 );
 
@@ -92,8 +92,8 @@ INSERT INTO Staff_day_off (date, staff_id) VALUES
 CREATE TABLE Shift (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(50),
-    checkin TIME,
-    checkout TIME,
+    checkin TIME NOT NULL,
+    checkout TIME NOT NULL,
     duration DOUBLE
 );
 
@@ -110,9 +110,9 @@ INSERT INTO Shift (name, checkin, checkout, duration) VALUES
 -- Lịch làm việc parttime/intern
 CREATE TABLE Staff_schedule (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    date DATE,
-    shift_id INT,
-    staff_id INT,
+    date DATE NOT NULL,
+    shift_id INT NOT NULL,
+    staff_id INT NOT NULL,
     FOREIGN KEY (shift_id) REFERENCES Shift(id),
     FOREIGN KEY (staff_id) REFERENCES Staff(id)
 );
@@ -124,11 +124,11 @@ INSERT INTO Staff_schedule (date, shift_id, staff_id) VALUES
 -- Bảng lương
 CREATE TABLE Salary (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    date DATE,
+    date DATE NOT NULL,
     duration DOUBLE,
     day_off INT,
     price DOUBLE,
-    staff_id INT,
+    staff_id INT NOT NULL,
     FOREIGN KEY (staff_id) REFERENCES Staff(id)
 );
 
@@ -142,8 +142,7 @@ INSERT INTO Salary (date, duration, day_off, price, staff_id) VALUES
 -- Customer kế thừa Account
 CREATE TABLE Customer (
     id INT PRIMARY KEY,
-    expiry_date DATE,
-    quantity_sauna INT,
+    expiry_date DATE NOT NULL,
     FOREIGN KEY (id) REFERENCES Account(id)
 );
 INSERT INTO Customer (id, expiry_date) VALUES
@@ -155,8 +154,8 @@ INSERT INTO Customer (id, expiry_date) VALUES
 CREATE TABLE Plan (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100),
-    price INT,
-    duration_days INT,
+    price INT NOT NULL,
+    duration_days INT NOT NULL,
     description TEXT
 );
 
@@ -170,9 +169,9 @@ INSERT INTO Plan (name, price, duration_days, description) VALUES
 -- Thanh toán gói tập
 CREATE TABLE Pay_customer (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    date DATE,
-    plan_id INT,
-    customer_id INT,
+    date DATE NOT NULL,
+    plan_id INT NOT NULL,
+    customer_id INT NOT NULL,
     FOREIGN KEY (plan_id) REFERENCES Plan(id),
     FOREIGN KEY (customer_id) REFERENCES Customer(id)
 );
@@ -186,12 +185,12 @@ INSERT INTO Pay_customer (date, plan_id, customer_id) VALUES
 -- Lịch tập khách hàng
 CREATE TABLE Customer_schedule (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    date DATE,
-    checkin TIME,
-    checkout TIME,
-    facility_id INT,
-    staff_id INT,
-    customer_id INT,
+    date DATE NOT NULL,
+    checkin TIME NOT NULL,
+    checkout TIME NOT NULL,
+    facility_id INT NOT NULL,
+    staff_id INT NOT NULL,
+    customer_id INT NOT NULL,
     FOREIGN KEY (facility_id) REFERENCES Facility(id),
     FOREIGN KEY (staff_id) REFERENCES Staff(id),
     FOREIGN KEY (customer_id) REFERENCES Customer(id)

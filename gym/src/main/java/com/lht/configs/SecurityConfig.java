@@ -56,8 +56,8 @@ public class SecurityConfig {
                         // Cho phép truy cập các tài nguyên tĩnh và trang đăng nhập
                         .requestMatchers("/login", "/css/**", "/js/**").permitAll()
                         // Cho phép truy cập API đăng nhập nếu bạn có một API riêng
+                        .requestMatchers("/api/**").permitAll()
                         .requestMatchers("/api/login").permitAll()
-                        .requestMatchers("/api/account/me").permitAll()
                         // Mọi yêu cầu khác đều phải được xác thực
                         .anyRequest().authenticated())
                 // Cấu hình form đăng nhập

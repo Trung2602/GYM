@@ -1,5 +1,5 @@
 class Account {
-  final int id;
+  final int? id;
   final String username;
   final String? password; // có thể null
   final String name;
