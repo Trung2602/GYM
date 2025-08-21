@@ -47,7 +47,7 @@ public class StaffSchedule implements Serializable {
     private Date date;
     
     @JoinColumn(name = "shift_id", referencedColumnName = "id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JsonIgnoreProperties({"staffScheduleSet"})
     private Shift shiftId;
     @JoinColumn(name = "staff_id", referencedColumnName = "id")

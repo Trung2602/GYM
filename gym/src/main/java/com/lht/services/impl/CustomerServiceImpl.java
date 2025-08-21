@@ -17,6 +17,7 @@ import jakarta.persistence.criteria.Predicate;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,13 +36,12 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private CustomerRepository customerRepository;
-    
+
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
-    
+
     @Autowired
     private Cloudinary cloudinary;
-
 
     @Override
     public List<Customer> getAllCustomers() {
@@ -126,4 +126,11 @@ public class CustomerServiceImpl implements CustomerService {
         return false;
     }
 
+    @Override
+    public Optional<Customer> getCustomerByName(String name) {
+        if (name == null || name.isEmpty()) {
+            return Optional.empty(); // trả về empty nếu name rỗng
+        }
+        return this.customerRepository.findByName(name);
+    }
 }

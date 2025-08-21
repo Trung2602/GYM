@@ -77,13 +77,14 @@ public class SalaryController {
         return "redirect:/salaries";
     }
 
-//    @PostMapping("/salary-update")
-//    public String updateSalaryAllStaffs(@ModelAttribute(value = "salary") Salary s, BindingResult result,
-//            Model model) {
-//        if (this.salaryService.addOrUpdateSalary(s) != null) {
-//            return "redirect:/salaries";
-//        }
-//        return "salary-add";
-//    }
+    @GetMapping("/salary-momth")
+    public String calculateMonthly(Model model,
+            @RequestParam int month,
+            @RequestParam int year) {
+        
+        this.salaryService.calculateMonthlySalaries(month, year);
+        model.addAttribute("salaries", salaryService.getAllSalaries());
+        return "salaries";
+    }
     
 }

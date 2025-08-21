@@ -25,4 +25,6 @@ public interface CustomerScheduleService {
     boolean deleteCustomerSchedule(Integer id);
     
     public List<CustomerSchedule> getAllSort(String sortField, String sortDir);
+    
+    public List<CustomerSchedule> getCustomerScheduleByCustomerId(Integer id);
 }

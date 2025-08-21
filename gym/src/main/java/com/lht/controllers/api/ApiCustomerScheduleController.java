@@ -4,11 +4,20 @@
  */
 package com.lht.controllers.api;
 
+import com.lht.dto.CustomerScheduleDTO;
+import com.lht.pojo.Customer;
 import com.lht.pojo.CustomerSchedule;
+import com.lht.pojo.Staff;
 import com.lht.services.CustomerScheduleService;
+import com.lht.services.CustomerService;
+import com.lht.services.StaffService;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,37 +35,107 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api")
 public class ApiCustomerScheduleController {
+
     @Autowired
     private CustomerScheduleService customerScheduleService;
 
-    @GetMapping("/customer-schedules-all")
-    public ResponseEntity<List<CustomerSchedule>> getCustomerSchedulesAll() {
-        return ResponseEntity.ok(this.customerScheduleService.getAllCustomerSchedules());
+    @Autowired
+    private CustomerService customerService;
+
+    @Autowired
+    private StaffService staffService;
+
+    @GetMapping("/customer-schedules-all/{id}") //lấy theo custotmerId
+    public ResponseEntity<List<CustomerScheduleDTO>> getCustomerSchedulesAll(@PathVariable("id") Integer id) {
+        List<CustomerSchedule> schedules = customerScheduleService.getCustomerScheduleByCustomerId(id);
+        // Map sang DTO
+        List<CustomerScheduleDTO> dtos = schedules.stream()
+                .map(CustomerScheduleDTO::new)
+                .toList();
+        return ResponseEntity.ok(dtos);
     }
-    
+
     @GetMapping("/customer-schedules-filter")
-    public ResponseEntity<List<CustomerSchedule>> getCustomerSchedulesFilter(@RequestParam Map<String, String> params) {
-        return ResponseEntity.ok(this.customerScheduleService.getCustomerSchedules(params));
+    public ResponseEntity<List<CustomerScheduleDTO>> getCustomerSchedulesFilter(@RequestParam Map<String, String> params) {
+        List<CustomerSchedule> schedules = this.customerScheduleService.getCustomerSchedules(params);
+        List<CustomerScheduleDTO> dtos = schedules.stream()
+                .map(CustomerScheduleDTO::new)
+                .toList();
+        return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("customer-schedules-sort")
-    public ResponseEntity<List<CustomerSchedule>> getCustomerSchedulesSort(
+    public ResponseEntity<List<CustomerScheduleDTO>> getCustomerSchedulesSort(
             @RequestParam(defaultValue = "id") String sortField,
             @RequestParam(defaultValue = "asc") String sortDir) {
-        return ResponseEntity.ok(this.customerScheduleService.getAllSort(sortField, sortDir));
+        List<CustomerSchedule> schedules = this.customerScheduleService.getAllSort(sortField, sortDir);
+        List<CustomerScheduleDTO> dtos = schedules.stream()
+                .map(CustomerScheduleDTO::new)
+                .toList();
+        return ResponseEntity.ok(dtos);
     }
-    
+
     @GetMapping("customer-schedule/{id}")
-    public ResponseEntity<CustomerSchedule> getCustomerScheduleById(@PathVariable("id") Integer id) {   
+    public ResponseEntity<CustomerScheduleDTO> getCustomerScheduleById(@PathVariable("id") Integer id) {
         if (id == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(this.customerScheduleService.getCustomerScheduleById(id));
+        CustomerSchedule cs = this.customerScheduleService.getCustomerScheduleById(id);
+        if (cs == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(new CustomerScheduleDTO(cs));
     }
 
     @PostMapping("customer-schedule-update")
-    public ResponseEntity<CustomerSchedule> addOrUpdateCustomerSchedule(@RequestBody CustomerSchedule customerSchedule) {
-        return ResponseEntity.ok(this.customerScheduleService.addOrUpdateCustomerSchedule(customerSchedule));
+    public ResponseEntity<?> addOrUpdateCustomerSchedule(@RequestBody CustomerScheduleDTO dto) {
+        CustomerSchedule cs = new CustomerSchedule();
+        cs.setId(dto.getId());
+        cs.setDate(dto.getDate());
+        cs.setCheckin(dto.getCheckin());
+        cs.setCheckout(dto.getCheckout());
+
+        if (dto.getCustomerName() != null) {
+            Optional<Customer> customerOpt = customerService.getCustomerByName(dto.getCustomerName());
+            if (customerOpt.isPresent()) {
+                cs.setCustomerId(customerOpt.get());
+            } else {
+                return ResponseEntity.badRequest().body(null); // Hoặc ném exception
+            }
+        } else {
+            return ResponseEntity.badRequest().body(null); // Không được để null
+        }
+
+        if (dto.getStaffName() != null) {
+            Optional<Staff> staffOpt = staffService.getStaffByName(dto.getStaffName());
+            if (staffOpt.isPresent()) {
+                Staff staff = staffOpt.get();
+                cs.setStaffId(staff);
+                if (staff.getFacilityId() != null) {
+                    cs.setFacilityId(staff.getFacilityId());
+                }
+            } else {
+                // Xử lý nếu không tìm thấy staff
+                cs.setStaffId(null);
+                cs.setFacilityId(null);
+            }
+        }
+
+        // Kiểm tra trùng ngày + checkin
+        Map<String, String> params = new HashMap<>();
+        params.put("date", new SimpleDateFormat("yyyy-MM-dd").format(cs.getDate()));
+        List<CustomerSchedule> existingSchedules = customerScheduleService.getCustomerSchedules(params);
+
+        boolean isConflict = existingSchedules.stream()
+                .anyMatch(e -> e.getCheckin() != null && e.getCheckin().equals(cs.getCheckin()));
+
+        if (isConflict) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Đã có lịch trùng ngày và giờ checkin");
+        }
+
+        CustomerSchedule saved = customerScheduleService.addOrUpdateCustomerSchedule(cs);
+        return ResponseEntity.ok(new CustomerScheduleDTO(saved));
     }
 
     @DeleteMapping("customer-schedule-delete/{id}")

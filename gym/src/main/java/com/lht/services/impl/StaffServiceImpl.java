@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -147,6 +148,14 @@ public class StaffServiceImpl implements StaffService {
             return true;
         }
         return false;
+    }
+    
+    @Override
+    public Optional<Staff> getStaffByName(String name) {
+        if (name == null || name.isEmpty()) {
+            return Optional.empty(); // trả về empty nếu name rỗng
+        }
+        return this.staffRepository.findByName(name);
     }
 
 }

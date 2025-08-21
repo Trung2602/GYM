@@ -1,16 +1,20 @@
 // lib/services/auth_service.dart
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:gym/models/AccountProvider.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../api.dart';
 import '../models/Account.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:provider/provider.dart';
+
 
 
 class AuthService {
-  Future<Account?> login(String username, String password) async {
+  Future<Account?> login(BuildContext context, String username, String password) async {
     final prefs = await SharedPreferences.getInstance();
 
     final response = await http.post(
@@ -42,6 +46,9 @@ class AuthService {
 
           // Lưu account JSON để dùng lại
           await prefs.setString("account", jsonEncode(account.toJson()));
+
+          final accountProvider = Provider.of<AccountProvider>(context, listen: false);
+          accountProvider.setAccount(account);
 
           return account;
         }
@@ -109,21 +116,22 @@ class AuthService {
   }
 
   // Đăng ký + đăng nhập tự động
-  Future<Account?> registerAndLogin(Account account, File? imageFile) async {
+  Future<Account?> registerAndLogin(BuildContext context, Account account, File? imageFile) async {
     // 1. Thực hiện đăng ký
     var registeredAccount = await registerWithImage(account, imageFile);
 
     if (registeredAccount != null) {
       // 2. Sau khi đăng ký thành công, gọi login để lấy token
-      return await login(account.username ?? '', account.password ?? '');
+      return await login(context, account.username ?? '', account.password ?? '');
     }
 
     return null;
   }
 
-  Future<void> logout() async {
+  Future<void> logout(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove("token");
     await prefs.remove("account"); // xoá luôn account khi logout
+    context.read<AccountProvider>().clearAccount();
   }
 }

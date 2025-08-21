@@ -1,6 +1,9 @@
 // home.dart
 import 'package:flutter/material.dart';
+import 'package:gym/models/AccountProvider.dart';
+import 'package:gym/models/Shift.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import '../services/auth_service.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -17,6 +20,7 @@ import 'salary.dart';
 import 'staff_schedule.dart';
 import 'login.dart';
 import 'customer_schedule.dart';
+import 'chat_page.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -27,40 +31,42 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _selectedIndex = 0; // Index của item được chọn trên BottomNavigationBar
+  List<Widget> _pages = [];
   final AuthService authService = AuthService();
   Account? savedAccount;
-  List<Widget> _pages = [];
 
   @override
-  void initState() {
-    super.initState();
-    _loadAccount();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final account = Provider.of<AccountProvider>(context).account;
+
+    if (account != savedAccount) {
+      savedAccount = account;
+      _buildPages();
+    }
   }
 
-  Future<void> _loadAccount() async {
-    final account = await authService.getSavedAccount();
-    setState(() {
-      savedAccount = account;
-
-      if (savedAccount != null && savedAccount!.role == 'Customer') {
-        _pages = [
-          const _DashboardScreen(),
-          const CustomerSchedule(),
-          const PayCustomer(),
-          Profile(account: savedAccount!),
-        ];
-      } else if (savedAccount != null && savedAccount!.role == 'Staff') {
-        _pages = [
-          const _DashboardScreen(),
-          const StaffSchedule(),
-          const Salary(),
-          const DayOff(),
-          Profile(account: savedAccount!),
-        ];
-      } else {
-        _pages = [const _DashboardScreen()];
-      }
-    });
+  void _buildPages() {
+    if (savedAccount == null) {
+      _pages = [
+        const _DashboardScreen()];
+    } else if (savedAccount!.role == 'Customer') {
+      _pages = [
+        const _DashboardScreen(),
+        const CustomerScheduleScreen(),
+        const PayCustomer(),
+        const Profile(),
+      ];
+    } else if (savedAccount!.role == 'Staff') {
+      _pages = [
+        const _DashboardScreen(),
+        const StaffSchedule(),
+        const Salary(),
+        const DayOff(),
+        const Profile(),
+      ];
+    }
+    setState(() {}); // gọi lại build khi _pages thay đổi
   }
 
   List<BottomNavigationBarItem> _buildBottomNavItems() {
@@ -153,6 +159,12 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    // Nếu chưa có account hoặc chưa build xong pages
+    if (savedAccount == null || _pages.isEmpty) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
     return Scaffold(
       // Màu nền tổng thể cho các khu vực không có ảnh nền
       backgroundColor: const Color(0xFF0F123A),
@@ -222,11 +234,10 @@ class _HomeState extends State<Home> {
         ),
       ),
 
-      body: savedAccount == null || _pages.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : _pages[_selectedIndex],
+      body: _pages[_selectedIndex],
 
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: _pages.length >= 2
+          ? BottomNavigationBar(
         items: _buildBottomNavItems(),
         currentIndex: _selectedIndex,
         selectedItemColor: const Color(0xFFFFD740),
@@ -235,7 +246,7 @@ class _HomeState extends State<Home> {
         onTap: _onItemTapped,
         type: BottomNavigationBarType.fixed,
         elevation: 10,
-      ),
+      ): null,
 
     );
   }
@@ -253,25 +264,53 @@ class _HomeState extends State<Home> {
         if (index != -1) { // Nếu là một item có trong BottomNavigationBar, chuyển trang
           _onItemTapped(index);
         } else {
-          // Xử lý các mục khác của Drawer
-          if (title == 'Rời khỏi Trạm Vũ Trụ') {
-            // Logout
-            authService.logout().then((_) {
-              Navigator.pushReplacement(
+          switch (title) {
+            case 'Rời khỏi Trạm Vũ Trụ':
+              authService.logout(context).then((_) {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Login()),
+                );
+              });
+              break;
+
+            // case 'Bảng Điều Khiển Thiên Hà':
+            //   Navigator.push(
+            //     context,
+            //     MaterialPageRoute(builder: (context) => const Dashboard()),
+            //   );
+            //   break;
+
+            // case 'Hồ Sơ Phi Hành Gia':
+            //   Navigator.push(
+            //     context,
+            //     MaterialPageRoute(builder: (context) => const Profile()),
+            //   );
+            //   break;
+
+            case 'Liên Lạc':
+              Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const Login()), // Login screen
+                MaterialPageRoute(builder: (context) => const ChatPage()),
               );
-            });
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Chức năng "$title" đang được phát triển...')),
-            );
+              break;
+
+            case 'Gói Tập':
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Tính năng Gói Tập đang được phát triển...')),
+              );
+              break;
+
+            default:
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Chức năng "$title" đang được phát triển...')),
+              );
           }
+
         }
       },
     );
   }
-
 }
 
 // ==========================================================
@@ -282,6 +321,7 @@ class _DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final account = Provider.of<AccountProvider>(context).account;
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
@@ -300,7 +340,7 @@ class _DashboardScreen extends StatelessWidget {
               children: [
                 // Phần chào mừng
                 Text(
-                  "Chào mừng đến với",
+                  "Chào mừng ${account != null ? " ${account.name}" : ""} đến với",
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 24,
@@ -508,16 +548,16 @@ class _DashboardScreen extends StatelessWidget {
     }
   }
 
-  Future<List<Plan>> fetchShifts() async {
+  Future<List<Shift>> fetchShifts() async {
     final token = await AuthService().getToken();
-    final response = await  http.get(Uri.parse(Api.getPlans),
+    final response = await  http.get(Uri.parse(Api.getShifts),
         headers: {"Content-Type": "application/json",
           'Authorization': 'Bearer $token',
         });
 
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
-      return data.map((json) => Plan.fromJson(json)).toList();
+      return data.map((json) => Shift.fromJson(json)).toList();
     } else {
       throw Exception("Failed to load plans");
     }
@@ -568,7 +608,8 @@ class _DashboardScreen extends StatelessWidget {
               alignment: Alignment.bottomRight,
               child: ElevatedButton(
                 onPressed: () {
-                  // Xử lý khi nhấn nút "Xem chi tiết"
+                  // Xử lý thanh toán gói tập
+
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF2C318F), // Màu xanh tím nhạt hơn

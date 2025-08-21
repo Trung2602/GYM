@@ -5,6 +5,8 @@
 package com.lht.reponsitories;
 
 import com.lht.pojo.Customer;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -13,5 +15,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  * @author admin
  */
 public interface CustomerRepository extends JpaRepository<Customer, Integer>, JpaSpecificationExecutor<Customer>{
-    
+    // Tìm customer theo tên chính xác
+    Optional<Customer> findByName(String name);
 }

@@ -25,4 +25,6 @@ public interface StaffDayOffService {
     boolean deleteStaffDayOff(Integer id);
     
     public List<StaffDayOff> getAllSort(String sortField, String sortDir);
+    
+    public int countByStaffIdAndMonthYear(int staffId, int month, int year);
 }

@@ -59,11 +59,13 @@ public class Staff extends Account implements Serializable {
     
     @JoinColumn(name = "facility_id", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"staffSet"})
+    //@JsonIgnoreProperties({"staffSet"})
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Facility facilityId;
     @JoinColumn(name = "staff_type_id", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"staffSet"})
+    //@JsonIgnoreProperties({"staffSet"})
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private StaffType staffTypeId;
     
     public Staff() {

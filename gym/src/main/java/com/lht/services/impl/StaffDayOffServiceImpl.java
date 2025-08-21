@@ -11,6 +11,8 @@ import jakarta.persistence.criteria.Predicate;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -91,5 +93,17 @@ public class StaffDayOffServiceImpl implements StaffDayOffService {
                 ? Sort.by(sortField).ascending()
                 : Sort.by(sortField).descending();
         return staffDayOffRepository.findAll(sort);
+    }
+
+    @Override
+    public int countByStaffIdAndMonthYear(int staffId, int month, int year) {
+        List<StaffDayOff> allDayOffs = staffDayOffRepository.findByStaffId_Id(staffId);
+
+        return (int) allDayOffs.stream() //từ List thành Stream để thao tác kiểu hàm functional
+                .filter(d -> {
+                    LocalDate localDate = ((java.sql.Date) d.getDate()).toLocalDate();
+                    return localDate.getMonthValue() == month && localDate.getYear() == year;
+                })
+                .count();
     }
 }

@@ -78,12 +78,12 @@ INSERT INTO Staff (id, created_date, staff_type_id, facility_id) VALUES
 -- Ngày nghỉ phép
 CREATE TABLE Staff_day_off (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    date DATE NOT NULL,
+    date_off DATE NOT NULL,
     staff_id INT NOT NULL,
     FOREIGN KEY (staff_id) REFERENCES Staff(id)
 );
 
-INSERT INTO Staff_day_off (date, staff_id) VALUES
+INSERT INTO Staff_day_off (date_off, staff_id) VALUES
 ('2025-06-15', 2),
 ('2025-06-22', 2),
 ('2025-06-29', 2);

@@ -78,7 +78,7 @@ class _RegisterState extends State<Register> {
 
     try {
       // ép nullable File! vì đã chắc chắn có ảnh
-      final result = await _authService.registerAndLogin(account, _selectedImage!);
+      final result = await _authService.registerAndLogin(context, account, _selectedImage!);
 
       if (!mounted) return;
 

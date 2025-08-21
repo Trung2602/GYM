@@ -5,6 +5,7 @@
 package com.lht.reponsitories;
 
 import com.lht.pojo.CustomerSchedule;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -13,5 +14,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  * @author admin
  */
 public interface CustomerScheduleRepository extends JpaRepository<CustomerSchedule, Integer>, JpaSpecificationExecutor<CustomerSchedule>{
-    
+    List<CustomerSchedule> findByCustomerId_Id(Integer customerId);
 }

@@ -11,6 +11,8 @@ import jakarta.persistence.criteria.Predicate;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -76,7 +78,7 @@ public class StaffScheduleServiceImpl implements StaffScheduleService {
                     throw new IllegalArgumentException("Invalid date format, expected yyyy-MM-dd");
                 }
             }
-            
+
             return cb.and(predicates.toArray(new Predicate[0]));
         };
         return staffScheduleRepository.findAll(spec);
@@ -103,4 +105,18 @@ public class StaffScheduleServiceImpl implements StaffScheduleService {
                 : Sort.by(sortField).descending();
         return staffScheduleRepository.findAll(sort);
     }
+
+    @Override
+    public double sumDurationByStaffIdAndMonthYear(int staffId, int month, int year) {
+        List<StaffSchedule> schedules = staffScheduleRepository.findByStaffId_Id(staffId);
+
+        return schedules.stream()
+                .filter(s -> {
+                    LocalDate localDate = ((java.sql.Date) s.getDate()).toLocalDate();
+                    return localDate.getMonthValue() == month && localDate.getYear() == year;
+                })
+                .mapToDouble(s -> s.getShiftId().getDuration()) // lấy duration từ shift
+                .sum();
+    }
+
 }

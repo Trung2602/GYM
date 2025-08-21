@@ -59,15 +59,18 @@ public class CustomerSchedule implements Serializable {
     
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"customerScheduleSet"})
+    //@JsonIgnoreProperties({"customerScheduleSet"})
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Customer customerId;
     @JoinColumn(name = "facility_id", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"customerScheduleSet"})
+    //@JsonIgnoreProperties({"customerScheduleSet"})
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Facility facilityId;
     @JoinColumn(name = "staff_id", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"customerScheduleSet"})
+    //@JsonIgnoreProperties({"customerScheduleSet"})
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Staff staffId;
 
     public CustomerSchedule() {

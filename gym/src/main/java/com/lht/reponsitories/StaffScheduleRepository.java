@@ -5,6 +5,7 @@
 package com.lht.reponsitories;
 
 import com.lht.pojo.StaffSchedule;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -14,4 +15,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  */
 public interface StaffScheduleRepository extends JpaRepository<StaffSchedule, Integer>, JpaSpecificationExecutor<StaffSchedule>{
     
+    List<StaffSchedule> findByStaffId_Id(Integer staffId);
 }

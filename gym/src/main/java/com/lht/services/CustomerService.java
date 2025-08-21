@@ -7,6 +7,7 @@ package com.lht.services;
 import com.lht.pojo.Customer;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  *
@@ -24,4 +25,5 @@ public interface CustomerService {
 
     boolean deleteCustomer(Integer id);
 
+    public Optional<Customer> getCustomerByName(String name);
 }

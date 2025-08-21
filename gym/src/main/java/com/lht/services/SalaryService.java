@@ -23,6 +23,8 @@ public interface SalaryService {
     Salary addOrUpdateSalary(Salary s);
 
     boolean deleteSalary(Integer id);
-    
+
     public List<Salary> getAllSort(String sortField, String sortDir);
+
+    public void calculateMonthlySalaries(int month, int year);
 }

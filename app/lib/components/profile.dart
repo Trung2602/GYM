@@ -1,14 +1,15 @@
 // profile.dart
 import 'package:flutter/material.dart';
 import '../models/Account.dart';
+import 'package:provider/provider.dart';
+import '../models/AccountProvider.dart';
 
 class Profile extends StatelessWidget {
-  final Account account;
-  const Profile({super.key, required this.account});
-
+  const Profile({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final account = Provider.of<AccountProvider>(context).account;
     return Container(
       // Optional: Add a space-themed background for consistency
       decoration: const BoxDecoration(
@@ -26,10 +27,10 @@ class Profile extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 60,
-                backgroundImage: account.avatar.isNotEmpty
+                backgroundImage: (account != null && account.avatar.isNotEmpty)
                     ? NetworkImage(account.avatar)
                     : null,
-                child: account.avatar.isEmpty
+                child: (account == null || account.avatar.isEmpty)
                     ? const Icon(Icons.person, size: 80, color: Colors.white)
                     : null,
               ),

@@ -7,6 +7,7 @@ package com.lht.services;
 import com.lht.pojo.Staff;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  *
@@ -23,4 +24,6 @@ public interface StaffService {
     Staff addOrUpdateStaff(Staff s);
 
     boolean deleteStaff(Integer id);
+    
+    public Optional<Staff> getStaffByName(String name);
 }

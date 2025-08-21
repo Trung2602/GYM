@@ -25,4 +25,6 @@ public interface StaffScheduleService {
     boolean deleteStaffSchedule(Integer id);
 
     public List<StaffSchedule> getAllSort(String sortField, String sortDir);
+    
+    public double sumDurationByStaffIdAndMonthYear(int staffId, int month, int year);
 }
