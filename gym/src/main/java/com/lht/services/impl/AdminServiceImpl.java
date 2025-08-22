@@ -62,7 +62,7 @@ public class AdminServiceImpl implements AdminService {
             // Trường hợp update: kiểm tra nếu password khác null và khác rỗng, encode lại
             a.setRole(a.getRole());
             if (a.getPassword() != null && !a.getPassword().isEmpty()) {
-                // Có thể kiểm tra nếu khác mật khẩu hiện tại mới encode (tùy logic)
+                // Có thể kiểm tra nếu khác mật khẩu hiện tại mới encode
                 a.setPassword(this.passwordEncoder.encode(a.getPassword()));
             } else {
                 // Giữ nguyên password cũ

@@ -3,15 +3,15 @@
     <head>
         <meta charset="UTF-8">
         <title>Quản lý gói tập</title>
-    <th:block th:replace="init :: styles"></th:block>
+    <th:block th:replace="~{init :: styles}"></th:block>
 </head>
 <body>
-<th:block th:replace="init :: header"></th:block>
+<th:block th:replace="~{init :: header}"></th:block>
 
 <div class="container-fluid">
     <div class="row">
         <div class="col-12 col-md-3 col-lg-2 bg-light border-end pt-3">
-            <th:block th:replace="init :: sidebar"></th:block>
+            <th:block th:replace="~{init :: sidebar}"></th:block>
         </div>
 
         <div class="col-12 col-md-9 col-lg-10 pt-3">
@@ -80,6 +80,6 @@
     </div>
 </div>
 
-<th:block th:replace="init :: footer"></th:block>
+<th:block th:replace="~{init :: footer}"></th:block>
 </body>
 </html>

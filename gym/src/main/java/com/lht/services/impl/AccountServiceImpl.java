@@ -12,6 +12,7 @@ import com.lht.pojo.Staff;
 import com.lht.reponsitories.AccountRepository;
 import com.lht.reponsitories.AdminRepository;
 import com.lht.services.AccountService;
+import com.lht.services.CustomerService;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -46,6 +47,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private CustomerService customerService;
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
@@ -151,16 +155,29 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Account acc = accountRepository.findByUsername(username)
-        .orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy tài khoản: " + username));
-        
+                .orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy tài khoản: " + username));
+
         if (acc == null) {
             throw new UsernameNotFoundException("Invalid username");
         }
         Set<GrantedAuthority> authorities = new HashSet<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_" + acc.getRole()));
+        Boolean accountNonExpired  = true;
+        if ("Customer".equals(acc.getRole())) {
+            Customer customer = customerService.getCustomerById(acc.getId());
+            if (customer.getExpiryDate() != null && customer.getExpiryDate().before(new Date())) {
+                accountNonExpired  = false; // đã hết hạn
+            }
+        }
 
         return new org.springframework.security.core.userdetails.User(
-                acc.getUsername(), acc.getPassword(), authorities);
+                acc.getUsername(), //username
+                acc.getPassword(), //password
+                acc.getIsActive(), //enabled: có được kich hoạt chưa
+                accountNonExpired , //expired: hết hạn chưa
+                true,
+                true,
+                authorities);
     }
 
 }

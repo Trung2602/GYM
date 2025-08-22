@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
         <title>Thống Kê Tài Chính</title>
-    <th:block th:replace="init :: styles"></th:block>
+    <th:block th:replace="~{init :: styles}"></th:block>
     <style>
         .card {
             background-color: var(--galactic-medium-blue); /* hoặc màu bạn muốn */
@@ -42,7 +42,7 @@
 </head>
 <body>
 
-    <div th:replace="init :: header"></div>
+    <div th:replace="~{init :: header}"></div>
 
     <div class="container-fluid py-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -221,7 +221,7 @@
         </div>
     </div>
 
-    <div th:replace="init :: footer"></div>
+    <th:block th:replace="~{init :: footer}"></th:block>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>

@@ -2,10 +2,10 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Quản lý lịch khách hàng</title>
-    <th:block th:replace="init :: styles"></th:block>
+    <th:block th:replace="~{init :: styles}"></th:block>
 </head>
 <body>
-<div th:replace="init :: header"></div>
+<div th:replace="~{init :: header}"></div>
 
 <div class="container">
     <form th:action="@{/customer-schedule-update}" th:object="${customerSchedule}" method="post">
@@ -63,7 +63,7 @@
     </form>
 </div>
 
-<div th:replace="init :: footer"></div>
+<th:block th:replace="~{init :: footer}"></th:block>
 </body>
 </html>
 

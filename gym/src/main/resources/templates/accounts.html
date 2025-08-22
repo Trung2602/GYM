@@ -3,16 +3,16 @@
     <head>
         <meta charset="UTF-8">
         <title>Quản lý tài khoản</title>
-    <th:block th:replace="init :: styles"></th:block>
+    <th:block th:replace="~{init :: styles}"></th:block>
 </head>
 
 <body>
-    <div th:replace="init :: header"></div>
+    <div th:replace="~{init :: header}"></div>
 
     <div class="container-fluid">
         <div class="row">
             <div class="col-12 col-md-3 col-lg-2 bg-light border-end pt-3">
-                <div th:replace="init :: sidebar"></div>
+               <th:block th:replace="~{init :: sidebar}"></th:block>
             </div>
 
             <div class="col-12 col-md-9 col-lg-10 pt-3">
@@ -196,7 +196,7 @@
         </div>
     </div>
 
-    <div th:replace="init :: footer"></div>
+    <th:block th:replace="~{init :: footer}"></th:block>
 
     <script>
         function showTab(event, tabId) {

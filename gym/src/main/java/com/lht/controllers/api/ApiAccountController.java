@@ -5,6 +5,7 @@
 package com.lht.controllers.api;
 
 import com.lht.dto.AccountDTO;
+import com.lht.dto.PasswordDTO;
 import com.lht.pojo.Account;
 import com.lht.services.AccountService;
 import com.lht.jwt.JwtUtils;
@@ -12,11 +13,11 @@ import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,6 +37,9 @@ public class ApiAccountController {
 
     @Autowired
     private AccountService accountService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     // GET /api/accounts?username=abc&isActive=true
     @GetMapping("/accounts")
@@ -123,4 +127,36 @@ public class ApiAccountController {
 
         return ResponseEntity.ok(new AccountDTO(acc));
     }
+
+    @PostMapping("/verify-password")
+    public ResponseEntity<?> verifyPassword(@RequestBody PasswordDTO request) {
+        Account account = accountService.getAccountByUsername(request.getUsername());
+        if (account == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tài khoản không tồn tại");
+        }
+
+        if (passwordEncoder.matches(request.getPassword(), account.getPassword())) {
+            return ResponseEntity.ok("Mật khẩu chính xác");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Mật khẩu không đúng");
+        }
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(@RequestBody PasswordDTO request) {
+        Account account = accountService.getAccountByUsername(request.getUsername());
+        if (account == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tài khoản không tồn tại");
+        }
+
+        if (!passwordEncoder.matches(request.getPassword(), account.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Mật khẩu cũ không đúng");
+        }
+
+        account.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        accountService.addOrUpdateAccount(account); // lưu vào DB
+
+        return ResponseEntity.ok("Mật khẩu đã được cập nhật thành công");
+    }
+
 }

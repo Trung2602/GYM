@@ -2,10 +2,10 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Lịch làm việc nhân viên</title>
-    <th:block th:replace="init :: styles"></th:block>
+    <th:block th:replace="~{init :: styles}"></th:block>
 </head>
 <body>
-    <div th:replace="init :: header"></div>
+    <div th:replace="~{init :: header}"></div>
     <div class="container">
         <form th:action="@{/staff-schedule-update}" th:object="${staffSchedule}" method="post">
             
@@ -43,7 +43,7 @@
             </div>
         </form>
     </div>
-    <div th:replace="init :: footer"></div>
+    <th:block th:replace="~{init :: footer}"></th:block>
 </body>
 </html>
 

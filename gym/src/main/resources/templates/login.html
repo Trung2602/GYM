@@ -2,10 +2,10 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>GYM - Đăng nhập</title>
-    <th:block th:replace="init :: styles"></th:block>
+    <th:block th:replace="~{init :: styles}"></th:block>
 </head>
 <body>
-    <div th:replace="init :: header"></div>
+    <th:block th:replace="~{init :: header}"></th:block>
 
     <div class="container my-5">
         <div class="row justify-content-center">
@@ -35,6 +35,6 @@
         </div>
     </div>
 
-    <div th:replace="init :: footer"></div>
+    <th:block th:replace="~{init :: footer}"></th:block>
 </body>
 </html>

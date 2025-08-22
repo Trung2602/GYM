@@ -2,14 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
         <title>Trang quản lý account</title>
-    <th:block th:replace="init :: styles"> </th:block>
+    <th:block th:replace="~{init :: styles}"></th:block>
 </head>
 
 <body>
-    <div th:replace="init :: header"></div>
-
-
-
+    <div th:replace="~{init :: header}"></div>
 
     <div class="container my-4">
         <form th:action="@{${formAction}}" th:object="${account}" method="post" enctype="multipart/form-data">
@@ -91,7 +88,7 @@
         </form>
 
     </div>
-    <div th:replace="init :: footer"></div>
+    <th:block th:replace="~{init :: footer}"></th:block>
 </body>
 
 </html>

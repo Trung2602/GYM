@@ -35,13 +35,28 @@ class _CustomerScheduleScreenState extends State<CustomerScheduleScreen> {
     fetchStaffs();
   }
 
-  void fetchStaffs() async {
+  Future<void> fetchStaffs() async {
     try {
-      final staffs = await getStaffs();
-      setState(() {
-        staffList = staffs;
-        isLoadingStaff = false;
-      });
+      final response = await http.get(Uri.parse(Api.getStaffs));
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+
+        // Nếu có class Staff thì parse
+        final staffs = data.map((e) => Staff.fromJson(e)).toList();
+
+        setState(() {
+          staffList = staffs;
+          isLoadingStaff = false;
+        });
+      } else {
+        setState(() {
+          isLoadingStaff = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Lỗi server: ${response.statusCode}")),
+        );
+      }
     } catch (e) {
       setState(() {
         isLoadingStaff = false;
@@ -268,7 +283,6 @@ class _CustomerScheduleScreenState extends State<CustomerScheduleScreen> {
                       initialTime: TimeOfDay(hour: selectedCheckin.hour + 1, minute: selectedCheckin.minute),
                     );
                     if (selectedCheckout == null) return; // Người dùng hủy chọn
-                    Staff? selectedStaff;
 
                     // Chọn nhân viên bằng dialog
                     Staff? selectedStaff = await showDialog<Staff>(

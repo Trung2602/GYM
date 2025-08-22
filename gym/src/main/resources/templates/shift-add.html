@@ -2,11 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
         <title>Trang quản lý ca làm việc</title>
-    <th:block th:replace="init :: styles"> </th:block>
+    <th:block th:replace="~{init :: styles}"></th:block>
 </head>
 
 <body>
-    <div th:replace="init :: header"></div>
+    <div th:replace="~{init :: header}"></div>
     <div class="container">
         <form th:action="@{/shift-update}" th:object="${shift}" method="post">
             <div class="form-group">
@@ -39,7 +39,7 @@
             </div>
         </form>
     </div>
-    <div th:replace="init :: footer"></div>
+    <th:block th:replace="~{init :: footer}"></th:block>
 
     <script>
         function updateDuration() {

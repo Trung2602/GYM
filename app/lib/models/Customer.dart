@@ -4,7 +4,7 @@ class Customer extends Account {
   final DateTime? expiryDate;
 
   Customer({
-    required int? id,
+    required int id,
     required String username,
     String? password,
     required String name,
@@ -14,7 +14,7 @@ class Customer extends Account {
     required String mail,
     required String avatar,
     bool? isActive,
-    this.expiryDate,
+    required this.expiryDate,
   }) : super(
     id: id,
     username: username,

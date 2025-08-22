@@ -10,6 +10,7 @@ public class AccountDTO {
 
     private Integer id;
     private String username;
+    private String password;
     private String role;
     private String name;
     private String mail;
@@ -23,6 +24,7 @@ public class AccountDTO {
         if (acc != null) {
             this.id = acc.getId();
             this.username = acc.getUsername();
+            this.password = acc.getPassword();
             this.role = acc.getRole();
             this.name = acc.getName();
             this.mail = acc.getMail();
@@ -50,6 +52,14 @@ public class AccountDTO {
         this.username = username;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    
     public String getRole() {
         return role;
     }
