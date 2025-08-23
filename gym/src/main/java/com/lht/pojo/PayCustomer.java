@@ -21,6 +21,8 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import java.io.Serializable;
 import java.util.Date;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
 
 /**
@@ -52,6 +54,7 @@ public class PayCustomer implements Serializable {
     private Customer customerId;
     @JoinColumn(name = "plan_id", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnoreProperties({"payCustomerSet"})
     private Plan planId;
 

@@ -128,7 +128,7 @@ public class StaffServiceImpl implements StaffService {
                 s.setAvatar(currentAccount.getAvatar());
             } else {
                 // Tạo mới mà không có ảnh
-                s.setAvatar("/images/image1.png");
+                s.setAvatar("https://res.cloudinary.com/dxgc9wwrd/image/upload/v1754928114/nzoi1xjxasxfvsut1azv.jpg");
             }
         }
 

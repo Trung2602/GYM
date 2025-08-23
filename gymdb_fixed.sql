@@ -80,7 +80,7 @@ CREATE TABLE Staff_day_off (
     id INT PRIMARY KEY AUTO_INCREMENT,
     date_off DATE NOT NULL,
     staff_id INT NOT NULL,
-    FOREIGN KEY (staff_id) REFERENCES Staff(id)
+    FOREIGN KEY (staff_id) REFERENCES Staff(id) on delete cascade
 );
 
 INSERT INTO Staff_day_off (date_off, staff_id) VALUES
@@ -114,7 +114,7 @@ CREATE TABLE Staff_schedule (
     shift_id INT NOT NULL,
     staff_id INT NOT NULL,
     FOREIGN KEY (shift_id) REFERENCES Shift(id),
-    FOREIGN KEY (staff_id) REFERENCES Staff(id)
+    FOREIGN KEY (staff_id) REFERENCES Staff(id) on delete cascade
 );
 
 INSERT INTO Staff_schedule (date, shift_id, staff_id) VALUES
@@ -129,7 +129,7 @@ CREATE TABLE Salary (
     day_off INT,
     price DOUBLE,
     staff_id INT NOT NULL,
-    FOREIGN KEY (staff_id) REFERENCES Staff(id)
+    FOREIGN KEY (staff_id) REFERENCES Staff(id) on delete cascade
 );
 
 INSERT INTO Salary (date, duration, day_off, price, staff_id) VALUES
@@ -173,7 +173,7 @@ CREATE TABLE Pay_customer (
     plan_id INT NOT NULL,
     customer_id INT NOT NULL,
     FOREIGN KEY (plan_id) REFERENCES Plan(id),
-    FOREIGN KEY (customer_id) REFERENCES Customer(id)
+    FOREIGN KEY (customer_id) REFERENCES Customer(id) on delete cascade
 );
 
 INSERT INTO Pay_customer (date, plan_id, customer_id) VALUES
@@ -192,8 +192,8 @@ CREATE TABLE Customer_schedule (
     staff_id INT NOT NULL,
     customer_id INT NOT NULL,
     FOREIGN KEY (facility_id) REFERENCES Facility(id),
-    FOREIGN KEY (staff_id) REFERENCES Staff(id),
-    FOREIGN KEY (customer_id) REFERENCES Customer(id)
+    FOREIGN KEY (staff_id) REFERENCES Staff(id) on delete cascade,
+    FOREIGN KEY (customer_id) REFERENCES Customer(id) on delete cascade
 );
 
 INSERT INTO Customer_schedule (date, checkin, checkout, facility_id, staff_id, customer_id) VALUES

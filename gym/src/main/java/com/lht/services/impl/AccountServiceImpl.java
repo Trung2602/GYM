@@ -158,7 +158,7 @@ public class AccountServiceImpl implements AccountService {
                 a.setAvatar(currentAccount.getAvatar());
             } else {
                 // Nếu tạo mới mà không có ảnh
-                a.setAvatar("/images/image1.png");
+                a.setAvatar("https://res.cloudinary.com/dxgc9wwrd/image/upload/v1754928114/nzoi1xjxasxfvsut1azv.jpg");
             }
         }
 

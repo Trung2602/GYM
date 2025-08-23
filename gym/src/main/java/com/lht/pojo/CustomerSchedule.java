@@ -22,6 +22,8 @@ import jakarta.persistence.TemporalType;
 import java.io.Serializable;
 import java.time.LocalTime;
 import java.util.Date;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
 
 /**
@@ -60,6 +62,7 @@ public class CustomerSchedule implements Serializable {
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)
     //@JsonIgnoreProperties({"customerScheduleSet"})
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Customer customerId;
     @JoinColumn(name = "facility_id", referencedColumnName = "id")
@@ -69,6 +72,7 @@ public class CustomerSchedule implements Serializable {
     private Facility facilityId;
     @JoinColumn(name = "staff_id", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     //@JsonIgnoreProperties({"customerScheduleSet"})
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Staff staffId;

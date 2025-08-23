@@ -52,7 +52,7 @@ public class AdminController {
     }
 
     @PostMapping("/admin-update")
-    public String updateAdmin(@ModelAttribute(value = "admin") Admin p, BindingResult result,
+    public String updateAdmin(@ModelAttribute(value = "account") Admin p, BindingResult result,
             Model model) {
         if (this.adminService.addOrUpdateAdmin(p) != null) {
             return "redirect:/accounts";

@@ -23,18 +23,18 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @Controller
 public class CustomerController {
-    
+
     @Autowired
     private CustomerService customerService;
 
     @GetMapping("/customers")
-    public String listAdmins(Model model) {
+    public String listCustomers(Model model) {
         model.addAttribute("customers", this.customerService.getAllCustomers());
         return "accounts";
     }
 
     @GetMapping("/customer/{id}")
-    public String getAdmin(@PathVariable("id") Integer id, Model model) {
+    public String getCustomer(@PathVariable("id") Integer id, Model model) {
         if (id != null) {
             model.addAttribute("customer", this.customerService.getCustomerById(id));
         }
@@ -42,7 +42,7 @@ public class CustomerController {
     }
 
     @GetMapping("/customer/add")
-    public String convertAdminForm(@RequestParam(name = "id", required = false) Integer id, Model model) {
+    public String convertCustomerForm(@RequestParam(name = "id", required = false) Integer id, Model model) {
         model.addAttribute("account", (id != null) ? this.customerService.getCustomerById(id) : new Customer());
         model.addAttribute("formAction", "/customer-update");
         model.addAttribute("role", "customer");
@@ -51,8 +51,14 @@ public class CustomerController {
     }
 
     @PostMapping("/customer-update")
-    public String updateAdmin(@ModelAttribute(value = "customer") Customer p, BindingResult result,
+    public String updateCustomer(@ModelAttribute(value = "account") Customer p, BindingResult result,
             Model model) {
+        System.out.println("=== Customer POST ===");
+        System.out.println("ID: " + p.getId());
+        System.out.println("Username: " + p.getUsername());
+        System.out.println("Password: " + p.getPassword());
+        System.out.println("Expiry date: " + p.getExpiryDate());
+        System.out.println("===================");
         if (this.customerService.addOrUpdateCustomer(p) != null) {
             return "redirect:/accounts";
         }
@@ -60,7 +66,7 @@ public class CustomerController {
     }
 
     @DeleteMapping("/customer-delete/{id}")
-    public String destroyAdmin(@PathVariable("id") Integer id, Model model) {
+    public String destroyCustomer(@PathVariable("id") Integer id, Model model) {
         if (id != null) {
             this.customerService.deleteCustomer(id);
         }

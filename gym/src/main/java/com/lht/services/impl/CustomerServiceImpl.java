@@ -105,7 +105,7 @@ public class CustomerServiceImpl implements CustomerService {
                 c.setAvatar(currentAccount.getAvatar());
             } else {
                 // Tạo mới mà không có ảnh
-                c.setAvatar("/images/image1.png");
+                c.setAvatar("https://res.cloudinary.com/dxgc9wwrd/image/upload/v1754928114/nzoi1xjxasxfvsut1azv.jpg");
             }
         }
 

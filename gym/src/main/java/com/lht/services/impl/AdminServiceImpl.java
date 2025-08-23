@@ -83,7 +83,7 @@ public class AdminServiceImpl implements AdminService {
                 a.setAvatar(currentAccount.getAvatar());
             } else {
                 // Tạo mới mà không có ảnh
-                a.setAvatar("/images/image1.png");
+                a.setAvatar("https://res.cloudinary.com/dxgc9wwrd/image/upload/v1754928114/nzoi1xjxasxfvsut1azv.jpg");
             }
         }
 

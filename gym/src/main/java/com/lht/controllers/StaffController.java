@@ -5,7 +5,9 @@
 package com.lht.controllers;
 
 import com.lht.pojo.Staff;
+import com.lht.services.FacilityService;
 import com.lht.services.StaffService;
+import com.lht.services.StaffTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,15 +28,22 @@ public class StaffController {
     
     @Autowired
     private StaffService staffService;
+    
+    @Autowired
+    private FacilityService facilityService;
+    
+    @Autowired
+    private StaffTypeService staffTypeService;
+    
 
     @GetMapping("/staffs")
-    public String listAdmins(Model model) {
+    public String listStaffs(Model model) {
         model.addAttribute("staffs", this.staffService.getAllStaffs());
         return "accounts";
     }
 
     @GetMapping("/staff/{id}")
-    public String getAdmin(@PathVariable("id") Integer id, Model model) {
+    public String getStaff(@PathVariable("id") Integer id, Model model) {
         if (id != null) {
             model.addAttribute("staff", this.staffService.getStaffById(id));
         }
@@ -42,8 +51,10 @@ public class StaffController {
     }
 
     @GetMapping("/staff/add")
-    public String convertAdminForm(@RequestParam(name = "id", required = false) Integer id, Model model) {
+    public String convertStaffForm(@RequestParam(name = "id", required = false) Integer id, Model model) {
         model.addAttribute("account", (id != null) ? this.staffService.getStaffById(id) : new Staff());
+        model.addAttribute("facilities", this.facilityService.getAllFacilities());
+        model.addAttribute("types", this.staffTypeService.getAllStaffTypes());
         model.addAttribute("formAction", "/staff-update");
         model.addAttribute("role", "staff");
 
@@ -51,7 +62,7 @@ public class StaffController {
     }
 
     @PostMapping("/staff-update")
-    public String updateAdmin(@ModelAttribute(value = "staff") Staff p, BindingResult result,
+    public String updateStaff(@ModelAttribute(value = "account") Staff p, BindingResult result,
             Model model) {
         if (this.staffService.addOrUpdateStaff(p) != null) {
             return "redirect:/accounts";
@@ -60,7 +71,7 @@ public class StaffController {
     }
 
     @DeleteMapping("/staff-delete/{id}")
-    public String destroyAdmin(@PathVariable("id") Integer id, Model model) {
+    public String destroyStaff(@PathVariable("id") Integer id, Model model) {
         if (id != null) {
             this.staffService.deleteStaff(id);
         }

@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  *
@@ -63,5 +65,31 @@ public class AccountController {
     public String addOrUpdateAccount(@ModelAttribute("account") Account a) {
         this.accountService.addOrUpdateAccount(a);
         return "redirect:/accounts"; // quay về trang danh sách tài khoản
+    }
+    
+    @PostMapping("/uploadAvatar")
+    public String uploadAvatar(@RequestParam("file") MultipartFile file,
+                               @RequestParam("id") int accountId,
+                               RedirectAttributes redirectAttributes) {
+
+        try {
+            // Lấy account hiện tại
+            Account account = accountService.getAccountById(accountId);
+            if (account == null) {
+                redirectAttributes.addFlashAttribute("message", "Không tìm thấy account!");
+                return "redirect:/accounts";
+            }
+
+            // Set file mới và gọi service xử lý
+            account.setFile(file);
+            accountService.addOrUpdateAccount(account);
+
+            redirectAttributes.addFlashAttribute("message", "Upload avatar thành công!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("message", "Upload avatar thất bại!");
+        }
+
+        return "redirect:/accounts";
     }
 }

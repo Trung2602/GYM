@@ -41,7 +41,7 @@ public class SecurityConfig {
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-            
+
     @Bean
     @Order(0)
     public StandardServletMultipartResolver multipartResolver() {
