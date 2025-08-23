@@ -112,4 +112,9 @@ public class PayCustomerServiceImpl implements PayCustomerService {
                 : Sort.by(sortField).descending();
         return payCustomerRepository.findAll(sort);
     }
+    
+    @Override
+    public List<PayCustomer> getPayCustomerByCustomerId(Integer id) {
+        return this.payCustomerRepository.findByCustomerId_Id(id);
+    }
 }

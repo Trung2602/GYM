@@ -4,6 +4,7 @@
  */
 package com.lht.controllers.api;
 
+import com.lht.dto.PayCustomerDTO;
 import com.lht.pojo.PayCustomer;
 import com.lht.services.PayCustomerService;
 import java.util.List;
@@ -29,9 +30,14 @@ public class ApiPayCustomerController {
     @Autowired
     private PayCustomerService payCustomerService;
 
-    @GetMapping("/pay-customers-all")
-    public ResponseEntity<List<PayCustomer>> getPayCustomersAll() {
-        return ResponseEntity.ok(this.payCustomerService.getAllPayCustomers());
+    @GetMapping("/pay-customers-all/{id}")
+    public ResponseEntity<List<PayCustomerDTO>> getPayCustomersAll(@PathVariable("id") Integer id) {
+        List<PayCustomer> schedules = payCustomerService.getPayCustomerByCustomerId(id);
+        // Map sang DTO
+        List<PayCustomerDTO> dtos = schedules.stream()
+                .map(PayCustomerDTO::new)
+                .toList();
+        return ResponseEntity.ok(dtos);
     }
     
     @GetMapping("/pay-customers-filter")

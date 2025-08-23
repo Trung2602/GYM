@@ -37,7 +37,7 @@ class Api {
   static const String postCustomerSchedule = "$baseUrl/customer-schedule-update";
   static String deleteCustomerSchedule(int id) => "$baseUrl/customer-schedule-delete/$id";
 // ================== PAY CUSTOMER ==================
-  static const String getPayCustomers = "$baseUrl/pay-customer-all";
+  static String getPayCustomersAll(int customerId) => "$baseUrl/pay-customers-all/$customerId";
   static const String getPayCustomersFilter = "$baseUrl/pay-customer-filter";
   static const String getPayCustomersSort = "$baseUrl/pay-customer-sort";
   static String getPayCustomerById(int id) => "$baseUrl/pay-customer/$id";

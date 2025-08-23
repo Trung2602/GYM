@@ -1,8 +1,60 @@
-// pay_customer.dart
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../models/AccountProvider.dart';
+import '../models/PayCustomer.dart';
+import '../models/Account.dart';
+import '../api.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
-class PayCustomer extends StatelessWidget {
-  const PayCustomer({super.key});
+class PayCustomerScreen extends StatefulWidget {
+  const PayCustomerScreen({super.key});
+
+  @override
+  State<PayCustomerScreen> createState() => _PayCustomerScreenState();
+}
+
+class _PayCustomerScreenState extends State<PayCustomerScreen> {
+  List<PayCustomerModel> payList = [];
+  bool loading = true;
+
+  Account? account;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    account = Provider.of<AccountProvider>(context).account;
+
+    fetchPayCustomers();
+  }
+
+  Future<void> fetchPayCustomers() async {
+    setState(() {
+      loading = true;
+    });
+
+    try {
+      final url = Api.getPayCustomersAll(account!.id);
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        payList = data.map((e) => PayCustomerModel.fromJson(e)).toList();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Lỗi khi tải dữ liệu: ${response.statusCode}')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Lỗi: $e')),
+      );
+    }
+
+    setState(() {
+      loading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,68 +70,50 @@ class PayCustomer extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Thông tin thanh toán",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            Card(
+        child: loading
+            ? const Center(child: CircularProgressIndicator())
+            : payList.isEmpty
+            ? const Center(
+          child: Text(
+            'Chưa có thanh toán nào',
+            style: TextStyle(color: Colors.white),
+          ),
+        )
+            : ListView.builder(
+          itemCount: payList.length,
+          itemBuilder: (context, index) {
+            final pay = payList[index];
+            return Card(
               color: Colors.white.withOpacity(0.08),
-              shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15)),
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Text(
-                      "Gói tập: Premium Galactic",
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+                      "Gói tập: ${pay.planName}",
+                      style: const TextStyle(
+                          color: Colors.white, fontSize: 16),
                     ),
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                     Text(
-                      "Giá: 1.200.000 VND/tháng",
-                      style: TextStyle(color: Colors.white70, fontSize: 14),
+                      "Giá: ${pay.price} VND",
+                      style: const TextStyle(
+                          color: Colors.white70, fontSize: 14),
                     ),
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                     Text(
-                      "Ngày hết hạn: 30/09/2025",
-                      style: TextStyle(color: Colors.white70, fontSize: 14),
+                      "Ngày đóng: ${pay.date}",
+                      style: const TextStyle(
+                          color: Colors.white70, fontSize: 14),
                     ),
                   ],
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  // Xử lý thanh toán
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text('Chức năng thanh toán đang được phát triển...')),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFFD740),
-                  foregroundColor: Colors.black,
-                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                ),
-                child: const Text(
-                  "Thanh Toán Ngay",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-          ],
+            );
+          },
         ),
       ),
     );

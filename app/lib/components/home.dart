@@ -55,7 +55,7 @@ class _HomeState extends State<Home> {
       _pages = [
         const _DashboardScreen(),
         const CustomerScheduleScreen(),
-        const PayCustomer(),
+        const PayCustomerScreen(),
         const Profile(),
       ];
     } else if (savedAccount!.role == 'Staff') {
