@@ -1,26 +1,26 @@
 class Account {
   final int id;
   final String username;
-  final String? password; // có thể null
+  final String password;
   final String name;
   final DateTime? birthday;
-  final bool? gender;
+  final bool gender;
   final String role;
   final String mail;
   final String avatar;
-  final bool? isActive;
+  final bool isActive;
 
   Account({
     required this.id,
     required this.username,
-    this.password,
+    required this.password,
     required this.name,
-    this.birthday,
-    this.gender,
+    required this.birthday,
+    required this.gender,
     required this.role,
     required this.mail,
     required this.avatar,
-    this.isActive,
+    required this.isActive,
   });
 
   factory Account.fromJson(Map<String, dynamic> json) {

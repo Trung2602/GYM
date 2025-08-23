@@ -1,7 +1,6 @@
 // home.dart
 import 'package:flutter/material.dart';
-import 'package:gym/models/AccountProvider.dart';
-import 'package:gym/models/Shift.dart';
+
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../services/auth_service.dart';
@@ -12,6 +11,8 @@ import '../api.dart';
 // Import models
 import '../models/Account.dart';
 import '../models/Plan.dart';
+import 'package:gym/models/AccountProvider.dart';
+import 'package:gym/models/Shift.dart';
 // Import các màn hình con sau này
 import 'profile.dart';
 import 'day_off.dart';

@@ -4,6 +4,8 @@
  */
 package com.lht.services.impl;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.lht.pojo.Account;
 import com.lht.pojo.Admin;
 import com.lht.pojo.Customer;
@@ -17,6 +19,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.GrantedAuthority;
@@ -53,6 +58,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    private Cloudinary cloudinary;
 
     @Override
     public List<Account> getAllAccounts() {
@@ -109,7 +117,57 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account addOrUpdateAccount(Account a) {
-        return accountRepository.save(a);
+        Account currentAccount = null;
+
+        if (a.getId() != null) {
+            // Tìm account có tồn tại không: Có -> uppdate // Không -> add
+            currentAccount = this.accountRepository.findById(a.getId())
+                    .orElse(null);
+        }
+
+        // Xử lý password
+        if (a.getId() == null) {
+            // Trường hợp thêm mới
+            if (a.getRole() == null || a.getRole().isEmpty()) {
+                a.setRole("Customer");
+            }
+            a.setPassword(this.passwordEncoder.encode(a.getPassword()));
+        } else {
+            // Trường hợp update
+            if (a.getPassword() != null && !a.getPassword().isEmpty()) {
+                // Nếu người dùng truyền password mới → encode lại
+                a.setPassword(this.passwordEncoder.encode(a.getPassword()));
+            } else if (currentAccount != null) {
+                // Nếu không nhập password mới → giữ password cũ
+                a.setPassword(currentAccount.getPassword());
+            }
+        }
+
+        // Xử lý avatar
+        if (a.getFile() != null && !a.getFile().isEmpty()) {
+            try {
+                Map res = cloudinary.uploader().upload(a.getFile().getBytes(),
+                        ObjectUtils.asMap("resource_type", "auto"));
+                a.setAvatar(res.get("secure_url").toString());
+            } catch (IOException ex) {
+                Logger.getLogger(AccountServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            if (currentAccount != null) {
+                // Nếu update mà không đổi ảnh
+                a.setAvatar(currentAccount.getAvatar());
+            } else {
+                // Nếu tạo mới mà không có ảnh
+                a.setAvatar("/images/image1.png");
+            }
+        }
+
+        try {
+            return accountRepository.save(a);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @Override
@@ -162,11 +220,11 @@ public class AccountServiceImpl implements AccountService {
         }
         Set<GrantedAuthority> authorities = new HashSet<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_" + acc.getRole()));
-        Boolean accountNonExpired  = true;
+        Boolean accountNonExpired = true;
         if ("Customer".equals(acc.getRole())) {
             Customer customer = customerService.getCustomerById(acc.getId());
             if (customer.getExpiryDate() != null && customer.getExpiryDate().before(new Date())) {
-                accountNonExpired  = false; // đã hết hạn
+                accountNonExpired = false; // đã hết hạn
             }
         }
 
@@ -174,7 +232,7 @@ public class AccountServiceImpl implements AccountService {
                 acc.getUsername(), //username
                 acc.getPassword(), //password
                 acc.getIsActive(), //enabled: có được kich hoạt chưa
-                accountNonExpired , //expired: hết hạn chưa
+                accountNonExpired, //expired: hết hạn chưa
                 true,
                 true,
                 authorities);

@@ -19,6 +19,8 @@ public class AccountDTO {
     private Boolean gender;
     private Boolean isActive;
 
+    public AccountDTO() { }
+
     // Constructor từ entity Account
     public AccountDTO(Account acc) {
         if (acc != null) {
@@ -33,6 +35,21 @@ public class AccountDTO {
             this.gender = acc.getGender();
             this.isActive = acc.getIsActive();
         }
+    }
+
+    public Account toEntity() {
+        Account acc = new Account();
+        acc.setId(this.id);
+        acc.setUsername(this.username);
+        acc.setPassword(this.password);
+        acc.setRole(this.role);
+        acc.setName(this.name);
+        acc.setMail(this.mail);
+        acc.setAvatar(this.avatar);
+        acc.setBirthday(this.birthday);
+        acc.setGender(this.gender);
+        acc.setIsActive(this.isActive);
+        return acc;
     }
 
     // Getter & Setter
@@ -59,7 +76,7 @@ public class AccountDTO {
     public void setPassword(String password) {
         this.password = password;
     }
-    
+
     public String getRole() {
         return role;
     }

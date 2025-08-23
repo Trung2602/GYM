@@ -4,6 +4,9 @@ class Api {
   static const String login = "$baseUrl/login";
   static const String me = "$baseUrl/account/me";
   static const String register = "$baseUrl/register-customer";
+  static const String verifyPassword = "$baseUrl/verify-password";
+  static const String accountUpdate = "$baseUrl/account/update";
+  static const String changePassword = "$baseUrl/change-password";
   // ================== FACILITY ==================
   static const String getFacilities = "$baseUrl/facilities-all";
   static const String getFacilitiesFilter = "$baseUrl/facilities-filter";

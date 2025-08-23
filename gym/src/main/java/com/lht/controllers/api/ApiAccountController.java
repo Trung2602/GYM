@@ -20,12 +20,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -66,10 +69,36 @@ public class ApiAccountController {
     }
 
     // POST /api/account
-    @PostMapping("/account/addOrUpdate")
-    public ResponseEntity<Account> addOrUpdateAccount(@RequestBody Account account) {
-        Account saved = accountService.addOrUpdateAccount(account);
-        return ResponseEntity.ok(saved);
+    @PostMapping("/account/update")
+    public ResponseEntity<Account> updateAccount(@ModelAttribute("account") Account account,
+            @RequestPart(value = "image", required = false) MultipartFile file) {
+        if (account == null || account.getId() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        // Load đúng entity từ DB
+        Account acc = accountService.getAccountById(account.getId());
+        if (acc == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Copy dữ liệu từ client sang entity trong DB
+        acc.setName(account.getName());
+        acc.setMail(account.getMail());
+        acc.setBirthday(account.getBirthday());
+        acc.setGender(account.getGender());
+        acc.setRole(account.getRole());
+        acc.setIsActive(account.getIsActive());
+
+        if (account.getPassword() != null && !account.getPassword().isEmpty()) {
+            acc.setPassword(account.getPassword()); // service sẽ encode lại
+        }
+
+        if (file != null) {
+            acc.setFile(file); // xử lý upload trong service
+        }
+
+        return ResponseEntity.ok(accountService.addOrUpdateAccount(acc));
     }
 
     // DELETE /api/account/{id}
@@ -153,7 +182,7 @@ public class ApiAccountController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Mật khẩu cũ không đúng");
         }
 
-        account.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        account.setPassword(request.getNewPassword());
         accountService.addOrUpdateAccount(account); // lưu vào DB
 
         return ResponseEntity.ok("Mật khẩu đã được cập nhật thành công");

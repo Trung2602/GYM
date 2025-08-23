@@ -8,31 +8,20 @@ class Staff extends Account {
   final String facility;
 
   Staff({
-    required int id,
-    required String username,
-    String? password,
-    required String name,
-    DateTime? birthday,
-    bool? gender,
-    required String role,
-    required String mail,
-    required String avatar,
-    bool? isActive,
+    required super.id,
+    required super.username,
+    required String super.password,
+    required super.name,
+    required super.birthday,
+    required bool super.gender,
+    required super.role,
+    required super.mail,
+    required super.avatar,
+    required bool super.isActive,
     this.createdDate,
     required this.staffType,
     required this.facility,
-  }) : super(
-    id: id,
-    username: username,
-    password: password,
-    name: name,
-    birthday: birthday,
-    gender: gender,
-    role: role,
-    mail: mail,
-    avatar: avatar,
-    isActive: isActive,
-  );
+  });
 
   factory Staff.fromJson(Map<String, dynamic> json) {
     return Staff(

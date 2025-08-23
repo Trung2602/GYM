@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
 import '../models/Account.dart';
 import '../models/AccountProvider.dart';
-
+import '../api.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
@@ -45,7 +48,7 @@ class _Profile extends State<Profile> {
     nameController = TextEditingController(text: account?.name ?? '');
     mailController = TextEditingController(text: account?.mail ?? '');
     avatarController = TextEditingController(text: account?.avatar ?? '');
-    passwordController = TextEditingController(text: account?.password ?? '');
+    passwordController = TextEditingController(text:'');
     birthday = account?.birthday;
     gender = account?.gender ?? true;
     role = account?.role ?? "Customer";
@@ -68,67 +71,104 @@ class _Profile extends State<Profile> {
 
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text("Xác nhận mật khẩu"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (errorText != null) // chỉ hiện khi có lỗi
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: Text(
-                  errorText!,
-                  style: const TextStyle(color: Colors.red),
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setState) {
+            return AlertDialog(
+              title: const Text("Xác nhận mật khẩu"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (errorText != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Text(errorText!, style: const TextStyle(color: Colors.red)),
+                    ),
+                  TextField(
+                    controller: passwordController,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      labelText: "Nhập mật khẩu",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  child: const Text("Hủy"),
+                  onPressed: () => Navigator.pop(ctx),
                 ),
-              ),
-            TextField(
-              controller: passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(
-                labelText: "Nhập mật khẩu",
-                border: OutlineInputBorder(),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            child: const Text("Hủy"),
-            onPressed: () => Navigator.pop(ctx),
-          ),
-          ElevatedButton(
-            child: const Text("Lưu"),
-            onPressed: () {
-              final password = passwordController.text.trim();
+                ElevatedButton(
+                  child: const Text("Lưu"),
+                  onPressed: () async {
+                    final password = passwordController.text.trim();
+                    if (password.isEmpty) {
+                      setState(() => errorText = "Vui lòng nhập mật khẩu");
+                      return;
+                    }
 
-              if (password.isEmpty) {
-                setState(() {
-                  errorText = "Vui lòng nhập mật khẩu";
-                });
-                return;
-              }
+                    try {
+                      // verify password
+                      final verifyRes = await http.post(
+                        Uri.parse(Api.verifyPassword),
+                        headers: {"Content-Type": "application/json"},
+                        body: jsonEncode({
+                          "username": account?.username,
+                          "password": password,
+                        }),
+                      );
 
-              if (password != account?.password) { // ✅ so với password trong account
-                setState(() {
-                  errorText = "Mật khẩu không chính xác";
-                });
-                return;
-              }
+                      if (verifyRes.statusCode != 200) {
+                        setState(() => errorText = verifyRes.body);
+                        return;
+                      }
 
-              // ✅ TODO: Gọi API update profile ở đây
-              Navigator.pop(ctx); // đóng dialog
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Thông tin đã được lưu")),
-              );
-            },
-          ),
-        ],
-      ),
+                      // update account
+                      final uri = Uri.parse(Api.accountUpdate);
+                      final request = http.MultipartRequest('POST', uri);
+
+                      request.fields['id'] = account.id.toString();
+                      request.fields['name'] = nameController.text;
+                      request.fields['mail'] = mailController.text;
+                      request.fields['gender'] = gender.toString();
+                      request.fields['isActive'] = isActive.toString();
+                      if (birthday != null) request.fields['birthday'] = birthday!.toIso8601String();
+                      if (passwordController.text.isNotEmpty) request.fields['password'] = passwordController.text;
+
+                      if (_selectedImage != null) {
+                        request.files.add(await http.MultipartFile.fromPath('image', _selectedImage!.path));
+                      }
+
+                      final streamedRes = await request.send();
+                      final res = await http.Response.fromStream(streamedRes);
+
+
+                      if (res.statusCode == 200) {
+                        final updatedAcc = Account.fromJson(jsonDecode(res.body));
+                        Provider.of<AccountProvider>(context, listen: false).setAccount(updatedAcc);
+                        Navigator.pop(ctx);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Thông tin đã được lưu")),
+                        );
+                      } else {
+                        setState(() => errorText = res.body);
+                      }
+                    } catch (e) {
+                      setState(() => errorText = "Lỗi kết nối: $e");
+                    }
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 
+
   void _showChangePasswordDialog(BuildContext context, Account account) {
-    final account = Provider.of<AccountProvider>(context, listen: false).account;
     final oldPassController = TextEditingController();
     final newPassController = TextEditingController();
     final confirmPassController = TextEditingController();
@@ -196,23 +236,35 @@ class _Profile extends State<Profile> {
                       return;
                     }
 
-                    if (oldPass != account?.password) {
-                      setState(() => errorText = "Mật khẩu cũ không chính xác");
-                      return;
-                    }
-
                     if (newPass != confirmPass) {
-                      setState(() => errorText = "Mật khẩu mới không khớp");
+                      setState(() => errorText = "Xác nhận mật khẩu mới không khớp");
                       return;
                     }
 
-                    // ✅ TODO: Gọi API đổi mật khẩu
-                    // await ApiService.changePassword(account.id, newPass);
+                    try {
+                      // API change-password
+                      final changeRes = await http.post(
+                        Uri.parse(Api.changePassword),
+                        headers: {"Content-Type": "application/json"},
+                        body: jsonEncode({
+                          "username": account?.username,
+                          "password": oldPass,
+                          "newPassword": newPass,
+                        }),
+                      );
 
-                    Navigator.pop(ctx);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Mật khẩu đã được đổi")),
-                    );
+                      if (changeRes.statusCode == 200) {
+                        Navigator.pop(ctx);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Mật khẩu đã được đổi thành công")),
+                        );
+                      } else {
+                        setState(() => errorText = changeRes.body);
+                      }
+                    } catch (e) {
+                      setState(() => errorText = "Lỗi kết nối: $e");
+                    }
+
                   },
                 ),
               ],
@@ -313,7 +365,7 @@ class _Profile extends State<Profile> {
                       // Username
                       TextField(
                         controller: usernameController,
-                        //readOnly: true,
+                        readOnly: true,
                         decoration: const InputDecoration(
                           labelText: "Username",
                           prefixIcon: Icon(Icons.account_circle),
@@ -417,11 +469,7 @@ class _Profile extends State<Profile> {
                           // Nút lưu thông tin
                           ElevatedButton.icon(
                             onPressed: () {
-                              // TODO: gọi API update account KHÔNG đổi mật khẩu
                               _showSaveDialog(context);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Hồ sơ đã được lưu!')),
-                              );
                             },
                             icon: const Icon(Icons.save, color: Colors.white),
                             label: const Text("Lưu Thay Đổi"),

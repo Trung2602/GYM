@@ -69,7 +69,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (c.getExpiryDate() == null) {
             Calendar cal = Calendar.getInstance();
             cal.setTime(new Date()); // ngày hiện tại
-            cal.add(Calendar.MONTH, 1); // cộng 1 tháng
+            cal.add(Calendar.DATE, 1); // cộng 1 ngày
             c.setExpiryDate(cal.getTime()); // set lại
         }
         Customer currentAccount = null;

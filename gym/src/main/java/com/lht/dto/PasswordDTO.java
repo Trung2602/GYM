@@ -43,7 +43,7 @@ public class PasswordDTO {
     }
     
     public String getNewPassword() {
-        return password;
+        return newPassword;
     }
 
     public void setNewPassword(String newPassword) {
