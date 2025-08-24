@@ -136,6 +136,11 @@ public class SalaryServiceImpl implements SalaryService {
         return salaryRepository.findAll(sort);
     }
 
+    @Override
+    public List<Salary> getSalaryByStaffId(Integer id) {
+        return this.salaryRepository.findByStaffId_Id(id);
+    }
+    
 //=================================================================================
     @Override
     public void calculateMonthlySalaries(int month, int year) {

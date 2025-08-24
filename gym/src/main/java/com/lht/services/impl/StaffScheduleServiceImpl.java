@@ -119,4 +119,9 @@ public class StaffScheduleServiceImpl implements StaffScheduleService {
                 .sum();
     }
 
+    @Override
+    public List<StaffSchedule> getStaffScheduleByStaffId(Integer id) {
+        return this.staffScheduleRepository.findByStaffId_Id(id);
+    }
+    
 }

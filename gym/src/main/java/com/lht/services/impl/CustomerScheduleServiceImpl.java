@@ -57,7 +57,7 @@ public class CustomerScheduleServiceImpl implements CustomerScheduleService {
             }
 
             if (params.containsKey("staffId")) {
-                predicates.add(cb.equal(root.get("staff").get("id"), Integer.parseInt(params.get("staffId"))));
+                predicates.add(cb.equal(root.get("staffId").get("id"), Integer.parseInt(params.get("staffId"))));
             }
 
             if (params.containsKey("facilityId")) {
@@ -123,5 +123,10 @@ public class CustomerScheduleServiceImpl implements CustomerScheduleService {
     @Override
     public List<CustomerSchedule> getCustomerScheduleByCustomerId(Integer id) {
         return this.customerScheduleRepository.findByCustomerId_Id(id);
+    }
+    
+    @Override
+    public List<CustomerSchedule> getCustomerScheduleByStaffId(Integer id) {
+        return this.customerScheduleRepository.findByStaffId_Id(id);
     }
 }

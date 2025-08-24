@@ -4,6 +4,7 @@
  */
 package com.lht.controllers.api;
 
+import com.lht.dto.StaffScheduleDTO;
 import com.lht.pojo.StaffSchedule;
 import com.lht.services.StaffScheduleService;
 import java.util.List;
@@ -26,14 +27,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api")
 public class ApiStaffScheduleController {
+
     @Autowired
     private StaffScheduleService staffScheduleService;
 
-    @GetMapping("/staff-schedules-all")
-    public ResponseEntity<List<StaffSchedule>> getStaffSchedulesAll() {
-        return ResponseEntity.ok(this.staffScheduleService.getAllStaffSchedules());
+    @GetMapping("/staff-schedules-all/{id}") // lấy tất cả lịch làm việc theo staffId
+    public ResponseEntity<List<StaffScheduleDTO>> getStaffSchedules(@PathVariable("id") Integer id) {
+        List<StaffSchedule> schedules = staffScheduleService.getStaffScheduleByStaffId(id);
+        List<StaffScheduleDTO> dtos = schedules.stream()
+                .map(StaffScheduleDTO::new) // constructor DTO nhận entity
+                .toList();
+        return ResponseEntity.ok(dtos);
     }
-    
+
     @GetMapping("/staff-schedules-filter")
     public ResponseEntity<List<StaffSchedule>> getStaffSchedulesFilter(@RequestParam Map<String, String> params) {
         return ResponseEntity.ok(this.staffScheduleService.getStaffSchedules(params));
@@ -45,9 +51,9 @@ public class ApiStaffScheduleController {
             @RequestParam(defaultValue = "asc") String sortDir) {
         return ResponseEntity.ok(this.staffScheduleService.getAllSort(sortField, sortDir));
     }
-    
+
     @GetMapping("staff-schedule/{id}")
-    public ResponseEntity<StaffSchedule> getStaffScheduleById(@PathVariable("id") Integer id) {   
+    public ResponseEntity<StaffSchedule> getStaffScheduleById(@PathVariable("id") Integer id) {
         if (id == null) {
             return ResponseEntity.notFound().build();
         }

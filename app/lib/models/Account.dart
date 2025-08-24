@@ -9,6 +9,7 @@ class Account {
   final String mail;
   final String avatar;
   final bool isActive;
+  final String? type;
 
   Account({
     required this.id,
@@ -21,6 +22,7 @@ class Account {
     required this.mail,
     required this.avatar,
     required this.isActive,
+    this.type,
   });
 
   factory Account.fromJson(Map<String, dynamic> json) {
@@ -35,6 +37,7 @@ class Account {
       mail: json['mail'] ?? '',
       avatar: json['avatar'] ?? '',
       isActive: json['isActive'],
+      type: json['type'],
     );
   }
 
@@ -50,6 +53,7 @@ class Account {
       'mail': mail,
       'avatar': avatar,
       'isActive': isActive,
+      'type': type,
     };
   }
 }

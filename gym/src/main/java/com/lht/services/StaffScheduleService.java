@@ -27,4 +27,6 @@ public interface StaffScheduleService {
     public List<StaffSchedule> getAllSort(String sortField, String sortDir);
     
     public double sumDurationByStaffIdAndMonthYear(int staffId, int month, int year);
+    
+    public List<StaffSchedule> getStaffScheduleByStaffId(Integer id);
 }

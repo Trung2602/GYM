@@ -9,6 +9,8 @@ import com.lht.dto.PasswordDTO;
 import com.lht.pojo.Account;
 import com.lht.services.AccountService;
 import com.lht.jwt.JwtUtils;
+import com.lht.services.CustomerService;
+import com.lht.services.StaffService;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
@@ -43,6 +45,12 @@ public class ApiAccountController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private StaffService staffService;
+    
+    @Autowired
+    private CustomerService customerService;
 
     // GET /api/accounts?username=abc&isActive=true
     @GetMapping("/accounts")
@@ -153,8 +161,11 @@ public class ApiAccountController {
         if (acc == null) {
             return ResponseEntity.notFound().build();
         }
-
-        return ResponseEntity.ok(new AccountDTO(acc));
+        AccountDTO dto = new AccountDTO(acc);
+        if("Staff".equals(acc.getRole())){
+            dto.setType(staffService.getStaffById(acc.getId()).getStaffTypeId().getName());
+        }
+        return ResponseEntity.ok(dto);
     }
 
     @PostMapping("/verify-password")

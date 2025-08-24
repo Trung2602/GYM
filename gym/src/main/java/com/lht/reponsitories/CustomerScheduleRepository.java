@@ -15,4 +15,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  */
 public interface CustomerScheduleRepository extends JpaRepository<CustomerSchedule, Integer>, JpaSpecificationExecutor<CustomerSchedule>{
     List<CustomerSchedule> findByCustomerId_Id(Integer customerId);
+    List<CustomerSchedule> findByStaffId_Id(Integer staffId);
 }

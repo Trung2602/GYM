@@ -30,9 +30,8 @@ class Api {
 
   // ==================///// CUSTOMER \\\\\==================
   // ================== CUSTOMER SCHEDULE ==================
-  static String getCustomerSchedulesAll(int customerId) => "$baseUrl/customer-schedules-all/$customerId";
+  static String getCustomerSchedulesAll(int accountId) => "$baseUrl/customer-schedules-all/$accountId";
   static const String getCustomerSchedulesFilter = "$baseUrl/customer-schedules-filter";
-  static const String getCustomerSchedulesSort = "$baseUrl/customer-schedules-sort";
   static String getCustomerScheduleById(int id) => "$baseUrl/customer-schedule/$id";
   static const String postCustomerSchedule = "$baseUrl/customer-schedule-update";
   static String deleteCustomerSchedule(int id) => "$baseUrl/customer-schedule-delete/$id";
@@ -56,21 +55,20 @@ class Api {
   static String getStaffTypeById(int id) => "$baseUrl/staff-type/$id";
   static const String postStaffType = "$baseUrl/staff-type-update";
   // ================== STAFF SCHEDULE ==================
-  static const String getStaffSchedules = "$baseUrl/staff-schedules-all";
+  static String getStaffSchedules(int staffId) => "$baseUrl/staff-schedules-all/$staffId";
   static const String getStaffSchedulesFilter = "$baseUrl/staff-schedules-filter";
   static const String getStaffSchedulesSort = "$baseUrl/staff-schedules-sort";
   static String getStaffScheduleById(int id) => "$baseUrl/staff-schedule/$id";
   static const String postStaffSchedule = "$baseUrl/staff-schedule-update";
   static String deleteStaffSchedule(int id) => "$baseUrl/staff-schedule-delete/$id";
   // ================== STAFF DAY OFF ==================
-  static const String getStaffDayOffs = "$baseUrl/staff-day-offs-all";
+  static String getStaffDayOffs(int staffId) => "$baseUrl/staff-day-offs-all/$staffId";
   static const String getStaffDayOffsFilter = "$baseUrl/staff-day-offs-filter";
-  static const String getStaffDayOffsSort = "$baseUrl/staff-day-offs-sort";
   static String getStaffDayOffById(int id) => "$baseUrl/staff-day-off/$id";
   static const String postStaffDayOff = "$baseUrl/staff-day-off-update";
   static String deleteStaffDayOff(int id) => "$baseUrl/staff-day-off-delete/$id";
   // ================== SALARY ==================
-  static const String getSalaries = "$baseUrl/salaries-all";
+  static String getSalaries(int staffId) => "$baseUrl/salaries-all/$staffId";
   static const String getSalariesFilter = "$baseUrl/salaries-filter";
   static const String getSalariesSort = "$baseUrl/salaries-sort";
   static String getSalaryById(int id) => "$baseUrl/salary/$id";

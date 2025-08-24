@@ -27,4 +27,6 @@ public interface SalaryService {
     public List<Salary> getAllSort(String sortField, String sortDir);
 
     public void calculateMonthlySalaries(int month, int year);
+    
+    public List<Salary> getSalaryByStaffId(Integer id);
 }

@@ -50,12 +50,7 @@ public class StaffDayOffServiceImpl implements StaffDayOffService {
             List<Predicate> predicates = new ArrayList<>();
             // Lọc theo staffId
             if (params.containsKey("staffId")) {
-                try {
-                    Integer staffId = Integer.parseInt(params.get("staffId"));
-                    predicates.add(cb.equal(root.get("staffId").get("id"), staffId));
-                } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException("Invalid staffId. Expected a number.");
-                }
+                predicates.add(cb.equal(root.get("staffId").get("id"), Integer.parseInt(params.get("staffId"))));
             }
 
             // Lọc theo date
@@ -68,6 +63,20 @@ public class StaffDayOffServiceImpl implements StaffDayOffService {
                     throw new IllegalArgumentException("Invalid date format. Expected yyyy-MM-dd.");
                 }
             }
+
+            if (params.containsKey("month") && params.containsKey("year")) {
+                try {
+                    int month = Integer.parseInt(params.get("month"));
+                    int year = Integer.parseInt(params.get("year"));
+                    // tính range từ đầu -> cuối tháng
+                    LocalDate start = LocalDate.of(year, month, 1);
+                    LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
+                    predicates.add(cb.between(root.get("date"), java.sql.Date.valueOf(start), java.sql.Date.valueOf(end)));
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Invalid month/year. Expected a number.");
+                }
+            }
+
             return cb.and(predicates.toArray(new Predicate[0]));
         };
         return staffDayOffRepository.findAll(spec);
@@ -75,7 +84,10 @@ public class StaffDayOffServiceImpl implements StaffDayOffService {
 
     @Override
     public StaffDayOff addOrUpdateStaffDayOff(StaffDayOff s) {
-        return staffDayOffRepository.save(s);
+        if (s.getStaffId().getStaffTypeId().getName().equals("Fulltime")) {
+            return staffDayOffRepository.save(s);
+        }
+        return null;
     }
 
     @Override
@@ -105,5 +117,10 @@ public class StaffDayOffServiceImpl implements StaffDayOffService {
                     return localDate.getMonthValue() == month && localDate.getYear() == year;
                 })
                 .count();
+    }
+
+    @Override
+    public List<StaffDayOff> getStaffDayOffByStaffId(Integer id) {
+        return this.staffDayOffRepository.findByStaffId_Id(id);
     }
 }

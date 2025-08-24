@@ -18,8 +18,10 @@ public class AccountDTO {
     private Date birthday;
     private Boolean gender;
     private Boolean isActive;
+    private String type;
 
-    public AccountDTO() { }
+    public AccountDTO() {
+    }
 
     // Constructor từ entity Account
     public AccountDTO(Account acc) {
@@ -34,6 +36,7 @@ public class AccountDTO {
             this.birthday = acc.getBirthday();
             this.gender = acc.getGender();
             this.isActive = acc.getIsActive();
+            this.type = null;
         }
     }
 
@@ -133,4 +136,11 @@ public class AccountDTO {
         this.isActive = isActive;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }

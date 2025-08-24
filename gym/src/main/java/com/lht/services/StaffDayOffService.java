@@ -27,4 +27,6 @@ public interface StaffDayOffService {
     public List<StaffDayOff> getAllSort(String sortField, String sortDir);
     
     public int countByStaffIdAndMonthYear(int staffId, int month, int year);
+    
+    public List<StaffDayOff> getStaffDayOffByStaffId(Integer id);
 }

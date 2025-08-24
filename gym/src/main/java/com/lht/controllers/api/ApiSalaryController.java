@@ -4,6 +4,7 @@
  */
 package com.lht.controllers.api;
 
+import com.lht.dto.SalaryDTO;
 import com.lht.pojo.Salary;
 import com.lht.services.SalaryService;
 import java.util.List;
@@ -26,14 +27,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api")
 public class ApiSalaryController {
+
     @Autowired
     private SalaryService salaryService;
 
-    @GetMapping("/salaries-all")
-    public ResponseEntity<List<Salary>> getSalariesAll() {
-        return ResponseEntity.ok(this.salaryService.getAllSalaries());
+    @GetMapping("/salaries-all/{id}") // lấy tất cả Salary theo staffId
+    public ResponseEntity<List<SalaryDTO>> getSalariesAll(@PathVariable("id") Integer id) {
+        List<Salary> salaries = salaryService.getSalaryByStaffId(id); // service filter theo staffId
+        List<SalaryDTO> dtos = salaries.stream()
+                .map(SalaryDTO::new)
+                .toList();
+        return ResponseEntity.ok(dtos);
     }
-    
+
     @GetMapping("/salaries-filter")
     public ResponseEntity<List<Salary>> getSalariesFilter(@RequestParam Map<String, String> params) {
         return ResponseEntity.ok(this.salaryService.getSalaries(params));
@@ -45,9 +51,9 @@ public class ApiSalaryController {
             @RequestParam(defaultValue = "asc") String sortDir) {
         return ResponseEntity.ok(this.salaryService.getAllSort(sortField, sortDir));
     }
-    
+
     @GetMapping("salary/{id}")
-    public ResponseEntity<Salary> getSalaryById(@PathVariable("id") Integer id) {   
+    public ResponseEntity<Salary> getSalaryById(@PathVariable("id") Integer id) {
         if (id == null) {
             return ResponseEntity.notFound().build();
         }

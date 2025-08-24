@@ -1,15 +1,15 @@
 import 'dart:convert';
 
 class Shift {
-  final int? id;
-  final String? name;
+  final int id;
+  final String name;
   final DateTime? checkin;
   final DateTime? checkout;
   final double? duration;
 
   Shift({
-    this.id,
-    this.name,
+    required this.id,
+    required this.name,
     this.checkin,
     this.checkout,
     this.duration,
@@ -18,8 +18,8 @@ class Shift {
   /// Parse từ JSON (API trả về)
   factory Shift.fromJson(Map<String, dynamic> json) {
     return Shift(
-      id: json['id'] as int?,
-      name: json['name'] as String?,
+      id: json['id'] as int,
+      name: json['name'] as String,
       checkin: json['checkin'] != null ? DateTime.parse("1970-01-01T${json['checkin']}") : null,
       checkout: json['checkout'] != null ? DateTime.parse("1970-01-01T${json['checkout']}") : null,
       duration: (json['duration'] as num?)?.toDouble(),

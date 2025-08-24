@@ -5,9 +5,11 @@
 package com.lht.controllers.api;
 
 import com.lht.dto.CustomerScheduleDTO;
+import com.lht.pojo.Account;
 import com.lht.pojo.Customer;
 import com.lht.pojo.CustomerSchedule;
 import com.lht.pojo.Staff;
+import com.lht.services.AccountService;
 import com.lht.services.CustomerScheduleService;
 import com.lht.services.CustomerService;
 import com.lht.services.StaffService;
@@ -45,9 +47,38 @@ public class ApiCustomerScheduleController {
     @Autowired
     private StaffService staffService;
 
-    @GetMapping("/customer-schedules-all/{id}") //lấy theo custotmerId
-    public ResponseEntity<List<CustomerScheduleDTO>> getCustomerSchedulesAll(@PathVariable("id") Integer id) {
+    @Autowired
+    private AccountService accountService;
+
+    @GetMapping("/customer-schedules-customer/{id}") //lấy theo custotmerId
+    public ResponseEntity<List<CustomerScheduleDTO>> getCustomerSchedulesCustomer(@PathVariable("id") Integer id) {
         List<CustomerSchedule> schedules = customerScheduleService.getCustomerScheduleByCustomerId(id);
+        // Map sang DTO
+        List<CustomerScheduleDTO> dtos = schedules.stream()
+                .map(CustomerScheduleDTO::new)
+                .toList();
+        return ResponseEntity.ok(dtos);
+    }
+
+    @GetMapping("/customer-schedules-staff/{id}") //lấy theo staffId
+    public ResponseEntity<List<CustomerScheduleDTO>> getCustomerSchedulesStaff(@PathVariable("id") Integer id) {
+        List<CustomerSchedule> schedules = customerScheduleService.getCustomerScheduleByStaffId(id);
+        // Map sang DTO
+        List<CustomerScheduleDTO> dtos = schedules.stream()
+                .map(CustomerScheduleDTO::new)
+                .toList();
+        return ResponseEntity.ok(dtos);
+    }
+
+    @GetMapping("/customer-schedules-all/{id}") //lấy theo accountId
+    public ResponseEntity<List<CustomerScheduleDTO>> getCustomerScheduleAll(@PathVariable("id") Integer id) {
+        List<CustomerSchedule> schedules;
+        if (accountService.getAccountById(id).getRole().equals("Customer")) {
+            schedules = customerScheduleService.getCustomerScheduleByCustomerId(id);
+        } else {
+            schedules = customerScheduleService.getCustomerScheduleByStaffId(id);
+        }
+
         // Map sang DTO
         List<CustomerScheduleDTO> dtos = schedules.stream()
                 .map(CustomerScheduleDTO::new)
@@ -57,6 +88,27 @@ public class ApiCustomerScheduleController {
 
     @GetMapping("/customer-schedules-filter")
     public ResponseEntity<List<CustomerScheduleDTO>> getCustomerSchedulesFilter(@RequestParam Map<String, String> params) {
+
+        // Lấy accountId từ params
+        String accountIdStr = params.get("accountId");
+        if (accountIdStr == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        Integer accountId = Integer.valueOf(accountIdStr);
+
+        // Lấy Account từ id
+        Account acc = accountService.getAccountById(accountId);
+        if (acc == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Tùy role mà thêm param cho service
+        if (acc.getRole().equals("Customer")) {
+            params.put("customerId", accountIdStr);
+        } else if (acc.getRole().equals("Staff")) {
+            params.put("staffId", accountIdStr);
+        }
+
         List<CustomerSchedule> schedules = this.customerScheduleService.getCustomerSchedules(params);
         List<CustomerScheduleDTO> dtos = schedules.stream()
                 .map(CustomerScheduleDTO::new)

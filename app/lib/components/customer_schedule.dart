@@ -79,7 +79,7 @@ class _CustomerScheduleScreenState extends State<CustomerScheduleScreen> {
     }
   }
   Future<List<CustomerSchedule>> getCustomerSchedulesFilter(String date) async {
-    final uri = Uri.parse("${Api.getCustomerSchedulesFilter}?customerId=${account!.id}&date=$date");
+    final uri = Uri.parse("${Api.getCustomerSchedulesFilter}?accountId=${account!.id}&date=$date");
     final response = await http.get(uri);
 
     if (response.statusCode == 200) {
@@ -104,18 +104,6 @@ class _CustomerScheduleScreenState extends State<CustomerScheduleScreen> {
       throw Exception("Failed to post schedule: ${response.body}");
     }
   }
-  // Future<List<Staff>> getStaffs() async {
-  //   final uri = Uri.parse("${Api.getStaffs}");
-  //   final response = await http.get(uri);
-  //
-  //   if (response.statusCode == 200) {
-  //     final List<dynamic> data = jsonDecode(response.body);
-  //     return data.map((e) => Staff.fromJson(e)).toList();
-  //   } else {
-  //     throw Exception("Failed to load staffs");
-  //   }
-  // }
-
 
   @override
   Widget build(BuildContext context) {
@@ -265,8 +253,9 @@ class _CustomerScheduleScreenState extends State<CustomerScheduleScreen> {
                 const SizedBox(width: 10),
                 // Nút Add Schedule
                 _selectedDay == null ||
-                    _selectedDay!.isBefore(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day))
-                    ? SizedBox.shrink() // Ẩn nút nếu chưa chọn ngày hoặc ngày quá khứ
+                    _selectedDay!.isBefore(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day)) ||
+                    account?.role == "Staff"
+                    ? const SizedBox.shrink() // Ẩn nút nếu chưa chọn ngày hoặc ngày quá khứ
                     : ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.greenAccent),
                   onPressed: () async {

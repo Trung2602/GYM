@@ -61,9 +61,12 @@ class _HomeState extends State<Home> {
     } else if (savedAccount!.role == 'Staff') {
       _pages = [
         const _DashboardScreen(),
-        const StaffSchedule(),
-        const Salary(),
-        const DayOff(),
+        const CustomerScheduleScreen(),
+        if (savedAccount!.type == 'Fulltime')
+          const DayOff()
+        else
+          const StaffSchedule(),
+        const SalaryScreen(),
         const Profile(),
       ];
     }
@@ -93,24 +96,31 @@ class _HomeState extends State<Home> {
         ),
       ];
     } else if (savedAccount!.role == 'Staff') {
-      return const [
-        BottomNavigationBarItem(
+      return [
+        const BottomNavigationBarItem(
           icon: Icon(Icons.dashboard),
           label: "Trang chủ",
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.access_time),
-          label: "Ca Làm",
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.calendar_today),
+          label: "Lịch Trình",
         ),
-        BottomNavigationBarItem(
+        // Thêm "Xin nghỉ" hoặc "Ca làm" tuỳ type
+        if (savedAccount!.type == "Fulltime")
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.beach_access),
+            label: "Xin Nghỉ",
+          )
+        else
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.access_time),
+            label: "Ca Làm",
+          ),
+        const BottomNavigationBarItem(
           icon: Icon(Icons.attach_money),
           label: "Bảng Lương",
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.beach_access),
-          label: "Xin Nghỉ",
-        ),
-        BottomNavigationBarItem(
+        const BottomNavigationBarItem(
           icon: Icon(Icons.person_pin),
           label: "Hồ Sơ",
         ),
@@ -129,34 +139,39 @@ class _HomeState extends State<Home> {
   List<Widget> _buildDrawerItems() {
     if (savedAccount == null) return [];
 
-    List<Map<String, dynamic>> menuItems = [];
+    List<Map<String, dynamic>> menuItems = [
+      {'icon': Icons.dashboard, 'title': 'Bảng Điều Khiển Thiên Hà', 'index': 0},
+      {'icon': Icons.calendar_today, 'title': 'Lịch Trình', 'index': 1},
+    ];
 
     if (savedAccount!.role == 'Customer') {
-      menuItems = [
-        {'icon': Icons.dashboard, 'title': 'Bảng Điều Khiển Thiên Hà', 'index': 0},
-        {'icon': Icons.person, 'title': 'Hồ Sơ Phi Hành Gia', 'index': 2},
-        {'icon': Icons.fitness_center, 'title': 'Gói Tập', 'index': -1},
-        {'icon': Icons.message, 'title': 'Liên Lạc', 'index': -1},
-        {'icon': Icons.calendar_today, 'title': 'Lịch Trình', 'index': -1},
-      ];
+      menuItems.addAll([
+        {'icon': Icons.calendar_today, 'title': 'Lịch Trình', 'index': 1},
+        {'icon': Icons.payment, 'title': 'Thanh Toán', 'index': 2},
+        {'icon': Icons.person, 'title': 'Hồ Sơ Phi Hành Gia', 'index': 3},
+      ]);
     } else if (savedAccount!.role == 'Staff') {
-      menuItems = [
-        {'icon': Icons.dashboard, 'title': 'Bảng Điều Khiển Thiên Hà', 'index': 0},
-        {'icon': Icons.person, 'title': 'Hồ Sơ Phi Hành Gia', 'index': 2},
-        {'icon': Icons.access_time, 'title': 'Ca Làm', 'index': -1},
-        {'icon': Icons.beach_access, 'title': 'Xin Nghỉ', 'index': -1},
-        {'icon': Icons.attach_money, 'title': 'Bảng Lương', 'index': -1},
-        {'icon': Icons.message, 'title': 'Liên Lạc', 'index': -1},
-      ];
+      menuItems.addAll([
+        savedAccount!.type == "Fulltime"
+          ? {'icon': Icons.beach_access, 'title': 'Xin Nghỉ', 'index': 2}
+          : {'icon': Icons.access_time,  'title': 'Ca Làm',   'index': 2},
+        {'icon': Icons.attach_money, 'title': 'Bảng Lương', 'index': 3},
+        {'icon': Icons.person, 'title': 'Hồ Sơ Phi Hành Gia', 'index': 4},
+      ]);
     }
 
-    // Thêm luôn logout
-    menuItems.add({'icon': Icons.logout, 'title': 'Rời khỏi Trạm Vũ Trụ', 'index': -1});
+    // Các mục chung
+    menuItems.addAll([
+      {'icon': Icons.message, 'title': 'Liên Lạc', 'index': -1},
+      {'icon': Icons.logout, 'title': 'Rời khỏi Trạm Vũ Trụ', 'index': -1},
+    ]);
 
     return menuItems.map((item) {
       return _buildDrawerItem(item['icon'], item['title'], item['index']);
     }).toList();
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -262,7 +277,7 @@ class _HomeState extends State<Home> {
       ),
       onTap: () {
         Navigator.pop(context); // Đóng Drawer
-        if (index != -1) { // Nếu là một item có trong BottomNavigationBar, chuyển trang
+        if (index >= 0) { // Nếu là một item có trong BottomNavigationBar, chuyển trang
           _onItemTapped(index);
         } else {
           switch (title) {
@@ -274,34 +289,12 @@ class _HomeState extends State<Home> {
                 );
               });
               break;
-
-            // case 'Bảng Điều Khiển Thiên Hà':
-            //   Navigator.push(
-            //     context,
-            //     MaterialPageRoute(builder: (context) => const Dashboard()),
-            //   );
-            //   break;
-
-            // case 'Hồ Sơ Phi Hành Gia':
-            //   Navigator.push(
-            //     context,
-            //     MaterialPageRoute(builder: (context) => const Profile()),
-            //   );
-            //   break;
-
             case 'Liên Lạc':
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const ChatPage()),
               );
               break;
-
-            case 'Gói Tập':
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Tính năng Gói Tập đang được phát triển...')),
-              );
-              break;
-
             default:
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text('Chức năng "$title" đang được phát triển...')),
@@ -434,54 +427,90 @@ class _DashboardScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 30), // Giảm khoảng cách
 
-                // Phần "Khóa học đang diễn ra" hoặc "Lịch trình hôm nay"
-                const Text(
-                  "Gói tập",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      shadows: [
-                        Shadow(blurRadius: 5.0, color: Colors.black54, offset: Offset(1, 1))
-                      ]
+                // Phần "Gói tập" hoặc "Ca làm việc"
+                Text(
+                  account?.role == "Customer" ? "Gói tập" : "Ca làm việc",
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    shadows: [
+                      Shadow(blurRadius: 5.0, color: Colors.black54, offset: Offset(1, 1))
+                    ],
                   ),
                 ),
-                const SizedBox(height: 10), // Giảm khoảng cách
-                FutureBuilder<List<Plan>>(
-                  future: fetchPlans(),
+                const SizedBox(height: 10),
+
+                FutureBuilder(
+                  future: account?.role == "Customer" ? fetchPlans() : fetchShifts(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
                       return Center(child: Text("Lỗi: ${snapshot.error}"));
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return const Center(child: Text("Không có kế hoạch nào"));
+                    } else if (!snapshot.hasData || (snapshot.data as List).isEmpty) {
+                      return const Center(child: Text("Không có dữ liệu"));
                     }
 
-                    final plans = snapshot.data!;
-
-                    return ListView.builder(
-                      padding: const EdgeInsets.all(12),
-                      itemCount: plans.length,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(), //không cho ListView tự cuộn
-                      itemBuilder: (context, index) {
-                        final plan = plans[index];
-                        return Column(
-                          children: [
-                            _buildScheduleCard(
-                              plan.name,                // title
-                              plan.description ?? "",   // subtitle
-                              "Thời hạn: ${plan.durationDays.toString()} ngày",// time (bạn có thể format lại)
-                              "Giá: ${plan.price} VNĐ", // description
-                            ),
-                            const SizedBox(height: 10),
-                          ],
-                        );
-                      },
-                    );
-                  }
+                    if (account?.role == "Customer") {
+                      // Hiển thị danh sách gói tập
+                      final plans = snapshot.data as List<Plan>;
+                      return ListView.builder(
+                        padding: const EdgeInsets.all(12),
+                        itemCount: plans.length,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          final plan = plans[index];
+                          return Column(
+                            children: [
+                              _buildScheduleCard(
+                                plan.name,
+                                plan.description ?? "",
+                                "Thời hạn: ${plan.durationDays} ngày",
+                                "Giá: ${plan.price} VNĐ",
+                              ),
+                              const SizedBox(height: 10),
+                            ],
+                          );
+                        },
+                      );
+                    } else if (account?.type == "Fulltime"){
+                      return const Padding(
+                        padding: EdgeInsets.all(12.0),
+                        child: Text(
+                          "Thời gian: 05:00 - 21:00\nChúc bạn một ngày mới tốt lành!",
+                          style: TextStyle(color: Colors.white70, fontSize: 16),
+                        ),
+                      );
+                    } else {
+                      // Hiển thị lịch ca làm việc
+                      final shifts = snapshot.data as List<Shift>;
+                      return ListView.builder(
+                        padding: const EdgeInsets.all(12),
+                        itemCount: shifts.length,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          final shift = shifts[index];
+                          return Column(
+                            children: [
+                              _buildScheduleCard(
+                                shift.name,
+                                "Ca: ${shift.name}",
+                                "Giờ: ${shift.checkin != null ? shift.checkin!.toIso8601String().substring(11, 16) : '--:--'}"
+                                    " - ${shift.checkout != null ? shift.checkout!.toIso8601String().substring(11, 16) : '--:--'}",
+                                "Tổng thời gian: ${shift.duration ?? 0} giờ",
+                              ),
+                              const SizedBox(height: 10),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  },
                 ),
+
 
                 const SizedBox(height: 30), // Giảm khoảng cách cuối cùng
               ],

@@ -27,4 +27,6 @@ public interface CustomerScheduleService {
     public List<CustomerSchedule> getAllSort(String sortField, String sortDir);
     
     public List<CustomerSchedule> getCustomerScheduleByCustomerId(Integer id);
+    
+    public List<CustomerSchedule> getCustomerScheduleByStaffId(Integer id);
 }
