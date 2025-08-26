@@ -7,6 +7,10 @@ package com.lht.controllers;
 import com.lht.pojo.Shift;
 import com.lht.services.ShiftService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,10 +34,22 @@ public class ShiftController {
     @GetMapping("/shifts")
     public String listShifts(Model model,
             @RequestParam(defaultValue = "id") String sortField,
-            @RequestParam(defaultValue = "asc") String sortDir) {
-        model.addAttribute("shifts", shiftService.getAllSort(sortField, sortDir));
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+
+        Page<Shift> shiftPage = shiftService.getAllSort(sortField, sortDir, page, size);
+
+        model.addAttribute("shifts", shiftPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", shiftPage.getTotalPages());
+        model.addAttribute("totalItems", shiftPage.getTotalElements());
+        model.addAttribute("pageSize", size);
+
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDir", sortDir);
+        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
+
         return "shifts";
     }
 

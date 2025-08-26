@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -100,10 +103,13 @@ public class StaffTypeServiceImpl implements StaffTypeService {
     }
 
     @Override
-    public List<StaffType> getAllSort(String sortField, String sortDir) {
+    public Page<StaffType> getAllSort(String sortField, String sortDir, int page, int size) {
         Sort sort = sortDir.equalsIgnoreCase("asc")
                 ? Sort.by(sortField).ascending()
                 : Sort.by(sortField).descending();
-        return staffTypeRepository.findAll(sort);
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return staffTypeRepository.findAll(pageable);
     }
+
 }

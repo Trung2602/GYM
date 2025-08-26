@@ -18,6 +18,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -113,18 +116,19 @@ public class CustomerScheduleServiceImpl implements CustomerScheduleService {
     }
 
     @Override
-    public List<CustomerSchedule> getAllSort(String sortField, String sortDir) {
+    public Page<CustomerSchedule> getAllSort(String sortField, String sortDir, int page, int size) {
         Sort sort = sortDir.equalsIgnoreCase("asc")
                 ? Sort.by(sortField).ascending()
                 : Sort.by(sortField).descending();
-        return customerScheduleRepository.findAll(sort);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return customerScheduleRepository.findAll(pageable);
     }
 
     @Override
     public List<CustomerSchedule> getCustomerScheduleByCustomerId(Integer id) {
         return this.customerScheduleRepository.findByCustomerId_Id(id);
     }
-    
+
     @Override
     public List<CustomerSchedule> getCustomerScheduleByStaffId(Integer id) {
         return this.customerScheduleRepository.findByStaffId_Id(id);

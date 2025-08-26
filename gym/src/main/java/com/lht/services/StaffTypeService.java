@@ -7,6 +7,7 @@ package com.lht.services;
 import com.lht.pojo.StaffType;
 import java.util.List;
 import java.util.Map;
+import org.springframework.data.domain.Page;
 
 /**
  *
@@ -24,5 +25,5 @@ public interface StaffTypeService {
 
     boolean deleteStaffType(Integer id);
     
-    public List<StaffType> getAllSort(String sortField, String sortDir);
+    public Page<StaffType> getAllSort(String sortField, String sortDir, int page, int size);
 }

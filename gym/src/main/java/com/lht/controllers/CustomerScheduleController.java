@@ -10,6 +10,7 @@ import com.lht.services.CustomerService;
 import com.lht.services.FacilityService;
 import com.lht.services.StaffService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,23 +30,35 @@ public class CustomerScheduleController {
 
     @Autowired
     private CustomerScheduleService customerScheduleService;
-    
+
     @Autowired
     private CustomerService customerService;
-    
+
     @Autowired
     private StaffService staffService;
-    
+
     @Autowired
     private FacilityService facilityService;
 
     @GetMapping("/customer-schedules")
     public String listCustomerSchedules(Model model,
             @RequestParam(defaultValue = "id") String sortField,
-            @RequestParam(defaultValue = "asc") String sortDir) {
-        model.addAttribute("customerSchedules", customerScheduleService.getAllSort(sortField, sortDir));
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Page<CustomerSchedule> schedulePage = customerScheduleService.getAllSort(sortField, sortDir, page, size);
+
+        model.addAttribute("customerSchedules", schedulePage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", schedulePage.getTotalPages());
+        model.addAttribute("totalItems", schedulePage.getTotalElements());
+        model.addAttribute("pageSize", size);
+        
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDir", sortDir);
+        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
+
         return "customer-schedules";
     }
 

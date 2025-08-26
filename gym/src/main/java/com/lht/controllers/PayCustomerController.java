@@ -9,6 +9,7 @@ import com.lht.services.CustomerService;
 import com.lht.services.PayCustomerService;
 import com.lht.services.PlanService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -28,20 +29,30 @@ public class PayCustomerController {
 
     @Autowired
     private PayCustomerService payCustomerService;
-    
+
     @Autowired
     private CustomerService customerService;
-    
+
     @Autowired
     private PlanService planService;
 
     @GetMapping("/pay-customers")
     public String listPayCustomers(Model model,
             @RequestParam(defaultValue = "id") String sortField,
-            @RequestParam(defaultValue = "asc") String sortDir) {
-        model.addAttribute("payCustomers", payCustomerService.getAllSort(sortField, sortDir));
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "3") int size) {
+        Page<PayCustomer> payCustomerPage = payCustomerService.getAllSort(sortField, sortDir, page, size);
+
+        model.addAttribute("payCustomers", payCustomerPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", payCustomerPage.getTotalPages());
+        model.addAttribute("totalItems", payCustomerPage.getTotalElements());
+        model.addAttribute("pageSize", size);
+
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDir", sortDir);
+        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
         return "pay-customers";
     }
 

@@ -7,6 +7,7 @@ package com.lht.services;
 import com.lht.pojo.PayCustomer;
 import java.util.List;
 import java.util.Map;
+import org.springframework.data.domain.Page;
 
 /**
  *
@@ -24,7 +25,7 @@ public interface PayCustomerService {
 
     boolean deletePayCustomer(Integer id);
     
-    public List<PayCustomer> getAllSort(String sortField, String sortDir);
+    public Page<PayCustomer> getAllSort(String sortField, String sortDir, int page, int size);
     
     public List<PayCustomer> getPayCustomerByCustomerId(Integer id);
 }

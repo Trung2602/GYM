@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -69,7 +72,7 @@ public class ShiftServiceImpl implements ShiftService {
                     throw new IllegalArgumentException("Invalid duration, expected a number");
                 }
             }
-            
+
             return cb.and(predicates.toArray(new Predicate[0]));
         };
         return shiftRepository.findAll(spec);
@@ -90,10 +93,13 @@ public class ShiftServiceImpl implements ShiftService {
     }
 
     @Override
-    public List<Shift> getAllSort(String sortField, String sortDir) {
+    public Page<Shift> getAllSort(String sortField, String sortDir, int page, int size) {
         Sort sort = sortDir.equalsIgnoreCase("asc")
                 ? Sort.by(sortField).ascending()
                 : Sort.by(sortField).descending();
-        return shiftRepository.findAll(sort);
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return shiftRepository.findAll(pageable);
     }
+
 }

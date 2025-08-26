@@ -7,6 +7,7 @@ package com.lht.services;
 import com.lht.pojo.CustomerSchedule;
 import java.util.List;
 import java.util.Map;
+import org.springframework.data.domain.Page;
 
 /**
  *
@@ -24,7 +25,7 @@ public interface CustomerScheduleService {
 
     boolean deleteCustomerSchedule(Integer id);
     
-    public List<CustomerSchedule> getAllSort(String sortField, String sortDir);
+    public Page<CustomerSchedule> getAllSort(String sortField, String sortDir, int page, int size);
     
     public List<CustomerSchedule> getCustomerScheduleByCustomerId(Integer id);
     

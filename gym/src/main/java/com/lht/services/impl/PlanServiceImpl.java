@@ -15,6 +15,9 @@ import java.util.List;
 import java.util.Map;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -101,10 +104,12 @@ public class PlanServiceImpl implements PlanService {
     }
 
     @Override
-    public List<Plan> getAllSort(String sortField, String sortDir) {
+    public Page<Plan> getAllSort(String sortField, String sortDir, int page, int size) {
         Sort sort = sortDir.equalsIgnoreCase("asc")
                 ? Sort.by(sortField).ascending()
                 : Sort.by(sortField).descending();
-        return planRepository.findAll(sort);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        
+        return planRepository.findAll(pageable);
     }
 }

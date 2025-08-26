@@ -7,6 +7,7 @@ package com.lht.controllers;
 import com.lht.pojo.StaffType;
 import com.lht.services.StaffTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,10 +31,22 @@ public class StaffTypeController {
     @GetMapping("/staff-types")
     public String listStaffTypes(Model model,
             @RequestParam(defaultValue = "id") String sortField,
-            @RequestParam(defaultValue = "asc") String sortDir) {
-        model.addAttribute("staffTypes", staffTypeService.getAllSort(sortField, sortDir));
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "2") int size) {
+
+        Page<StaffType> staffTypePage = staffTypeService.getAllSort(sortField, sortDir, page, size);
+
+        model.addAttribute("staffTypes", staffTypePage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", staffTypePage.getTotalPages());
+        model.addAttribute("totalItems", staffTypePage.getTotalElements());
+        model.addAttribute("pageSize", size);
+
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDir", sortDir);
+        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
+
         return "staff-types";
     }
 

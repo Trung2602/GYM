@@ -9,6 +9,7 @@ import com.lht.services.PlanService;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,11 +34,22 @@ public class PlanController {
     @GetMapping("/plans")
     public String listPlans(Model model,
             @RequestParam(defaultValue = "id") String sortField,
-            @RequestParam(defaultValue = "asc") String sortDir) {
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "2") int size) {
         //Nếu không có sortField thì sẽ sắp xếp theo "id" và thứ tự tăng dần "asc"
-        model.addAttribute("plans", planService.getAllSort(sortField, sortDir));
+        Page<Plan> planPage = planService.getAllSort(sortField, sortDir, page, size);
+
+        model.addAttribute("plans", planPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", planPage.getTotalPages());
+        model.addAttribute("totalItems", planPage.getTotalElements());
+        model.addAttribute("pageSize", size);
+
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDir", sortDir);
+        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
+        
         return "plans";
     }
 

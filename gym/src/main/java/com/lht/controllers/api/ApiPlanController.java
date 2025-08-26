@@ -9,6 +9,7 @@ import com.lht.services.PlanService;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,10 +42,12 @@ public class ApiPlanController {
     }
 
     @GetMapping("plans-sort")
-    public ResponseEntity<List<Plan>> getPlansSort(
+    public ResponseEntity<Page<Plan>> getPlansSort(
             @RequestParam(defaultValue = "id") String sortField,
-            @RequestParam(defaultValue = "asc") String sortDir) {
-        return ResponseEntity.ok(this.planService.getAllSort(sortField, sortDir));
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "2") int size) {
+        return ResponseEntity.ok(this.planService.getAllSort(sortField, sortDir,page,size));
     }
     
     @GetMapping("plan/{id}")

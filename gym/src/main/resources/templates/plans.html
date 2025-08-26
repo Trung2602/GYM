@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="UTF-8">
-        <title>Quản lý gói tập</title>
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý gói tập</title>
     <th:block th:replace="~{init :: styles}"></th:block>
 </head>
 <body>
@@ -24,7 +24,7 @@
 
             <div class="table-responsive"> 
                 <table class="table table-bordered"> 
-                    <thead> 
+                    <thead class="table-dark">
                         <tr>
                             <th>STT</th>
                             <th>Tên gói</th>
@@ -50,15 +50,13 @@
                     </thead>
                     <tbody>
                         <tr th:each="p, stt : ${plans}">
-                            <td th:text="${stt.count}" class="text-center"></td> <!-- Biến stt đếm vòng lặp như i trong for -->
+                            <td th:text="${stt.count}" class="text-center"></td>
                             <td th:text="${p.name}"></td>
                             <td th:text="${#numbers.formatInteger(p.price, 3, 'COMMA')} + ' VND'"></td>
-                            <!-- #numbers: Gọi utility object của Thymeleaf để xử lý số -->
-                            <!-- COMMA: dấu phẩy ngăn cách hàng nghìn -->
                             <td th:text="${p.durationDays}" class="text-center"></td> 
                             <td th:text="${p.description}"></td>
                             <td class="text-center">
-                                <a th:href="@{'/plan/add?id='+${p.id} }" class="btn btn-warning btn-sm me-2"> 
+                                <a th:href="@{'/plan/add?id='+${p.id}}" class="btn btn-warning btn-sm me-2"> 
                                     <i class="bi bi-pencil-square"></i> Sửa
                                 </a>
                                 <form th:action="@{'/plan-delete/'+${p.id}}" method="post" style="display:inline">
@@ -76,6 +74,37 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- Pagination -->
+            <nav aria-label="Page navigation" th:if="${totalPages > 1}">
+                <ul class="pagination justify-content-center">
+                    <!-- Nút Previous -->
+                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/plans(page=${currentPage-1}, size=${pageSize}, sortField=${sortField}, sortDir=${sortDir})}">
+                            << 
+                        </a>
+                    </li>
+
+                    <!-- Các số trang -->
+                    <li class="page-item"
+                        th:each="i : ${#numbers.sequence(0, totalPages-1)}"
+                        th:classappend="${i == currentPage} ? 'active'">
+                        <a class="page-link"
+                           th:text="${i+1}"
+                           th:href="@{/plans(page=${i}, size=${pageSize}, sortField=${sortField}, sortDir=${sortDir})}">
+                        </a>
+                    </li>
+
+                    <!-- Nút Next -->
+                    <li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/plans(page=${currentPage+1}, size=${pageSize}, sortField=${sortField}, sortDir=${sortDir})}">
+                            >> 
+                        </a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
 </div>
