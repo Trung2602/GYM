@@ -10,6 +10,7 @@ class Account {
   final String avatar;
   final bool isActive;
   final String? type;
+  final DateTime? expiryDate;
 
   Account({
     required this.id,
@@ -23,6 +24,7 @@ class Account {
     required this.avatar,
     required this.isActive,
     this.type,
+    this.expiryDate,
   });
 
   factory Account.fromJson(Map<String, dynamic> json) {
@@ -38,6 +40,7 @@ class Account {
       avatar: json['avatar'] ?? '',
       isActive: json['isActive'],
       type: json['type'],
+      expiryDate: json['expiryDate'] != null ? DateTime.parse(json['expiryDate']) : null,
     );
   }
 
@@ -54,6 +57,7 @@ class Account {
       'avatar': avatar,
       'isActive': isActive,
       'type': type,
+      'expiryDate': expiryDate?.toIso8601String(),
     };
   }
 }

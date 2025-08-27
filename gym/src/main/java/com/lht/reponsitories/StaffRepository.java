@@ -5,6 +5,7 @@
 package com.lht.reponsitories;
 
 import com.lht.pojo.Staff;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -15,4 +16,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  */
 public interface StaffRepository extends JpaRepository<Staff, Integer>, JpaSpecificationExecutor<Staff>{
     Optional<Staff> findByName(String name);
+    List<Staff> findByStaffTypeId_Name(String type);
 }

@@ -7,6 +7,7 @@ package com.lht.services;
 import com.lht.pojo.Salary;
 import java.util.List;
 import java.util.Map;
+import org.springframework.data.domain.Page;
 
 /**
  *
@@ -24,7 +25,7 @@ public interface SalaryService {
 
     boolean deleteSalary(Integer id);
 
-    public List<Salary> getAllSort(String sortField, String sortDir);
+    public Page<Salary> getAllSort(String sortField, String sortDir, int page, int size);
 
     public void calculateMonthlySalaries(int month, int year);
     

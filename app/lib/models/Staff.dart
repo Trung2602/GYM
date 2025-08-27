@@ -36,8 +36,8 @@ class Staff extends Account {
       avatar: json['avatar'] ?? '',
       isActive: json['isActive'],
       createdDate: json['createdDate'] != null ? DateTime.parse(json['createdDate']) : null,
-      staffType: json['staffType'],
-      facility: json['facility'],
+      staffType: json['staffTypeName'],
+      facility: json['facilityName'],
     );
   }
 

@@ -7,6 +7,7 @@ package com.lht.services;
 import com.lht.pojo.Plan;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 
 /**
@@ -26,5 +27,7 @@ public interface PlanService {
     boolean deletePlan(Integer id);
 
     public Page<Plan> getAllSort(String sortField, String sortDir, int page, int size);
+    
+    public Optional<Plan> getPlanByName(String name);
 
 }

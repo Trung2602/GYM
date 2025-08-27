@@ -7,6 +7,7 @@ package com.lht.services;
 import com.lht.pojo.StaffDayOff;
 import java.util.List;
 import java.util.Map;
+import org.springframework.data.domain.Page;
 
 /**
  *
@@ -24,7 +25,7 @@ public interface StaffDayOffService {
 
     boolean deleteStaffDayOff(Integer id);
     
-    public List<StaffDayOff> getAllSort(String sortField, String sortDir);
+    public Page<StaffDayOff> getAllSort(String sortField, String sortDir, int page, int size);
     
     public int countByStaffIdAndMonthYear(int staffId, int month, int year);
     

@@ -35,19 +35,19 @@ public class StaffDTO extends AccountDTO{
         this.createdDate = createdDate;
     }
 
-    public String getFacility() {
+    public String getFacilityName() {
         return facilityName;
     }
 
-    public void setFacility(String facility) {
-        this.facilityName = facility;
+    public void setFacilityName(String facilityName) {
+        this.facilityName = facilityName;
     }
 
-    public String getStaffType() {
+    public String getStaffTypeName() {
         return staffTypeName;
     }
 
-    public void setStaffType(String staffType) {
-        this.staffTypeName = staffType;
+    public void setStaffTypeName(String staffTypeName) {
+        this.staffTypeName = staffTypeName;
     }
 }

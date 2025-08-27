@@ -5,6 +5,8 @@
 package com.lht.services;
 
 import com.lht.pojo.Staff;
+import java.time.LocalTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,4 +28,6 @@ public interface StaffService {
     boolean deleteStaff(Integer id);
     
     public Optional<Staff> getStaffByName(String name);
+    
+    public List<Staff> getWorkingStaffByDateTime(Date date, LocalTime checkIn, LocalTime checkOut);
 }

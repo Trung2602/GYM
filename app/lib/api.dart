@@ -47,7 +47,7 @@ class Api {
   // ==================///// STAFF \\\\\==================
   // ================== STAFF =================
   static const String getStaffs = "$baseUrl/staffs-all";
-
+  static const String getWorkingStaff = "$baseUrl/working-staff";
   // ================== STAFF TYPE ==================
   static const String getStaffTypes = "$baseUrl/staff-type-all";
   static const String getStaffTypesFilter = "$baseUrl/staff-type-filter";

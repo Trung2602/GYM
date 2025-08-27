@@ -8,6 +8,7 @@ import com.lht.pojo.StaffDayOff;
 import com.lht.services.StaffDayOffService;
 import com.lht.services.StaffService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -34,10 +35,21 @@ public class StaffDayOffController {
     @GetMapping("/staff-day-offs")
     public String listStaffDayOffs(Model model,
             @RequestParam(defaultValue = "id") String sortField,
-            @RequestParam(defaultValue = "asc") String sortDir) {
-        model.addAttribute("staffDayOffs", staffDayOffService.getAllSort(sortField, sortDir));
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        Page<StaffDayOff> dayOffPage = staffDayOffService.getAllSort(sortField, sortDir, page, size);
+
+        model.addAttribute("staffDayOffs", dayOffPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", dayOffPage.getTotalPages());
+        model.addAttribute("totalItems", dayOffPage.getTotalElements());
+        model.addAttribute("pageSize", size);
+
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDir", sortDir);
+        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
+        
         return "staff-day-offs";
     }
 

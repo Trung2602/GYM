@@ -65,7 +65,7 @@ class _HomeState extends State<Home> {
         if (savedAccount!.type == 'Fulltime')
           const DayOff()
         else
-          const StaffSchedule(),
+          const StaffScheduleScreen(),
         const SalaryScreen(),
         const Profile(),
       ];

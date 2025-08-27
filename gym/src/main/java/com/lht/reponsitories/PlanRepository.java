@@ -5,6 +5,7 @@
 package com.lht.reponsitories;
 
 import com.lht.pojo.Plan;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -14,4 +15,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  */
 public interface PlanRepository extends JpaRepository<Plan, Integer>, JpaSpecificationExecutor<Plan> {
 
+    Optional<Plan> findByName(String name);
 }

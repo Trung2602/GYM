@@ -263,13 +263,13 @@ class _Profile extends State<Profile> {
 
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/background.jpg'),
-            fit: BoxFit.cover,
-            opacity: 0.7,
-          ),
-        ),
+        // decoration: const BoxDecoration(
+        //   image: DecorationImage(
+        //     image: AssetImage('assets/images/background.jpg'),
+        //     fit: BoxFit.cover,
+        //     opacity: 0.7,
+        //   ),
+        // ),
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Column(

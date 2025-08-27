@@ -9,6 +9,7 @@ import com.lht.services.SalaryService;
 import com.lht.services.StaffDayOffService;
 import com.lht.services.StaffService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -38,10 +39,21 @@ public class SalaryController {
     @GetMapping("/salaries")
     public String listSalaries(Model model,
             @RequestParam(defaultValue = "id") String sortField,
-            @RequestParam(defaultValue = "asc") String sortDir) {
-        model.addAttribute("salaries", salaryService.getAllSort(sortField, sortDir));
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        
+        Page<Salary> salaryPage = salaryService.getAllSort(sortField, sortDir, page, size);
+
+        model.addAttribute("salaries", salaryPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", salaryPage.getTotalPages());
+        model.addAttribute("totalItems", salaryPage.getTotalElements());
+        model.addAttribute("pageSize", size);
+
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDir", sortDir);
+        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
         return "salaries";
     }
 

@@ -19,6 +19,7 @@ public class AccountDTO {
     private Boolean gender;
     private Boolean isActive;
     private String type;
+    private Date expiryDate;
 
     public AccountDTO() {
     }
@@ -37,6 +38,7 @@ public class AccountDTO {
             this.gender = acc.getGender();
             this.isActive = acc.getIsActive();
             this.type = null;
+            this.expiryDate = null;
         }
     }
 
@@ -142,5 +144,13 @@ public class AccountDTO {
 
     public void setType(String type) {
         this.type = type;
+    }
+    
+    public Date getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(Date expiryDate) {
+        this.expiryDate = expiryDate;
     }
 }

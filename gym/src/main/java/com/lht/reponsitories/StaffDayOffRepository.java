@@ -4,7 +4,10 @@
  */
 package com.lht.reponsitories;
 
+import com.lht.pojo.Staff;
 import com.lht.pojo.StaffDayOff;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -16,4 +19,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 public interface StaffDayOffRepository extends JpaRepository<StaffDayOff, Integer>, JpaSpecificationExecutor<StaffDayOff> {
 
     List<StaffDayOff> findByStaffId_Id(Integer staffId);
+    
+    List<StaffDayOff> findByDateAndStaffId_Id(Date date, Integer staffId);
 }

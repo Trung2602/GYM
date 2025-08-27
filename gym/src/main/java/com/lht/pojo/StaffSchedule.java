@@ -55,7 +55,8 @@ public class StaffSchedule implements Serializable {
     @JoinColumn(name = "staff_id", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnoreProperties({"staffScheduleSet"})
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    //@JsonIgnoreProperties({"staffScheduleSet"})
     private Staff staffId;
 
     public StaffSchedule() {

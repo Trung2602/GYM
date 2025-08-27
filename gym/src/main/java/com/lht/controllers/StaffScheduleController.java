@@ -9,6 +9,7 @@ import com.lht.services.ShiftService;
 import com.lht.services.StaffScheduleService;
 import com.lht.services.StaffService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -38,10 +39,20 @@ public class StaffScheduleController {
     @GetMapping("/staff-schedules")
     public String listStaffSchedules(Model model,
             @RequestParam(defaultValue = "id") String sortField,
-            @RequestParam(defaultValue = "asc") String sortDir) {
-        model.addAttribute("staffSchedules", staffScheduleService.getAllSort(sortField, sortDir));
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<StaffSchedule> schedulePage = staffScheduleService.getAllSort(sortField, sortDir, page, size);
+
+        model.addAttribute("staffSchedules", schedulePage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", schedulePage.getTotalPages());
+        model.addAttribute("totalItems", schedulePage.getTotalElements());
+        model.addAttribute("pageSize", size);
+
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDir", sortDir);
+        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
         return "staff-schedules";
     }
 

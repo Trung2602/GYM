@@ -6,14 +6,21 @@ package com.lht.services.impl;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.lht.pojo.Shift;
 import com.lht.pojo.Staff;
+import com.lht.pojo.StaffSchedule;
+import com.lht.reponsitories.StaffDayOffRepository;
 import com.lht.reponsitories.StaffRepository;
+import com.lht.reponsitories.StaffScheduleRepository;
 import com.lht.services.StaffService;
 import jakarta.persistence.criteria.Predicate;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -39,8 +46,14 @@ public class StaffServiceImpl implements StaffService {
     private StaffRepository staffRepository;
     
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private StaffDayOffRepository staffDayOffRepository;
     
+    @Autowired
+    private StaffScheduleRepository staffScheduleRepository;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
     @Autowired
     private Cloudinary cloudinary;
 
@@ -149,13 +162,54 @@ public class StaffServiceImpl implements StaffService {
         }
         return false;
     }
-    
+
     @Override
     public Optional<Staff> getStaffByName(String name) {
         if (name == null || name.isEmpty()) {
             return Optional.empty(); // trả về empty nếu name rỗng
         }
         return this.staffRepository.findByName(name);
+    }
+    
+    private static final LocalTime FULLTIME_START = LocalTime.of(5, 0);
+    private static final LocalTime FULLTIME_END   = LocalTime.of(21, 0);
+
+    public List<Staff> getWorkingStaffByDateTime(Date date, LocalTime checkIn, LocalTime checkOut) {
+        List<Staff> result = new ArrayList<>();
+
+        // Convert java.util.Date -> LocalDate để dễ xử lý
+        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        // 1. Lấy fulltime staff
+        List<Staff> fulltimeStaff = staffRepository.findByStaffTypeId_Name("Fulltime");
+        for (Staff s : fulltimeStaff) {
+            
+            Date utilDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            
+            boolean isOff = !staffDayOffRepository.findByDateAndStaffId_Id(utilDate, s.getId()).isEmpty();
+            boolean validTime = !checkIn.isBefore(FULLTIME_START) && !checkOut.isAfter(FULLTIME_END);
+
+            if (!isOff && validTime) {
+                result.add(s);
+            }
+        }
+
+        // 2. Lấy parttime staff theo schedule
+        List<StaffSchedule> schedules = staffScheduleRepository.findByDate(localDate);
+        for (StaffSchedule sc : schedules) {
+            Shift shift = sc.getShiftId();
+            if (shift != null) {
+                boolean validShift = !checkIn.isBefore(shift.getCheckin()) && !checkOut.isAfter(shift.getCheckout());
+                if (validShift) {
+                    Staff staff = sc.getStaffId();
+                    if (!result.contains(staff)) {
+                        result.add(staff);
+                    }
+                }
+            }
+        }
+
+        return result;
     }
 
 }

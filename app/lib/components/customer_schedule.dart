@@ -32,40 +32,51 @@ class _CustomerScheduleScreenState extends State<CustomerScheduleScreen> {
     super.didChangeDependencies();
     account = Provider.of<AccountProvider>(context).account;
 
-    fetchStaffs();
   }
 
-  Future<void> fetchStaffs() async {
+  Future<void> fetchWorkingStaff({
+    required DateTime date,
+    required TimeOfDay checkIn,
+    required TimeOfDay checkOut,
+  }) async {
+    setState(() {
+      isLoadingStaff = true;
+    });
+
+    // Chuyển TimeOfDay sang string HH:mm:ss
+    String checkInStr = "${checkIn.hour.toString().padLeft(2,'0')}:${checkIn.minute.toString().padLeft(2,'0')}:00";
+    String checkOutStr = "${checkOut.hour.toString().padLeft(2,'0')}:${checkOut.minute.toString().padLeft(2,'0')}:00";
+
+    String dateStr = "${date.year.toString().padLeft(4,'0')}-${date.month.toString().padLeft(2,'0')}-${date.day.toString().padLeft(2,'0')}";
+
+    final uri = Uri.parse("${Api.getWorkingStaff}?date=$dateStr&checkIn=$checkInStr&checkOut=$checkOutStr");
+
     try {
-      final response = await http.get(Uri.parse(Api.getStaffs));
+      final response = await http.get(uri);
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
-
-        // Nếu có class Staff thì parse
         final staffs = data.map((e) => Staff.fromJson(e)).toList();
 
         setState(() {
           staffList = staffs;
-          isLoadingStaff = false;
         });
       } else {
-        setState(() {
-          isLoadingStaff = false;
-        });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Lỗi server: ${response.statusCode}")),
         );
       }
     } catch (e) {
-      setState(() {
-        isLoadingStaff = false;
-      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Lỗi tải danh sách nhân viên: $e")),
       );
+    } finally {
+      setState(() {
+        isLoadingStaff = false;
+      });
     }
   }
+
 
   Future<List<CustomerSchedule>> getCustomerSchedulesAll(String date) async {
     final uri = Uri.parse("${Api.getCustomerSchedulesAll(account!.id)}?date=$date");
@@ -108,13 +119,13 @@ class _CustomerScheduleScreenState extends State<CustomerScheduleScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/images/background.jpg'),
-          fit: BoxFit.cover,
-          opacity: 0.7,
-        ),
-      ),
+      // decoration: const BoxDecoration(
+      //   image: DecorationImage(
+      //     image: AssetImage('assets/images/background.jpg'),
+      //     fit: BoxFit.cover,
+      //     opacity: 0.7,
+      //   ),
+      // ),
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -251,6 +262,7 @@ class _CustomerScheduleScreenState extends State<CustomerScheduleScreen> {
                 ),
 
                 const SizedBox(width: 10),
+                //=====================================================
                 // Nút Add Schedule
                 _selectedDay == null ||
                     _selectedDay!.isBefore(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day)) ||
@@ -262,21 +274,44 @@ class _CustomerScheduleScreenState extends State<CustomerScheduleScreen> {
                     // Chọn giờ checkin
                     final TimeOfDay? selectedCheckin = await showTimePicker(
                       context: context,
-                      initialTime: TimeOfDay(hour: 8, minute: 0),
+                      initialTime: const TimeOfDay(hour: 8, minute: 0),
                     );
-                    if (selectedCheckin == null) return; // Người dùng hủy chọn
+                    if (selectedCheckin == null) return;
 
                     // Chọn giờ checkout
                     final TimeOfDay? selectedCheckout = await showTimePicker(
                       context: context,
                       initialTime: TimeOfDay(hour: selectedCheckin.hour + 1, minute: selectedCheckin.minute),
                     );
-                    if (selectedCheckout == null) return; // Người dùng hủy chọn
+                    if (selectedCheckout == null) return;
 
-                    // Chọn nhân viên bằng dialog
+                    // Lấy danh sách nhân viên đang làm việc
+                    await fetchWorkingStaff(
+                      date: _selectedDay!,
+                      checkIn: selectedCheckin,
+                      checkOut: selectedCheckout,
+                    );
+
+                    // Mở dialog chọn nhân viên từ danh sách working staff
                     Staff? selectedStaff = await showDialog<Staff>(
                       context: context,
                       builder: (context) {
+                        if (isLoadingStaff) {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+                        if (staffList.isEmpty) {
+                          return AlertDialog(
+                            title: const Text("Không có nhân viên trống"),
+                            content: const Text("Không có nhân viên nào làm việc trong khoảng thời gian này."),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: const Text("OK"),
+                              ),
+                            ],
+                          );
+                        }
+
                         return AlertDialog(
                           title: const Text("Chọn nhân viên"),
                           content: SizedBox(
@@ -299,16 +334,17 @@ class _CustomerScheduleScreenState extends State<CustomerScheduleScreen> {
                       },
                     );
 
-                    if (selectedStaff == null) return; // Không chọn nhân viên thì thôi
+                    if (selectedStaff == null) return;
 
                     final dateStr = "${_selectedDay!.year.toString().padLeft(4,'0')}-${_selectedDay!.month.toString().padLeft(2,'0')}-${_selectedDay!.day.toString().padLeft(2,'0')}";
+
                     try {
                       final newSchedule = CustomerSchedule(
                         customerName: account!.name,
                         date: _selectedDay!,
                         checkin: selectedCheckin,
                         checkout: selectedCheckout,
-                        staffName: "Lư Hiếu Trung",
+                        staffName: selectedStaff.name, // dùng nhân viên đã chọn
                       );
 
                       final posted = await postCustomerSchedule(newSchedule);
@@ -323,7 +359,6 @@ class _CustomerScheduleScreenState extends State<CustomerScheduleScreen> {
                         schedulesForSelectedDay = schedules;
                       });
                     } catch (e) {
-                      // Nếu backend trả về lỗi 409 (Conflict)
                       if (e.toString().contains("409")) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text("Lịch trùng ngày và giờ checkin, không thể tạo")),

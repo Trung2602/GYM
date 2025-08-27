@@ -164,6 +164,8 @@ public class ApiAccountController {
         AccountDTO dto = new AccountDTO(acc);
         if("Staff".equals(acc.getRole())){
             dto.setType(staffService.getStaffById(acc.getId()).getStaffTypeId().getName());
+        }else{
+            dto.setExpiryDate(customerService.getCustomerById(acc.getId()).getExpiryDate());
         }
         return ResponseEntity.ok(dto);
     }

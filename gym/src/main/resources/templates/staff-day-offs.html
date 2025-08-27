@@ -62,6 +62,38 @@
                     </tbody>
                 </table>
             </div>
+            
+            <!-- Pagination -->
+            <nav aria-label="Page navigation" th:if="${totalPages > 1}">
+                <ul class="pagination justify-content-center">
+                    <!-- Nút Previous -->
+                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/staff-day-offs(page=${currentPage-1}, size=${pageSize}, sortField=${sortField}, sortDir=${sortDir})}">
+                            << 
+                        </a>
+                    </li>
+
+                    <!-- Các số trang -->
+                    <li class="page-item"
+                        th:each="i : ${#numbers.sequence(0, totalPages-1)}"
+                        th:classappend="${i == currentPage} ? 'active'">
+                        <a class="page-link"
+                           th:text="${i+1}"
+                           th:href="@{/staff-day-offs(page=${i}, size=${pageSize}, sortField=${sortField}, sortDir=${sortDir})}">
+                        </a>
+                    </li>
+
+                    <!-- Nút Next -->
+                    <li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/staff-day-offs(page=${currentPage+1}, size=${pageSize}, sortField=${sortField}, sortDir=${sortDir})}">
+                            >> 
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
         </div>
     </div>
 
