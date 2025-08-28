@@ -26,4 +26,6 @@ public interface CustomerService {
     boolean deleteCustomer(Integer id);
 
     public Optional<Customer> getCustomerByName(String name);
+    
+    public Optional<Customer> getCustomerByUsername(String username);
 }

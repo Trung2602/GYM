@@ -28,4 +28,8 @@ public interface PayCustomerService {
     public Page<PayCustomer> getAllSort(String sortField, String sortDir, int page, int size);
     
     public List<PayCustomer> getPayCustomerByCustomerId(Integer id);
+    
+    public void updatePaymentStatus(PayCustomer pay, String txnRef, String status, String bankCode);
+    
+    public void updateExpiryDate(Integer payCustomerId);
 }

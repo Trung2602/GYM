@@ -206,15 +206,18 @@ CREATE TABLE Pay_customer (
     date DATE NOT NULL,
     plan_id INT NOT NULL,
     customer_id INT NOT NULL,
+    txn_ref VARCHAR(50) NULL,
+    bank_code VARCHAR(20) NULL,
+    status VARCHAR(20) NULL,
     FOREIGN KEY (plan_id) REFERENCES Plan(id),
     FOREIGN KEY (customer_id) REFERENCES Customer(id) on delete cascade
 );
 
-INSERT INTO Pay_customer (date, plan_id, customer_id) VALUES
-('2025-05-10', 1, 5),
-('2025-06-02', 2, 6),
-('2025-06-10', 5, 5),
-('2025-07-02', 2, 6);
+INSERT INTO Pay_customer (date, plan_id, customer_id, txn_ref, bank_code, status) VALUES
+('2025-05-10', 1, 5, 'TXN001', 'NCB', 'SUCCESS'),
+('2025-06-02', 2, 6, 'TXN002', 'BIDV', 'SUCCESS'),
+('2025-06-10', 5, 5, 'TXN003', 'BIDV', 'FAILED'),
+('2025-07-02', 2, 6, 'TXN004', 'ACB', 'PENDING');
 
 -- Lịch tập khách hàng
 CREATE TABLE Customer_schedule (

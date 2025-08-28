@@ -6,6 +6,7 @@ package com.lht.reponsitories;
 
 import com.lht.pojo.PayCustomer;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -15,4 +16,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  */
 public interface PayCustomerRepository extends JpaRepository<PayCustomer, Integer>, JpaSpecificationExecutor<PayCustomer>{
     List<PayCustomer> findByCustomerId_Id(Integer customerId);
+    Optional<PayCustomer> findByTxnRef(String txnRef);
 }

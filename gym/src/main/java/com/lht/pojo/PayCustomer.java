@@ -47,6 +47,12 @@ public class PayCustomer implements Serializable {
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date date;
+    @Column(name = "txn_ref")
+    private String txnRef;   // thêm mã giao dịch VNPAY
+    @Column(name = "bank_code")
+    private String bankCode; // optional, ngân hàng
+    @Column(name = "status")
+    private String status;   // PENDING / SUCCESS / FAILED
     
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -95,6 +101,30 @@ public class PayCustomer implements Serializable {
 
     public void setPlanId(Plan planId) {
         this.planId = planId;
+    }
+    
+    public String getTxnRef() {
+        return txnRef;
+    }
+
+    public void setTxnRef(String txnRef) {
+        this.txnRef = txnRef;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getBankCode() {
+        return bankCode;
+    }
+
+    public void setBankCode(String bankCode) {
+        this.bankCode = bankCode;
     }
 
     @Override

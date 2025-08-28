@@ -4,7 +4,9 @@
  */
 package com.lht.services.impl;
 
+import com.lht.pojo.Customer;
 import com.lht.pojo.PayCustomer;
+import com.lht.reponsitories.CustomerRepository;
 import com.lht.reponsitories.PayCustomerRepository;
 import com.lht.services.PayCustomerService;
 
@@ -12,10 +14,13 @@ import jakarta.persistence.criteria.Predicate;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,8 +39,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class PayCustomerServiceImpl implements PayCustomerService {
 
     @Autowired
-
     private PayCustomerRepository payCustomerRepository;
+
+    @Autowired
+    private CustomerRepository customerRepository;
 
     @Override
     public List<PayCustomer> getAllPayCustomers() {
@@ -68,6 +75,21 @@ public class PayCustomerServiceImpl implements PayCustomerService {
                 }
             }
 
+            // Lọc theo txnRef
+            if (params.containsKey("txnRef")) {
+                predicates.add(cb.equal(root.get("txnRef"), params.get("txnRef")));
+            }
+
+            // Lọc theo status
+            if (params.containsKey("status")) {
+                predicates.add(cb.equal(root.get("status"), params.get("status")));
+            }
+
+            // Lọc theo bankCode
+            if (params.containsKey("bankCode")) {
+                predicates.add(cb.equal(root.get("bankCode"), params.get("bankCode")));
+            }
+
             if (params.containsKey("date")) {
                 try {
                     DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -96,7 +118,21 @@ public class PayCustomerServiceImpl implements PayCustomerService {
 
     @Override
     public PayCustomer addOrUpdatePayCustomer(PayCustomer p) {
+        if (p.getId() == null) {
+            // Trường hợp tạo mới
+            if (p.getStatus() == null) {
+                p.setStatus("PENDING");
+            }
+            p.setTxnRef(null);
+            p.setBankCode(null);
+        } else {
+            Optional<PayCustomer> payCustomer = payCustomerRepository.findById(p.getId());
+            p.setBankCode(payCustomer.get().getBankCode());
+            p.setTxnRef(payCustomer.get().getTxnRef());
+            p.setStatus(payCustomer.get().getStatus());
+        }
         return payCustomerRepository.save(p);
+
     }
 
     @Override
@@ -116,9 +152,53 @@ public class PayCustomerServiceImpl implements PayCustomerService {
         Pageable pageable = PageRequest.of(page, size, sort);
         return payCustomerRepository.findAll(pageable);
     }
-    
+
     @Override
     public List<PayCustomer> getPayCustomerByCustomerId(Integer id) {
         return this.payCustomerRepository.findByCustomerId_Id(id);
     }
+
+    @Override
+    public void updatePaymentStatus(PayCustomer pay, String txnRef, String status, String bankCode) {
+        if (pay != null) {
+            pay.setTxnRef(txnRef);
+            pay.setStatus(status);
+            pay.setBankCode(bankCode);
+            payCustomerRepository.save(pay);
+        }
+    }
+
+    @Override
+    public void updateExpiryDate(Integer payCustomerId) {
+        Optional<PayCustomer> payOpt = this.payCustomerRepository.findById(payCustomerId);
+        if (payOpt.isPresent()) {
+            PayCustomer pay = payOpt.get();
+            Optional<Customer> customerOpt = this.customerRepository.findById(pay.getCustomerId().getId());
+
+            if (customerOpt.isPresent()) {
+                Customer customer = customerOpt.get();
+
+                // Lấy ngày hiện tại
+                LocalDate now = LocalDate.now();
+
+                // Lấy ngày hết hạn hiện tại
+                Date expiry = customer.getExpiryDate();
+                LocalDate expiryDate = expiry != null
+                        ? expiry.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+                        : now;
+
+                // Số ngày của gói
+                int durationDays = pay.getPlanId().getDurationDays();
+
+                // Tính ngày hết hạn mới
+                LocalDate newExpiryDate = expiryDate.isBefore(now) ? now.plusDays(durationDays)
+                        : expiryDate.plusDays(durationDays);
+
+                // Cập nhật và lưu lại
+                customer.setExpiryDate(Date.from(newExpiryDate.atStartOfDay(ZoneId.from(expiryDate).systemDefault()).toInstant()));
+                this.customerRepository.save(customer);
+            }
+        }
+    }
+
 }

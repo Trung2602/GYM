@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
         <title>Lịch sử thanh toán</title>
@@ -45,6 +45,9 @@
                                 </a>
                             </th>
                             <th>Giá</th>
+                            <th>Mã giao dịch</th>
+                            <th>Ngân hàng</th>
+                            <th>Trạng thái</th>
                             <th>Thao tác</th>
                         </tr>
                     </thead>
@@ -55,7 +58,17 @@
                             <td th:text="${pc.customerId.name}"></td>
                             <td th:text="${pc.planId.name}"></td>
                             <td th:text="${#numbers.formatDecimal(pc.planId.price, 0, 'COMMA', 0, 'POINT')} + '₫'"></td>
+                            <td th:text="${pc.txnRef != null ? pc.txnRef : '-'}"></td>
+                            <td th:text="${pc.bankCode != null ? pc.bankCode : '-'}"></td>
+                            <td th:text="${pc.status != null ? pc.status : '-'}"></td>
                             <td class="text-center">
+                                <form th:action="@{/api/payment/create}" method="post">
+                                    <input type="hidden" name="pay-customer-id" th:value="${pc.id}" />
+                                    <input type="hidden" name="price" th:value="${pc.planId.price}" />
+                                    <button type="submit" class="btn btn-success btn-sm">
+                                        <i class="bi bi-credit-card"></i> Thanh toán
+                                    </button>
+                                </form>
                                 <a th:href="@{'/pay-customer/add?id='+${pc.id}}" class="btn btn-warning btn-sm me-1">
                                     <i class="bi bi-pencil-square"></i> Sửa
                                 </a>
@@ -74,7 +87,7 @@
                     </tbody>
                 </table>
             </div>
-            
+
             <!-- Pagination -->
             <nav aria-label="Page navigation" th:if="${totalPages > 1}">
                 <ul class="pagination justify-content-center">
@@ -105,7 +118,7 @@
                     </li>
                 </ul>
             </nav>
-            
+
         </div>
     </div>
 

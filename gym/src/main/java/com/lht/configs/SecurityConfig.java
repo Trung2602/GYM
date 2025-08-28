@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -58,6 +59,23 @@ public class SecurityConfig {
                         // Cho phép truy cập API đăng nhập nếu bạn có một API riêng
                         .requestMatchers("/api/**").permitAll()
                         .requestMatchers("/api/login").permitAll()
+                        //account
+//                        .requestMatchers(HttpMethod.GET, "/api/secure/profile").authenticated()
+//                        .requestMatchers(HttpMethod.POST, "/api/accounts").permitAll()
+//                        .requestMatchers(HttpMethod.POST, "/api/login").permitAll()
+//                        .requestMatchers(HttpMethod.POST, "/api/account/edit").authenticated()
+//                        .requestMatchers(HttpMethod.DELETE, "/api/account/{id}/delete").hasRole("ADMIN")
+                        //admin
+                        //customer
+                        //staff
+                        //facility
+                        //shift
+                        //plan
+                        //customer-schedule
+                        //staff-schedule
+                        //pay-custome
+                        //salary
+                        //staff-day-off
                         // Mọi yêu cầu khác đều phải được xác thực
                         .anyRequest().authenticated())
                 // Cấu hình form đăng nhập

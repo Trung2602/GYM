@@ -17,4 +17,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 public interface CustomerRepository extends JpaRepository<Customer, Integer>, JpaSpecificationExecutor<Customer>{
     // Tìm customer theo tên chính xác
     Optional<Customer> findByName(String name);
+    
+    Optional<Customer> findByUsername(String username);
 }

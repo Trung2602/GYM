@@ -133,4 +133,12 @@ public class CustomerServiceImpl implements CustomerService {
         }
         return this.customerRepository.findByName(name);
     }
+    
+    @Override
+    public Optional<Customer> getCustomerByUsername(String username) {
+        if (username == null || username.isEmpty()) {
+            return Optional.empty(); // trả về empty nếu name rỗng
+        }
+        return this.customerRepository.findByUsername(username);
+    }
 }
