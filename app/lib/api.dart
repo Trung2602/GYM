@@ -1,6 +1,6 @@
 class Api {
-  static const String baseUrl = "http://192.168.1.10:8080/api";
-  //static const String baseUrl = "https://3c5cdc9024ff.ngrok-free.app/api";
+  //static const String baseUrl = "http://192.168.1.10:8080/api";
+  static const String baseUrl = "https://8a406b8ff7c7.ngrok-free.app/api";
 
   static const String login = "$baseUrl/login";
   static const String me = "$baseUrl/account/me";

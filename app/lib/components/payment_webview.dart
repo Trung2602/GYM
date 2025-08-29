@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'pay_customer.dart';
 
 class PaymentWebView extends StatefulWidget {
   final String paymentUrl;
@@ -20,8 +21,16 @@ class _PaymentWebViewState extends State<PaymentWebView> {
       ..setNavigationDelegate(
         NavigationDelegate(
           onNavigationRequest: (NavigationRequest request) {
-            if (request.url.contains("/payment/return")) {
-              Navigator.pop(context, request.url); // trả url kết quả
+            if (request.url.contains("/api/payment/return")) {
+              // Lấy query params từ URL
+              final uri = Uri.parse(request.url);
+              final status = uri.queryParameters['status'];
+
+              // Trả dữ liệu về màn trước
+              Navigator.pop(context, {
+                'status': status,
+              });
+
               return NavigationDecision.prevent;
             }
             return NavigationDecision.navigate;

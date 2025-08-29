@@ -153,6 +153,10 @@
     Mở cmd trên máy và truyền 2 lệnh sau vào
     Lệnh kiểm trả: netstat -ano | findstr :8080
     VD: TCP 127.0.0.1:8080 0.0.0.0:0 LISTENING 12345
-    Lệnh tắt port: taskkill /PID <mã LISTENING> /F-->
+    Lệnh tắt port: taskkill /PID <mã LISTENING> /F
+    
+    Lệnh chạy ip public: ngrok http 8080
+    -->
+    
 
 </project>

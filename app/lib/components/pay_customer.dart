@@ -131,13 +131,16 @@ class _PayCustomerScreenState extends State<PayCustomerScreen> {
           ),
         );
 
-        if (resultUrl != null && resultUrl.toString().contains("pay_customer_id")) {
+        if (resultUrl != null && resultUrl['status'] == 'SUCCESS') {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Thanh toán xong, chờ xác nhận...")),
+            const SnackBar(content: Text("Thanh toán thành công!")),
           );
           await fetchPayCustomers();
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Thanh toán thất bại")),
+          );
         }
-
 
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

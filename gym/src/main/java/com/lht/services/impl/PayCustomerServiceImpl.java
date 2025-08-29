@@ -122,9 +122,8 @@ public class PayCustomerServiceImpl implements PayCustomerService {
             // Trường hợp tạo mới
             if (p.getStatus() == null) {
                 p.setStatus("PENDING");
+                
             }
-            p.setTxnRef(null);
-            p.setBankCode(null);
         } else {
             Optional<PayCustomer> payCustomer = payCustomerRepository.findById(p.getId());
             p.setBankCode(payCustomer.get().getBankCode());

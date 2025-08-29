@@ -69,28 +69,6 @@ public class ApiPaymentController {
             @RequestParam("username") String username,
             HttpServletRequest request) throws UnsupportedEncodingException {
 
-        String vnp_Version = "2.1.0";
-        String vnp_Command = "pay";
-        String vnp_TxnRef = String.valueOf(System.currentTimeMillis());
-        String vnp_IpAddr = request.getRemoteAddr();
-        String orderType = "170000"; // Thương mại điện tử
-
-        Map<String, String> vnp_Params = new HashMap<>();
-        vnp_Params.put("vnp_Version", vnp_Version);
-        vnp_Params.put("vnp_Command", vnp_Command);
-        vnp_Params.put("vnp_TmnCode", vnpConfig.getVnp_TmnCode());
-        vnp_Params.put("vnp_Amount", String.valueOf(planService.getPlanById(planId).getPrice() * 100));
-        vnp_Params.put("vnp_CurrCode", "VND");
-        vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-        vnp_Params.put("vnp_OrderInfo", "Thanh toan : " + planService.getPlanById(planId).getName());
-        vnp_Params.put("vnp_OrderType", orderType);
-        vnp_Params.put("vnp_Locale", "vn");
-        vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
-        vnp_Params.put("vnp_CreateDate", new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.MINUTE, 15);
-        vnp_Params.put("vnp_ExpireDate", new SimpleDateFormat("yyyyMMddHHmmss").format(cal.getTime()));
-
         //lấy customer thực hiện đăng ký
         Customer customer = null;
         if (username != null && !username.isEmpty()) {
@@ -104,11 +82,32 @@ public class ApiPaymentController {
         pc.setDate(new Date());
         pc.setPlanId(plan);      // sẽ lấy từ Plan entity
         pc.setCustomerId(customer);  // sẽ lấy từ Customer entity
-        pc.setStatus("PENDING");
+        pc.setStatus("FAILED");
         PayCustomer pay = this.payCustomerService.addOrUpdatePayCustomer(pc);
 
-        String returnUrl = vnpConfig.getVnp_ReturnUrl() + "?pay_customer_id=" + pay.getId();
-        vnp_Params.put("vnp_ReturnUrl", returnUrl);
+        String vnp_Version = "2.1.0";
+        String vnp_Command = "pay";
+        String vnp_TxnRef = String.valueOf(System.currentTimeMillis());
+        String vnp_IpAddr = request.getRemoteAddr();
+        String orderType = "170000"; // Thương mại điện tử
+
+        Map<String, String> vnp_Params = new HashMap<>();
+        vnp_Params.put("vnp_Version", vnp_Version);
+        vnp_Params.put("vnp_Command", vnp_Command);
+        vnp_Params.put("vnp_TmnCode", vnpConfig.getVnp_TmnCode());
+        vnp_Params.put("vnp_Amount", String.valueOf(planService.getPlanById(planId).getPrice() * 100));
+        vnp_Params.put("vnp_CurrCode", "VND");
+        vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
+        vnp_Params.put("vnp_OrderInfo", String.valueOf(pay.getId()));
+        vnp_Params.put("vnp_OrderType", orderType);
+        vnp_Params.put("vnp_Locale", "vn");
+        vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
+        vnp_Params.put("vnp_CreateDate", new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MINUTE, 15);
+        vnp_Params.put("vnp_ExpireDate", new SimpleDateFormat("yyyyMMddHHmmss").format(cal.getTime()));
+
+        vnp_Params.put("vnp_ReturnUrl", vnpConfig.getVnp_ReturnUrl());
 
         // Sort params
         List<String> fieldNames = new ArrayList<>(vnp_Params.keySet());
@@ -156,11 +155,11 @@ public class ApiPaymentController {
     @GetMapping("/payment/return")
     public ResponseEntity<?> handleReturn(@RequestParam Map<String, String> params, HttpServletResponse response) throws Exception {
         // In tất cả param ra console
-        System.out.println("===== VNPAY RETURN PARAMS =====");
-        params.forEach((key, value) -> {
-            System.out.println(key + " = " + value);
-        });
-        System.out.println("================================");
+//        System.out.println("===== VNPAY RETURN PARAMS =====");
+//        params.forEach((key, value) -> {
+//            System.out.println(key + " = " + value);
+//        });
+//        System.out.println("================================");
 
         String vnp_SecureHash = params.get("vnp_SecureHash");
 
@@ -187,7 +186,7 @@ public class ApiPaymentController {
                 status = "SUCCESS";
             }
 
-            int pcId = Integer.parseInt(params.get("pay_customer_id"));
+            int pcId = Integer.parseInt(params.get("vnp_OrderInfo"));
             // --- Tạo PayCustomer ---
             PayCustomer pay = this.payCustomerService.getPayCustomerById(pcId);
             String txnRef = params.get("vnp_TxnRef");
@@ -199,21 +198,12 @@ public class ApiPaymentController {
                 }
             }
             // --- Redirect về frontend ---
-            return ResponseEntity.ok().build();
+            Map<String, Object> result = new HashMap<>();
+            result.put("status", status);
+
+            return ResponseEntity.ok(result);
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid signature");
         }
-    }
-
-    @PostMapping("/payment/ipn")
-    public ResponseEntity<String> ipn(HttpServletRequest request) {
-        // Lấy tất cả tham số từ VNPAY gửi về
-        Map<String, String[]> params = request.getParameterMap();
-        params.forEach((key, value) -> {
-            System.out.println(key + " = " + Arrays.toString(value));
-        });
-
-        // Nếu muốn trả về VNPAY OK để xác nhận nhận dữ liệu
-        return ResponseEntity.ok("OK");
     }
 }
