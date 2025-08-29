@@ -1,5 +1,6 @@
 class Api {
   static const String baseUrl = "http://192.168.1.10:8080/api";
+  //static const String baseUrl = "https://3c5cdc9024ff.ngrok-free.app/api";
 
   static const String login = "$baseUrl/login";
   static const String me = "$baseUrl/account/me";
@@ -74,5 +75,8 @@ class Api {
   static String getSalaryById(int id) => "$baseUrl/salary/$id";
   static const String postSalary = "$baseUrl/salary-update";
   static String deleteSalary(int id) => "$baseUrl/salary-delete/$id";
+
+  // Payment
+  static const String createPayment = "$baseUrl/payment/create";
 
 }

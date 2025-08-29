@@ -5,6 +5,9 @@ class PayCustomerModel {
   String? customerName;
   String? planName;
   int? price;
+  String? txnRef;   // mã giao dịch VNPAY
+  String? status;   // PENDING / SUCCESS / FAILED
+  String? bankCode; // ngân hàng (optional)
 
   PayCustomerModel({
     this.id,
@@ -12,6 +15,9 @@ class PayCustomerModel {
     this.customerName,
     this.planName,
     this.price,
+    this.txnRef,
+    this.status,
+    this.bankCode,
   });
 
   // Chuyển từ JSON sang model
@@ -22,6 +28,9 @@ class PayCustomerModel {
       customerName: json['customerName'] as String?,
       planName: json['planName'] as String?,
       price: json['price'] as int?,
+      txnRef: json['txnRef'] as String?,
+      status: json['status'] as String?,
+      bankCode: json['bankCode'] as String?,
     );
   }
 
@@ -33,6 +42,9 @@ class PayCustomerModel {
       'customerName': customerName,
       'planName': planName,
       'price': price,
+      'txnRef': txnRef,
+      'status': status,
+      'bankCode': bankCode,
     };
   }
 }

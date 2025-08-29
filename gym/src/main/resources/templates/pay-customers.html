@@ -62,9 +62,8 @@
                             <td th:text="${pc.bankCode != null ? pc.bankCode : '-'}"></td>
                             <td th:text="${pc.status != null ? pc.status : '-'}"></td>
                             <td class="text-center">
-                                <form th:action="@{/api/payment/create}" method="post">
+                                <form th:action="@{/payment/create}" method="get">
                                     <input type="hidden" name="pay-customer-id" th:value="${pc.id}" />
-                                    <input type="hidden" name="price" th:value="${pc.planId.price}" />
                                     <button type="submit" class="btn btn-success btn-sm">
                                         <i class="bi bi-credit-card"></i> Thanh toán
                                     </button>
