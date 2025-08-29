@@ -122,7 +122,7 @@ public class PayCustomerServiceImpl implements PayCustomerService {
             // Trường hợp tạo mới
             if (p.getStatus() == null) {
                 p.setStatus("PENDING");
-                
+
             }
         } else {
             Optional<PayCustomer> payCustomer = payCustomerRepository.findById(p.getId());
@@ -169,35 +169,28 @@ public class PayCustomerServiceImpl implements PayCustomerService {
 
     @Override
     public void updateExpiryDate(Integer payCustomerId) {
-        Optional<PayCustomer> payOpt = this.payCustomerRepository.findById(payCustomerId);
-        if (payOpt.isPresent()) {
-            PayCustomer pay = payOpt.get();
-            Optional<Customer> customerOpt = this.customerRepository.findById(pay.getCustomerId().getId());
+        this.payCustomerRepository.findById(payCustomerId).ifPresent(pay -> {
+            this.customerRepository.findById(pay.getCustomerId().getId()).ifPresent(customer -> {
 
-            if (customerOpt.isPresent()) {
-                Customer customer = customerOpt.get();
-
-                // Lấy ngày hiện tại
                 LocalDate now = LocalDate.now();
 
-                // Lấy ngày hết hạn hiện tại
                 Date expiry = customer.getExpiryDate();
-                LocalDate expiryDate = expiry != null
-                        ? expiry.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-                        : now;
+                LocalDate expiryDate;
+                if (expiry != null) {
+                    String dateStr = new SimpleDateFormat("yyyy-MM-dd").format(expiry);
+                    expiryDate = LocalDate.parse(dateStr);
+                } else {
+                    expiryDate = now;
+                }
 
-                // Số ngày của gói
                 int durationDays = pay.getPlanId().getDurationDays();
-
-                // Tính ngày hết hạn mới
                 LocalDate newExpiryDate = expiryDate.isBefore(now) ? now.plusDays(durationDays)
                         : expiryDate.plusDays(durationDays);
 
-                // Cập nhật và lưu lại
-                customer.setExpiryDate(Date.from(newExpiryDate.atStartOfDay(ZoneId.from(expiryDate).systemDefault()).toInstant()));
+                customer.setExpiryDate(java.sql.Date.valueOf(newExpiryDate));
                 this.customerRepository.save(customer);
-            }
-        }
+            });
+        });
     }
 
 }

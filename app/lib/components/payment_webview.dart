@@ -1,6 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'pay_customer.dart';
+import 'package:http/http.dart' as http;
 
 class PaymentWebView extends StatefulWidget {
   final String paymentUrl;
@@ -20,18 +21,24 @@ class _PaymentWebViewState extends State<PaymentWebView> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
-          onNavigationRequest: (NavigationRequest request) {
+          onNavigationRequest: (NavigationRequest request) async {
             if (request.url.contains("/api/payment/return")) {
-              // Lấy query params từ URL
               final uri = Uri.parse(request.url);
-              final status = uri.queryParameters['status'];
+              final response = await http.get(uri);
 
-              // Trả dữ liệu về màn trước
-              Navigator.pop(context, {
-                'status': status,
-              });
+              if (response.statusCode == 200) {
+                // Parse JSON trả về từ backend
+                final Map<String, dynamic> json = jsonDecode(response.body);
+                final status = json['status']; // Lấy trực tiếp từ backend
 
-              return NavigationDecision.prevent;
+                // Trả dữ liệu về màn trước
+                Navigator.pop(context, {'status': status});
+              } else {
+                print('Request failed with status: ${response.statusCode}');
+                Navigator.pop(context, {'status': 'FAILED'});
+              }
+
+              return NavigationDecision.prevent; // Dừng WebView load URL
             }
             return NavigationDecision.navigate;
           },

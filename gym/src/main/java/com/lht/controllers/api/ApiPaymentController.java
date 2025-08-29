@@ -5,7 +5,6 @@
 package com.lht.controllers.api;
 
 import com.lht.configs.PaymentConfig;
-import com.lht.dto.PayCustomerDTO;
 import com.lht.pojo.Customer;
 import com.lht.pojo.PayCustomer;
 import com.lht.pojo.Plan;
@@ -19,7 +18,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -34,8 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -109,6 +105,7 @@ public class ApiPaymentController {
 
         vnp_Params.put("vnp_ReturnUrl", vnpConfig.getVnp_ReturnUrl());
 
+        System.out.println("URL return " + vnpConfig.getVnp_ReturnUrl());
         // Sort params
         List<String> fieldNames = new ArrayList<>(vnp_Params.keySet());
         Collections.sort(fieldNames);
@@ -155,11 +152,11 @@ public class ApiPaymentController {
     @GetMapping("/payment/return")
     public ResponseEntity<?> handleReturn(@RequestParam Map<String, String> params, HttpServletResponse response) throws Exception {
         // In tất cả param ra console
-//        System.out.println("===== VNPAY RETURN PARAMS =====");
-//        params.forEach((key, value) -> {
-//            System.out.println(key + " = " + value);
-//        });
-//        System.out.println("================================");
+        System.out.println("===== VNPAY RETURN PARAMS =====");
+        params.forEach((key, value) -> {
+            System.out.println(key + " = " + value);
+        });
+        System.out.println("================================");
 
         String vnp_SecureHash = params.get("vnp_SecureHash");
 
@@ -191,11 +188,9 @@ public class ApiPaymentController {
             PayCustomer pay = this.payCustomerService.getPayCustomerById(pcId);
             String txnRef = params.get("vnp_TxnRef");
             String bankCode = params.get("vnp_BankCode");
-            if (pay != null) {
-                this.payCustomerService.updatePaymentStatus(pay, txnRef, status, bankCode);
-                if ("SUCCESS".equals(status)) {
-                    this.payCustomerService.updateExpiryDate(pay.getId());
-                }
+            this.payCustomerService.updatePaymentStatus(pay, txnRef, status, bankCode);
+            if ("SUCCESS".equals(status)) {
+                this.payCustomerService.updateExpiryDate(pay.getId());
             }
             // --- Redirect về frontend ---
             Map<String, Object> result = new HashMap<>();
