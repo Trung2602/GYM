@@ -1,40 +1,54 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>GYM - Đăng nhập</title>
+    <head>
+        <title>GYM - Đăng nhập</title>
     <th:block th:replace="~{init :: styles}"></th:block>
 </head>
 <body>
-    <th:block th:replace="~{init :: header}"></th:block>
+<th:block th:replace="~{init :: header}"></th:block>
 
-    <div class="container my-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6 col-lg-5">
-                <div class="login-card">
-                    <h2 class="text-center mb-4 text-shadow" style="color: var(--galactic-accent-gold);">
-                        <i class="bi bi-person-circle me-2"></i> Đăng nhập
-                    </h2>
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="login-card">
+                <h2 class="text-center mb-4 text-shadow" style="color: var(--galactic-accent-gold);">
+                    <i class="bi bi-person-circle me-2"></i> Đăng nhập
+                </h2>
 
-                    <form th:action="@{/login}" method="post">
-                        <div class="mb-4">
-                            <label for="username" class="form-label">Tên đăng nhập:</label>
-                            <input type="text" class="form-control form-control-lg" id="username" placeholder="Nhập tên đăng nhập..." name="username" required>
-                        </div>
-                        <div class="mb-4">
-                            <label for="password" class="form-label">Mật khẩu:</label>
-                            <input type="password" class="form-control form-control-lg" id="password" placeholder="Nhập mật khẩu..." name="password" required>
-                        </div>
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-lg btn-primary rounded-pill px-4 py-2 mt-3">
-                                <i class="bi bi-box-arrow-in-right me-2"></i> Đăng nhập
-                            </button>
-                        </div>
-                    </form>
+                <div th:if="${param.error}">
+                    <p th:if="${param.error.contains('bad_credentials')}" style="color:red">
+                        Sai username hoặc password!
+                    </p>
+                    <p th:if="${param.error.contains('forbidden')}" style="color:red">
+                        Tài khoản của bạn không có quyền truy cập!
+                    </p>
                 </div>
+                <div th:if="${param.logout}">
+                    <p style="color:green">Đăng xuất thành công.</p>
+                </div>
+
+                <form th:action="@{/login}" method="post">
+
+
+                    <div class="mb-4">
+                        <label for="username" class="form-label">Tên đăng nhập:</label>
+                        <input type="text" class="form-control form-control-lg" id="username" placeholder="Nhập tên đăng nhập..." name="username" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="password" class="form-label">Mật khẩu:</label>
+                        <input type="password" class="form-control form-control-lg" id="password" placeholder="Nhập mật khẩu..." name="password" required>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-lg btn-primary rounded-pill px-4 py-2 mt-3">
+                            <i class="bi bi-box-arrow-in-right me-2"></i> Đăng nhập
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+</div>
 
-    <th:block th:replace="~{init :: footer}"></th:block>
+<th:block th:replace="~{init :: footer}"></th:block>
 </body>
 </html>

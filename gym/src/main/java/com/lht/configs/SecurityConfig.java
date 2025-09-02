@@ -54,37 +54,86 @@ public class SecurityConfig {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable()).authorizeHttpRequests(requests
                 -> requests
-                        // Cho phép truy cập các tài nguyên tĩnh và trang đăng nhập
+                        // Cho phép truy cập các tài nguyên tĩnh
                         .requestMatchers("/login", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/").hasRole("ADMIN")
                         // Cho phép truy cập API đăng nhập nếu bạn có một API riêng
-                        .requestMatchers("/api/**").permitAll()
-                        .requestMatchers("/api/login").permitAll()
-                        //account
-//                        .requestMatchers(HttpMethod.GET, "/api/secure/profile").authenticated()
-//                        .requestMatchers(HttpMethod.POST, "/api/accounts").permitAll()
-//                        .requestMatchers(HttpMethod.POST, "/api/login").permitAll()
-//                        .requestMatchers(HttpMethod.POST, "/api/account/edit").authenticated()
-//                        .requestMatchers(HttpMethod.DELETE, "/api/account/{id}/delete").hasRole("ADMIN")
-                        //admin
-                        //customer
-                        //staff
-                        //facility
-                        //shift
-                        //plan
-                        //customer-schedule
-                        //staff-schedule
-                        //pay-custome
-                        //salary
-                        //staff-day-off
-                        // Mọi yêu cầu khác đều phải được xác thực
+                        // ========== ACCOUNT ==========
+                        .requestMatchers(HttpMethod.POST, "/api/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/account/me").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/register-customer").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/verify-password").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/account/update").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/change-password").permitAll()
+                        // ========== FACILITY ==========
+                        .requestMatchers(HttpMethod.GET, "/api/facilities-all").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/facility/**").permitAll()
+                        // ========== PLAN ==========
+                        .requestMatchers(HttpMethod.GET, "/api/plans-all").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/plans-filter").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/plan/**").permitAll()
+                        // ========== SHIFT ==========
+                        .requestMatchers(HttpMethod.GET, "/api/shifts-all").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/shifts-filter").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/shift/**").permitAll()
+                        // ========== CUSTOMER SCHEDULE ==========
+                        .requestMatchers(HttpMethod.GET, "/api/customer-schedules-all/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/customer-schedules-filter").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/customer-schedule/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/customer-schedule-update").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/customer-schedule-delete/**").permitAll()
+                        // ========== PAY CUSTOMER ==========
+                        .requestMatchers(HttpMethod.GET, "/api/pay-customers-all/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/pay-customer-filter").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/pay-customer/**").permitAll()
+                        // ========== STAFF ==========
+                        .requestMatchers(HttpMethod.GET, "/api/staffs-all").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/working-staff").permitAll()
+                        // ========== STAFF TYPE ==========
+                        .requestMatchers(HttpMethod.GET, "/api/staff-type-all").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/staff-type/**").permitAll()
+                        // ========== STAFF SCHEDULE ==========
+                        .requestMatchers(HttpMethod.GET, "/api/staff-schedules-all/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/staff-schedules-filter").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/staff-schedule/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/staff-schedule-update").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/staff-schedule-delete/**").permitAll()
+                        // ========== STAFF DAY OFF ==========
+                        .requestMatchers(HttpMethod.GET, "/api/staff-day-offs-all/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/staff-day-offs-filter").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/staff-day-off/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/staff-day-off-update").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/staff-day-off-delete/**").permitAll()
+                        // ========== SALARY ==========
+                        .requestMatchers(HttpMethod.GET, "/api/salaries-all/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/salaries-filter").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/salary/**").permitAll()
+                        // ========== PAYMENT ==========
+                        .requestMatchers(HttpMethod.POST, "/api/payment/create").permitAll()
+                        // ========== DEFAULT ==========
                         .anyRequest().authenticated())
                 // Cấu hình form đăng nhập
                 .formLogin(form -> form.loginPage("/login")
                 .loginProcessingUrl("/login")
-                .defaultSuccessUrl("/", true)
-                .failureUrl("/login?error=true").permitAll())
+                .successHandler((request, response, authentication) -> {
+                    // Nếu là ADMIN thì cho vào trang chủ
+                    if (authentication.getAuthorities().stream()
+                            .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+                        response.sendRedirect("/");
+                    } else {
+                        // Nếu không phải ADMIN thì logout và trả về lỗi "forbidden"
+                        request.getSession().invalidate();
+                        response.sendRedirect("/login?error=forbidden");
+                    }
+                })
+                .failureHandler((request, response, exception) -> {
+                    // Sai username/password
+                    response.sendRedirect("/login?error=bad_credentials");
+                })
+                .permitAll()
+                )
                 .addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class)
-                .logout(logout -> logout.logoutSuccessUrl("/login").permitAll());
+                .logout(logout -> logout.logoutSuccessUrl("/login?logout=true").permitAll());
         return http.build();
     }
 

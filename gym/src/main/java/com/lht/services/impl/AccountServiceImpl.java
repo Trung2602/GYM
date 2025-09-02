@@ -219,7 +219,7 @@ public class AccountServiceImpl implements AccountService {
             throw new UsernameNotFoundException("Invalid username");
         }
         Set<GrantedAuthority> authorities = new HashSet<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + acc.getRole()));
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + acc.getRole().toUpperCase()));
         Boolean accountNonExpired = true;
         if ("Customer".equals(acc.getRole())) {
             Customer customer = customerService.getCustomerById(acc.getId());
