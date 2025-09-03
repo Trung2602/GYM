@@ -43,7 +43,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api")
 public class ApiPaymentController {
-    //flutter: url_launcher và WebView
 
     @Autowired
     private PayCustomerService payCustomerService;

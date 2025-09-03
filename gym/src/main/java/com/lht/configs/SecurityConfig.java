@@ -58,6 +58,7 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/css/**", "/js/**").permitAll()
                         .requestMatchers("/").hasRole("ADMIN")
                         // Cho phép truy cập API đăng nhập nếu bạn có một API riêng
+                        .requestMatchers("/api/**").permitAll()
                         // ========== ACCOUNT ==========
                         .requestMatchers(HttpMethod.POST, "/api/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/account/me").permitAll()
@@ -109,7 +110,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/salaries-filter").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/salary/**").permitAll()
                         // ========== PAYMENT ==========
-                        .requestMatchers(HttpMethod.POST, "/api/payment/create").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/payment/create").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/payment/return").permitAll()
                         // ========== DEFAULT ==========
                         .anyRequest().authenticated())
                 // Cấu hình form đăng nhập
