@@ -214,10 +214,10 @@ CREATE TABLE Pay_customer (
 );
 
 INSERT INTO Pay_customer (date, plan_id, customer_id, txn_ref, bank_code, status) VALUES
-('2025-05-10', 1, 5, 'TXN001', 'NCB', 'SUCCESS'),
-('2025-06-02', 2, 6, 'TXN002', 'BIDV', 'SUCCESS'),
-('2025-06-10', 5, 5, 'TXN003', 'BIDV', 'FAILED'),
-('2025-07-02', 2, 6, 'TXN004', 'ACB', 'PENDING');
+('2025-05-10', 1, 5, '1756871250833', 'NCB', 'SUCCESS'),
+('2025-06-02', 2, 6, '1756871010895', 'NCB', 'SUCCESS'),
+('2025-06-10', 5, 5, '1756992819560', 'NCB', 'SUCCESS'),
+('2025-07-02', 2, 6, '-', '-', 'PENDING');
 
 -- Lịch tập khách hàng
 CREATE TABLE Customer_schedule (
