@@ -5,6 +5,7 @@
 package com.lht.reponsitories;
 
 import com.lht.pojo.Shift;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -13,5 +14,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  * @author admin
  */
 public interface ShiftRepository extends JpaRepository<Shift, Integer>, JpaSpecificationExecutor<Shift>{
+    
+    Optional<Shift> findByName(String name);
     
 }

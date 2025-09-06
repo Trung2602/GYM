@@ -116,19 +116,6 @@ public class ApiCustomerScheduleController {
         return ResponseEntity.ok(dtos);
     }
 
-//    @GetMapping("customer-schedules-sort")
-//    public ResponseEntity<List<CustomerScheduleDTO>> getCustomerSchedulesSort(
-//            @RequestParam(defaultValue = "id") String sortField,
-//            @RequestParam(defaultValue = "asc") String sortDir,
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(defaultValue = "10") int size) {
-//        List<CustomerSchedule> schedules = this.customerScheduleService.getAllSort(sortField, sortDir, page, size);
-//        List<CustomerScheduleDTO> dtos = schedules.stream()
-//                .map(CustomerScheduleDTO::new)
-//                .toList();
-//        return ResponseEntity.ok(dtos);
-//    }
-
     @GetMapping("customer-schedule/{id}")
     public ResponseEntity<CustomerScheduleDTO> getCustomerScheduleById(@PathVariable("id") Integer id) {
         if (id == null) {

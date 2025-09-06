@@ -55,7 +55,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()).authorizeHttpRequests(requests
                 -> requests
                         // Cho phép truy cập các tài nguyên tĩnh
-                        .requestMatchers("/login", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/login", "/css/**", "/images/logo_transparent_white.png", "/js/**").permitAll()
                         .requestMatchers("/").hasRole("ADMIN")
                         // Cho phép truy cập API đăng nhập nếu bạn có một API riêng
                         .requestMatchers("/api/**").permitAll()

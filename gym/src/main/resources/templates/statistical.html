@@ -82,7 +82,7 @@
                         <div class="row no-gutters align-items-center">
                             <div class="col me-2">
                                 <div class="text-xs fw-bold text-primary text-uppercase mb-1">
-                                    Tổng doanh thu khách hàng
+                                    Tổng doanh thu
                                 </div>
                                 <div class="h5 mb-0 fw-bold">
                                     <span th:text="${#numbers.formatDecimal(totalPayCustomerRevenue, 0, 'COMMA', 2, 'POINT')}"></span> VNĐ
@@ -97,30 +97,12 @@
             </div>
 
             <div class="col-xl-4 col-md-6 mb-4">
-                <div class="card card-stat border-start-success shadow h-100">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col me-2">
-                                <div class="text-xs fw-bold text-success text-uppercase mb-1">
-                                    Tổng số lần thanh toán
-                                </div>
-                                <div class="h5 mb-0 fw-bold text-gray-800" th:text="${totalPayCustomerCount}"></div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="bi bi-coin fs-2 text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-4 col-md-6 mb-4">
                 <div class="card card-stat border-start-warning shadow h-100">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col me-2">
                                 <div class="text-xs fw-bold text-warning text-uppercase mb-1">
-                                    Tổng lương nhân viên
+                                    Tổng chi tiêu
                                 </div>
                                 <div class="h5 mb-0 fw-bold text-gray-800">
                                     <span th:text="${#numbers.formatDecimal(totalSalary, 0, 'COMMA', 2, 'POINT')}"></span> VNĐ
@@ -133,13 +115,33 @@
                     </div>
                 </div>
             </div>
+
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card card-stat border-start-success shadow h-100">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col me-2">
+                                <div class="text-xs fw-bold text-success text-uppercase mb-1">
+                                    Tổng lợi nhuận
+                                </div>
+                                <div class="h5 mb-0 fw-bold text-gray-800">
+                                    <span th:text="${#numbers.formatDecimal(totalProfit, 0, 'COMMA', 2, 'POINT')}"></span> VNĐ
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="bi bi-coin fs-2 text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="row mb-4">
             <div class="col-lg-6 mb-4">
                 <div class="card shadow h-100">
                     <div class="card-header py-3 bg-primary text-white">
-                        <h6 class="m-0 fw-bold">Doanh thu khách hàng theo thời gian</h6>
+                        <h6 class="m-0 fw-bold">Doanh thu</h6>
                     </div>
                     <div class="card-body">
                         <div class="chart-container">
@@ -164,10 +166,10 @@
         </div>
 
         <div class="row mb-4">
-            <div class="col-lg-12 mb-4">
+            <div class="col-lg-6 mb-4">
                 <div class="card shadow h-100">
                     <div class="card-header py-3 bg-warning text-white">
-                        <h6 class="m-0 fw-bold">Lương nhân viên theo thời gian</h6>
+                        <h6 class="m-0 fw-bold">Chi tiêu</h6>
                     </div>
                     <div class="card-body">
                         <div class="chart-container">
@@ -176,7 +178,36 @@
                     </div>
                 </div>
             </div>
+
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow h-100">
+                    <div class="card-header py-3 bg-success text-white">
+                        <h6 class="m-0 fw-bold">Chi tiêu theo chức vụ</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="salaryByTypeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <div class="row mb-4">
+            <div class="col-lg-12 mb-4">
+                <div class="card shadow h-100">
+                    <div class="card-header py-3 bg-info text-white">
+                        <h6 class="m-0 fw-bold">So sánh Doanh thu và Chi tiêu</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="revenueVsExpenseChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex justify-content-between align-items-center bg-dark text-white">
@@ -221,158 +252,251 @@
         </div>
     </div>
 
-    <th:block th:replace="~{init :: footer}"></th:block>
+<th:block th:replace="~{init :: footer}"></th:block>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 
-    <script th:inline="javascript">
-        /*<![CDATA[*/
-        document.addEventListener('DOMContentLoaded', function () {
-        // Cấu hình chung cho Chart.js
-        Chart.defaults.font.family = 'Arial, sans-serif';
-        Chart.defaults.font.size = 14;
-        // Dữ liệu Pay_customer theo tháng/năm
-        const payTimeData = {
-        labels: [[${payByTime.keySet()}]],
-                values: [[${payByTime.values()}]],
-                backgroundColor: 'rgba(78, 115, 223, 0.7)',
-                borderColor: 'rgba(78, 115, 223, 1)'
-        };
-        const payCustomerOverTimeCtx = document.getElementById('payCustomerOverTimeChart').getContext('2d');
-        new Chart(payCustomerOverTimeCtx, {
-        type: 'bar',
-                data: {
-                labels: payTimeData.labels,
-                        datasets: [{
-                        label: 'Doanh thu (VNĐ)',
-                                data: payTimeData.values,
-                                backgroundColor: payTimeData.backgroundColor,
-                                borderColor: payTimeData.borderColor,
-                                borderWidth: 1
-                        }]
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', function () {
+    // Cấu hình chung cho Chart.js
+    Chart.defaults.font.family = 'Arial, sans-serif';
+    Chart.defaults.font.size = 14;
+    // Dữ liệu Pay_customer theo tháng/năm
+    const payTimeData = {
+    labels: [[${payByTime.keySet()}]],
+            values: [[${payByTime.values()}]],
+            backgroundColor: 'rgba(78, 115, 223, 0.7)',
+            borderColor: 'rgba(78, 115, 223, 1)'
+    };
+    const payCustomerOverTimeCtx = document.getElementById('payCustomerOverTimeChart').getContext('2d');
+    new Chart(payCustomerOverTimeCtx, {
+    type: 'bar',
+            data: {
+            labels: payTimeData.labels,
+                    datasets: [{
+                    label: 'Doanh thu (VNĐ)',
+                            data: payTimeData.values,
+                            backgroundColor: payTimeData.backgroundColor,
+                            borderColor: payTimeData.borderColor,
+                            borderWidth: 1
+                    }]
+            },
+            options: {
+            responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                    y: {
+                    beginAtZero: true,
+                            title: {
+                            display: true,
+                                    text: 'Doanh thu (VNĐ)',
+                            },
+                            ticks: {
+                            callback: val => val.toLocaleString('vi-VN') + ' VNĐ'
+                            }
+                    },
+                            x: {
+                            title: {
+                            display: true,
+                                    text: 'Thời gian',
+                            }
+                            }
+                    },
+                    plugins: {
+                    legend: { display: false },
+                            tooltip: {
+                            callbacks: {
+                            label: context => `${context.dataset.label}: ${context.raw.toLocaleString('vi-VN')} VNĐ`
+                            }
+                            }
+                    }
+            }
+    });
+    // Dữ liệu Pay_customer theo Plan
+    const payPlanData = {
+    labels: [[${payByPlan.keySet()}]],
+            values: [[${payByPlan.values()}]],
+            colors: ['#4e73df', '#1cc88a', '#f6c23e', '#e74a3b', '#36b9cc', '#858796'] // Màu sắc chuyên nghiệp hơn
+    };
+    const payCustomerByPlanCtx = document.getElementById('payCustomerByPlanChart').getContext('2d');
+    new Chart(payCustomerByPlanCtx, {
+    type: 'doughnut',
+            data: {
+            labels: payPlanData.labels,
+                    datasets: [{
+                    data: payPlanData.values,
+                            backgroundColor: payPlanData.colors,
+                            hoverBackgroundColor: payPlanData.colors,
+                            hoverBorderColor: "rgba(234, 236, 244, 1)",
+                    }]
+            },
+            options: {
+            responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                    legend: { position: 'right' },
+                            tooltip: {
+                            callbacks: {
+                            label: (context) => {
+                            const label = context.label || '';
+                            const value = context.raw;
+                            const total = context.chart._getDatasetMeta(0).total;
+                            const percentage = ((value / total) * 100).toFixed(2);
+                            return `${label}: ${value.toLocaleString('vi-VN')} VNĐ (${percentage}%)`;
+                            }
+                            }
+                            }
+                    }
+            }
+    });
+    // Dữ liệu Salary theo tháng/năm
+    const salaryData = {
+    labels: [[${salaryByTime.keySet()}]],
+            values: [[${salaryByTime.values()}]],
+            backgroundColor: 'rgba(255, 159, 64, 0.7)',
+            borderColor: 'rgba(255, 159, 64, 1)'
+    };
+    const salaryOverTimeCtx = document.getElementById('salaryOverTimeChart').getContext('2d');
+    new Chart(salaryOverTimeCtx, {
+    type: 'bar',
+            data: {
+            labels: salaryData.labels,
+                    datasets: [{
+                    label: 'Tổng lương (VNĐ)',
+                            data: salaryData.values,
+                            backgroundColor: salaryData.backgroundColor,
+                            borderColor: salaryData.borderColor,
+                            borderWidth: 1
+                    }]
+            },
+            options: {
+            responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                    y: {
+                    beginAtZero: true,
+                            title: {
+                            display: true,
+                                    text: 'Tổng lương (VNĐ)',
+                            },
+                            ticks: {
+                            callback: val => val.toLocaleString('vi-VN') + ' VNĐ'
+                            }
+                    },
+                            x: {
+                            title: {
+                            display: true,
+                                    text: 'Thời gian',
+                            }
+                            }
+                    },
+                    plugins: {
+                    legend: { display: false },
+                            tooltip: {
+                            callbacks: {
+                            label: context => `${context.dataset.label}: ${context.raw.toLocaleString('vi-VN')} VNĐ`
+                            }
+                            }
+                    }
+            }
+    });<!-- Chi tiêu theo chức vụ -->
+    const salaryTypeData = {
+    labels: [[${salaryByType.keySet()}]],
+            values: [[${salaryByType.values()}]],
+            colors: ['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0', '#9966ff', '#ff9f40'] // màu khác để phân biệt
+    };
+    const salaryByTypeCtx = document.getElementById('salaryByTypeChart').getContext('2d');
+    new Chart(salaryByTypeCtx, {
+    type: 'doughnut',
+            data: {
+            labels: salaryTypeData.labels,
+                    datasets: [{
+                    data: salaryTypeData.values,
+                            backgroundColor: salaryTypeData.colors,
+                            hoverBackgroundColor: salaryTypeData.colors,
+                            hoverBorderColor: "rgba(234, 236, 244, 1)",
+                    }]
+            },
+            options: {
+            responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                    legend: { position: 'right' },
+                            tooltip: {
+                            callbacks: {
+                            label: (context) => {
+                            const label = context.label || '';
+                            const value = context.raw;
+                            const total = context.chart._metasets[0].total;
+                            const percentage = ((value / total) * 100).toFixed(2);
+                            return `${label}: ${value.toLocaleString('vi-VN')} VNĐ (${percentage}%)`;
+                            }
+                            }
+                            }
+                    }
+            }
+    });
+
+    // Biểu đồ cột kép: So sánh Doanh thu và Chi tiêu
+        const revenueVsExpenseData = {
+    labels: [[${allMonths}]],
+    datasets: [
+        {
+            label: 'Doanh thu (VNĐ)',
+            data: [[${payValues}]],
+            backgroundColor: 'rgba(78, 115, 223, 0.7)',
+            borderColor: 'rgba(78, 115, 223, 1)',
+            borderWidth: 1
+        },
+        {
+            label: 'Chi tiêu (VNĐ)',
+            data: [[${salaryValues}]],
+            backgroundColor: 'rgba(255, 99, 132, 0.7)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1
+        }
+    ]
+    };
+    const revenueVsExpenseCtx = document.getElementById('revenueVsExpenseChart').getContext    ('2d');
+    new Chart(revenueVsExpenseCtx, {
+    type: 'bar',
+    data: revenueVsExpenseData,
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'VNĐ'
                 },
-                options: {
-                responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                        y: {
-                        beginAtZero: true,
-                                title: {
-                                display: true,
-                                        text: 'Doanh thu (VNĐ)',
-                                },
-                                ticks: {
-                                callback: val => val.toLocaleString('vi-VN') + ' VNĐ'
-                                }
-                        },
-                                x: {
-                                title: {
-                                display: true,
-                                        text: 'Thời gian',
-                                }
-                                }
-                        },
-                        plugins: {
-                        legend: { display: false },
-                                tooltip: {
-                                callbacks: {
-                                label: context => `${context.dataset.label}: ${context.raw.toLocaleString('vi-VN')} VNĐ`
-                                }
-                                }
-                        }
+                ticks: {
+                    callback: val => val.toLocaleString('vi-VN') + ' VNĐ'
                 }
-        });
-        // Dữ liệu Pay_customer theo Plan
-        const payPlanData = {
-        labels: [[${payByPlan.keySet()}]],
-                values: [[${payByPlan.values()}]],
-                colors: ['#4e73df', '#1cc88a', '#f6c23e', '#e74a3b', '#36b9cc', '#858796'] // Màu sắc chuyên nghiệp hơn
-        };
-        const payCustomerByPlanCtx = document.getElementById('payCustomerByPlanChart').getContext('2d');
-        new Chart(payCustomerByPlanCtx, {
-        type: 'doughnut',
-                data: {
-                labels: payPlanData.labels,
-                        datasets: [{
-                        data: payPlanData.values,
-                                backgroundColor: payPlanData.colors,
-                                hoverBackgroundColor: payPlanData.colors,
-                                hoverBorderColor: "rgba(234, 236, 244, 1)",
-                        }]
-                },
-                options: {
-                responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                        legend: { position: 'right' },
-                                tooltip: {
-                                callbacks: {
-                                label: (context) => {
-                                const label = context.label || '';
-                                const value = context.raw;
-                                const total = context.chart._getDatasetMeta(0).total;
-                                const percentage = ((value / total) * 100).toFixed(2);
-                                return `${label}: ${value.toLocaleString('vi-VN')} VNĐ (${percentage}%)`;
-                                }
-                                }
-                                }
-                        }
+            },
+            x: {
+                title: {
+                    display: true,
+                    text: 'Thời gian'
                 }
-        });
-        // Dữ liệu Salary theo tháng/năm
-        const salaryData = {
-        labels: [[${salaryByTime.keySet()}]],
-                values: [[${salaryByTime.values()}]],
-                backgroundColor: 'rgba(255, 159, 64, 0.7)',
-                borderColor: 'rgba(255, 159, 64, 1)'
-        };
-        const salaryOverTimeCtx = document.getElementById('salaryOverTimeChart').getContext('2d');
-        new Chart(salaryOverTimeCtx, {
-        type: 'bar',
-                data: {
-                labels: salaryData.labels,
-                        datasets: [{
-                        label: 'Tổng lương (VNĐ)',
-                                data: salaryData.values,
-                                backgroundColor: salaryData.backgroundColor,
-                                borderColor: salaryData.borderColor,
-                                borderWidth: 1
-                        }]
-                },
-                options: {
-                responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                        y: {
-                        beginAtZero: true,
-                                title: {
-                                display: true,
-                                        text: 'Tổng lương (VNĐ)',
-                                },
-                                ticks: {
-                                callback: val => val.toLocaleString('vi-VN') + ' VNĐ'
-                                }
-                        },
-                                x: {
-                                title: {
-                                display: true,
-                                        text: 'Thời gian',
-                                }
-                                }
-                        },
-                        plugins: {
-                        legend: { display: false },
-                                tooltip: {
-                                callbacks: {
-                                label: context => `${context.dataset.label}: ${context.raw.toLocaleString('vi-VN')} VNĐ`
-                                }
-                                }
-                        }
+            }
+        },
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    label: context => `${context.dataset.label}: ${context.raw.toLocaleString('vi-VN')} VNĐ`
                 }
-        });
-        });
-        /*]]>*/
-    </script>
+            }
+        }
+    }
+    });
+
+    
+    });
+    /*]]>*/
+</script>
 </body>
 </html>

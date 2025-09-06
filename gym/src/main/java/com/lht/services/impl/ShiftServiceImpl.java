@@ -13,6 +13,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -102,4 +103,8 @@ public class ShiftServiceImpl implements ShiftService {
         return shiftRepository.findAll(pageable);
     }
 
+    @Override
+    public Optional<Shift> getShiftByName(String name) {
+        return shiftRepository.findByName(name);
+    }
 }

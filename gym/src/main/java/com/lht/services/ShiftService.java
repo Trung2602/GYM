@@ -7,6 +7,7 @@ package com.lht.services;
 import com.lht.pojo.Shift;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 
 /**
@@ -26,4 +27,6 @@ public interface ShiftService {
     boolean deleteShift(Integer id);
     
     public Page<Shift> getAllSort(String sortField, String sortDir, int page, int size);
+    
+    public Optional<Shift> getShiftByName(String name);
 }

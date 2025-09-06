@@ -71,10 +71,10 @@ class _LoginState extends State<Login> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
-                  Icons.rocket_launch,
-                  color: Color(0xFFFFAB40),
-                  size: 100,
+                const Image(
+                  image: AssetImage('assets/images/logo_transparent_white.png'),
+                  width: 200,
+                  height: 200,
                 ),
                 const SizedBox(height: 20),
                 const Text(
