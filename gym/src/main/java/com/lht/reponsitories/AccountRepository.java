@@ -16,4 +16,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  */
 public interface AccountRepository extends JpaRepository<Account, Integer>, JpaSpecificationExecutor<Account>{
     Optional<Account> findByUsername(String username);
+    Optional<Account> findByMail(String mail);
 }

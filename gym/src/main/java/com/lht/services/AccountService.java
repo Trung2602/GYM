@@ -28,5 +28,9 @@ public interface AccountService extends UserDetailsService{
     
     public boolean authenticate(String username, String password);
 
-    public Account getAccountByUsername(String username);    
+    public Account getAccountByUsername(String username);
+    
+    public String checkDuplicate(String username, String mail);
+    
+    public Account getAccountByMail(String mail);
 }

@@ -7,18 +7,11 @@ package com.lht.services.impl;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.lht.pojo.Account;
-import com.lht.pojo.Admin;
 import com.lht.pojo.Customer;
-import com.lht.pojo.Plan;
-import com.lht.pojo.Staff;
 import com.lht.reponsitories.AccountRepository;
-import com.lht.reponsitories.AdminRepository;
 import com.lht.services.AccountService;
 import com.lht.services.CustomerService;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -237,5 +230,21 @@ public class AccountServiceImpl implements AccountService {
                 true,
                 authorities);
     }
-
+    
+    @Override
+    public String checkDuplicate(String username, String mail) {
+        if (accountRepository.findByUsername(username).isPresent()) {
+            return "Username đã tồn tại!";
+        }
+        if (accountRepository.findByMail(mail).isPresent()) {
+            return "Mail đã tồn tại!";
+        }
+        return "OK";
+    }
+    
+    @Override
+    public Account getAccountByMail(String mail) {
+        Optional<Account> user = this.accountRepository.findByMail(mail);
+        return user.orElse(null);
+    }
 }

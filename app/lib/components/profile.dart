@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/Account.dart';
 import '../models/AccountProvider.dart';
@@ -122,12 +123,22 @@ class _Profile extends State<Profile> {
                 }
 
                 try {
+                  // Lấy token từ SharedPreferences
+                  final prefs = await SharedPreferences.getInstance();
+                  final token = prefs.getString("token") ?? "";
+
+                  if (token.isEmpty) {
+                    setState(() => errorText = "Bạn chưa đăng nhập");
+                    return;
+                  }
+
                   // Verify password
                   final verifyRes = await http.post(
                     Uri.parse(Api.verifyPassword),
-                    headers: {"Content-Type": "application/json"},
+                    headers: {
+                      "Content-Type": "application/json",
+                      "Authorization": "Bearer $token",},
                     body: jsonEncode({
-                      "username": account?.username,
                       "password": password,
                     }),
                   );
@@ -141,7 +152,7 @@ class _Profile extends State<Profile> {
                   final uri = Uri.parse(Api.accountUpdate);
                   final request = http.MultipartRequest('POST', uri);
 
-                  request.fields['id'] = account!.id.toString();
+                  request.headers['Authorization'] = "Bearer $token";
                   request.fields['name'] = nameController.text;
                   request.fields['mail'] = mailController.text;
                   request.fields['gender'] = gender.toString();
@@ -226,11 +237,21 @@ class _Profile extends State<Profile> {
                 }
 
                 try {
+                  // Lấy token từ SharedPreferences
+                  final prefs = await SharedPreferences.getInstance();
+                  final token = prefs.getString("token") ?? "";
+
+                  if (token.isEmpty) {
+                    setState(() => errorText = "Bạn chưa đăng nhập");
+                    return;
+                  }
+
                   final changeRes = await http.post(
                     Uri.parse(Api.changePassword),
-                    headers: {"Content-Type": "application/json"},
+                    headers: {
+                      "Content-Type": "application/json",
+                      "Authorization": "Bearer $token",},
                     body: jsonEncode({
-                      "username": account.username,
                       "password": oldPass,
                       "newPassword": newPass,
                     }),
@@ -353,7 +374,7 @@ class _Profile extends State<Profile> {
                       ),
                       SwitchListTile(value: gender, onChanged: (val) => setState(() => gender = val), title: Text("Giới tính: ${gender ? "Nam" : "Nữ"}")),
                       TextField(readOnly: true, controller: TextEditingController(text: role), decoration: const InputDecoration(labelText: "Vai trò", prefixIcon: Icon(Icons.security))),
-                      SwitchListTile(value: isActive, onChanged: (val) => setState(() => isActive = val), title: const Text("Kích hoạt tài khoản")),
+                      SwitchListTile(value: isActive, onChanged: null, title: const Text("Kích hoạt tài khoản")), //onChanged: (val) => setState(() => isActive = val)
                       const SizedBox(height: 15),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,

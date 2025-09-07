@@ -7,6 +7,7 @@ package com.lht.controllers.api;
 import com.lht.dto.AccountDTO;
 import com.lht.dto.CustomerDTO;
 import com.lht.pojo.Customer;
+import com.lht.services.AccountService;
 import com.lht.services.CustomerService;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,9 @@ public class ApiCustomerController {
 
     @Autowired
     private CustomerService customerService;
+    
+    @Autowired
+    private AccountService accountService;
 
     // Lấy danh sách có thể có filter qua query param (tên, giới tính, ... tùy bạn định nghĩa)
     @GetMapping("/customers")
@@ -53,7 +57,7 @@ public class ApiCustomerController {
 
     // Lấy 1 khách hàng theo ID
     @GetMapping("/customer/{id}")
-    public ResponseEntity<Customer> getCustomerById(@PathVariable Integer id) { 
+    public ResponseEntity<Customer> getCustomerById(@PathVariable Integer id) {
         Customer customer = customerService.getCustomerById(id);
         if (customer != null) {
             return ResponseEntity.ok(customer);
@@ -86,6 +90,13 @@ public class ApiCustomerController {
             @RequestPart(value = "image", required = false) MultipartFile file) {
         if (file != null) {
             customer.setFile(file); // gán MultipartFile vào Customer
+        }
+        // kiểm tra trùng username và mail
+        String check = accountService.checkDuplicate(customer.getUsername(), customer.getMail());
+        if (!"OK".equals(check)) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(Map.of("error", check)); // trả lỗi nếu trùng
         }
         customer.setId(null);
         Customer saved = customerService.addOrUpdateCustomer(customer);

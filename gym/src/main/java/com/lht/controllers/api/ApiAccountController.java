@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -45,52 +46,51 @@ public class ApiAccountController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-    
+
     @Autowired
     private StaffService staffService;
-    
+
     @Autowired
     private CustomerService customerService;
 
-    // GET /api/accounts?username=abc&isActive=true
-    @GetMapping("/accounts")
-    public ResponseEntity<List<Account>> getAccounts(@RequestParam Map<String, String> params) {
-        List<Account> accounts = accountService.getAccounts(params);
-        return ResponseEntity.ok(accounts);
-    }
-
-    // GET /api/accounts/all
-    @GetMapping("/accounts/getAll")
-    public ResponseEntity<List<Account>> getAllAccounts() {
-        return ResponseEntity.ok(accountService.getAllAccounts());
-    }
-
-    // GET /api/account/{id}
-    @GetMapping("/account/{id}")
-    public ResponseEntity<Account> getAccountById(@PathVariable Integer id) {
-        Account a = accountService.getAccountById(id);
-        if (a != null) {
-            return ResponseEntity.ok(a);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    // POST /api/account
     @PostMapping("/account/update")
-    public ResponseEntity<Account> updateAccount(@ModelAttribute("account") Account account,
-            @RequestPart(value = "image", required = false) MultipartFile file) {
-        if (account == null || account.getId() == null) {
-            return ResponseEntity.badRequest().build();
+    public ResponseEntity<?> updateAccount(@ModelAttribute("account") Account account,
+            @RequestPart(value = "image", required = false) MultipartFile file,
+            @RequestHeader("Authorization") String authHeader) {
+
+        // Kiểm tra token
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token không hợp lệ");
         }
 
-        // Load đúng entity từ DB
-        Account acc = accountService.getAccountById(account.getId());
+        String token = authHeader.substring(7);
+        String username;
+        try {
+            username = JwtUtils.validateTokenAndGetUsername(token);
+            if (username == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token không hợp lệ");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token không hợp lệ");
+        }
+
+        // Load entity từ DB
+        Account acc = accountService.getAccountByUsername(username);
         if (acc == null) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tài khoản không tồn tại");
         }
 
-        // Copy dữ liệu từ client sang entity trong DB
+        if (!acc.getUsername().equals(username)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Không có quyền cập nhật");
+        }
+
+        // Kiểm tra mail trùng (bỏ qua chính account)
+        Account existingMail = accountService.getAccountByMail(account.getMail());
+        if (existingMail != null && !existingMail.getId().equals(acc.getId())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Mail đã tồn tại!");
+        }
+
+        // Copy dữ liệu từ client sang DB
         acc.setName(account.getName());
         acc.setMail(account.getMail());
         acc.setBirthday(account.getBirthday());
@@ -99,7 +99,7 @@ public class ApiAccountController {
         acc.setIsActive(account.getIsActive());
 
         if (account.getPassword() != null && !account.getPassword().isEmpty()) {
-            acc.setPassword(account.getPassword()); // service sẽ encode lại
+            acc.setPassword(account.getPassword()); // encode trong service
         }
 
         if (file != null) {
@@ -107,27 +107,6 @@ public class ApiAccountController {
         }
 
         return ResponseEntity.ok(accountService.addOrUpdateAccount(acc));
-    }
-
-    // DELETE /api/account/{id}
-    @DeleteMapping("/account/{id}")
-    public ResponseEntity<?> deleteAccount(@PathVariable Integer id) {
-        boolean success = accountService.deleteAccount(id);
-        if (success) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @GetMapping("/account/isActive/{id}")
-    public ResponseEntity<Account> changeIsActive(@PathVariable Integer id) {
-        boolean success = accountService.changeIsActive(id);
-        if (success) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
     }
 
     //==============================================
@@ -162,17 +141,34 @@ public class ApiAccountController {
             return ResponseEntity.notFound().build();
         }
         AccountDTO dto = new AccountDTO(acc);
-        if("Staff".equals(acc.getRole())){
+        if ("Staff".equals(acc.getRole())) {
             dto.setType(staffService.getStaffById(acc.getId()).getStaffTypeId().getName());
-        }else{
+        } else {
             dto.setExpiryDate(customerService.getCustomerById(acc.getId()).getExpiryDate());
         }
         return ResponseEntity.ok(dto);
     }
 
     @PostMapping("/verify-password")
-    public ResponseEntity<?> verifyPassword(@RequestBody PasswordDTO request) {
-        Account account = accountService.getAccountByUsername(request.getUsername());
+    public ResponseEntity<?> verifyPassword(@RequestBody PasswordDTO request,
+            @RequestHeader("Authorization") String authHeader) {
+        // Kiểm tra Authorization header
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token không hợp lệ");
+        }
+
+        String token = authHeader.substring(7);
+        String username;
+        try {
+            username = JwtUtils.validateTokenAndGetUsername(token);
+            if (username == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token không hợp lệ");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token không hợp lệ");
+        }
+
+        Account account = accountService.getAccountByUsername(username);
         if (account == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tài khoản không tồn tại");
         }
@@ -185,8 +181,26 @@ public class ApiAccountController {
     }
 
     @PostMapping("/change-password")
-    public ResponseEntity<?> changePassword(@RequestBody PasswordDTO request) {
-        Account account = accountService.getAccountByUsername(request.getUsername());
+    public ResponseEntity<?> changePassword(@RequestBody PasswordDTO request,
+            @RequestHeader("Authorization") String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token không hợp lệ");
+        }
+
+        String token = authHeader.substring(7);
+
+        // Lấy username từ token
+        String username;
+        try {
+            username = JwtUtils.validateTokenAndGetUsername(token);
+            if (username == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token đã hết hạn hoặc không hợp lệ");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token không hợp lệ");
+        }
+
+        Account account = accountService.getAccountByUsername(username);
         if (account == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tài khoản không tồn tại");
         }
