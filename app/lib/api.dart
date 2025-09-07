@@ -59,3 +59,7 @@ class Api {
   // Payment
   static const String createPayment = "$baseUrl/payment/create";
 }
+
+//dart pub global activate flutterfire_cli
+//flutterfire configure --project=gym-chat-371b5
+
