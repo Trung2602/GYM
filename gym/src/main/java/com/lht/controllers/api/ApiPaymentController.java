@@ -9,6 +9,7 @@ import com.lht.pojo.Customer;
 import com.lht.pojo.PayCustomer;
 import com.lht.pojo.Plan;
 import com.lht.services.CustomerService;
+import com.lht.services.MailService;
 import com.lht.services.PayCustomerService;
 import com.lht.services.PlanService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -52,6 +53,9 @@ public class ApiPaymentController {
 
     @Autowired
     private CustomerService customerService;
+    
+    @Autowired
+    private MailService mailService;
 
     private final PaymentConfig vnpConfig;
 
@@ -190,6 +194,7 @@ public class ApiPaymentController {
             this.payCustomerService.updatePaymentStatus(pay, txnRef, status, bankCode);
             if ("SUCCESS".equals(status)) {
                 this.payCustomerService.updateExpiryDate(pay.getId());
+                //this.mailService.sendPaymentSuccess(pay.getCustomerId().getMail(), pay.getPlanId().getName());
             }
             // --- Redirect về frontend ---
             Map<String, Object> result = new HashMap<>();

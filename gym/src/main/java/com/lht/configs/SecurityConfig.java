@@ -66,6 +66,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/verify-password").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/account/update").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/change-password").authenticated()
+                        // ========== CUSTOMER ==========
+                        .requestMatchers(HttpMethod.GET, "/api/customer/{id}").hasRole("CUSTOMER")
                         // ========== FACILITY ==========
                         .requestMatchers(HttpMethod.GET, "/api/facilities-all").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/facility/**").permitAll()

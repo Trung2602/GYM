@@ -102,5 +102,4 @@ public class ApiCustomerController {
         Customer saved = customerService.addOrUpdateCustomer(customer);
         return ResponseEntity.ok(new CustomerDTO(saved));
     }
-
 }

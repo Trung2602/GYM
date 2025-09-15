@@ -136,6 +136,11 @@ class _PayCustomerScreenState extends State<PayCustomerScreen> {
             const SnackBar(content: Text("Thanh toán thành công!")),
           );
           await fetchPayCustomers();
+          final accRes = await http.get(Uri.parse(Api.getCustomerById(account!.id)));
+          if (accRes.statusCode == 200) {
+            final updatedCustomer = Account.fromJson(jsonDecode(accRes.body));
+            Provider.of<AccountProvider>(context, listen: false).setAccount(updatedCustomer);
+          }
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Thanh toán thất bại")),
@@ -159,7 +164,7 @@ class _PayCustomerScreenState extends State<PayCustomerScreen> {
       backgroundColor: const Color(0xFF0F123A),
       appBar: AppBar(
         title: Text(
-          "Hạn: ${account?.expiryDate != null ? account!.expiryDate!.toLocal().toString().split(' ')[0] : 'Chưa có'}",
+          "Hạn thành viên: ${account?.expiryDate != null ? account!.expiryDate!.toLocal().toString().split(' ')[0] : 'Chưa có'}",
           style: const TextStyle(color: Colors.white),
         ),
         backgroundColor: const Color(0xFF1A237E),
