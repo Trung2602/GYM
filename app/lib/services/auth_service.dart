@@ -80,7 +80,7 @@ class AuthService {
     return null;
   }
 
-  Future<Account?> registerWithImage(Account account, File? imageFile) async {
+  Future<bool> registerWithImage(Account account, File? imageFile) async {
     var uri = Uri.parse(Api.register);
 
     var request = http.MultipartRequest("POST", uri);
@@ -108,12 +108,47 @@ class AuthService {
     var streamedResponse = await request.send();
     var response = await http.Response.fromStream(streamedResponse);
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      return Account.fromJson(jsonDecode(response.body));
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      debugPrint(data["message"]); // OTP đã được gửi
+      return true;
     } else {
       throw Exception("Đăng ký thất bại: ${response.body}");
     }
   }
+
+  // Xác thực OTP
+  Future<Account?> verifyOtp(String mail, int otp) async {
+    var response = await http.post(
+      Uri.parse(Api.otpURL),
+      body: {
+        "mail": mail,
+        "otp": otp.toString(),
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      return Account.fromJson(data);
+    } else {
+      debugPrint("OTP sai: ${response.body}");
+      return null;
+    }
+  }
+
+  //. Sau khi verify thành công -> login để lấy token
+  Future<Account?> verifyOtpAndLogin(
+      BuildContext context, String mail, String password, int otp) async {
+    final acc = await verifyOtp(mail, otp);
+
+    if (acc != null) {
+      // login đúng bằng username và password gốc
+      return await login(context, acc.username, password);
+    }
+    return null;
+  }
+
 
   // Đăng ký + đăng nhập tự động
   Future<Account?> registerAndLogin(BuildContext context, Account account, File? imageFile) async {

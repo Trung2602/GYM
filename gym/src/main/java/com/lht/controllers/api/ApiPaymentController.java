@@ -194,7 +194,7 @@ public class ApiPaymentController {
             this.payCustomerService.updatePaymentStatus(pay, txnRef, status, bankCode);
             if ("SUCCESS".equals(status)) {
                 this.payCustomerService.updateExpiryDate(pay.getId());
-                //this.mailService.sendPaymentSuccess(pay.getCustomerId().getMail(), pay.getPlanId().getName());
+                this.mailService.sendPaymentSuccess(pay.getCustomerId().getMail(), pay.getPlanId().getName());
             }
             // --- Redirect về frontend ---
             Map<String, Object> result = new HashMap<>();

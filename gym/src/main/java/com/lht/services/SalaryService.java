@@ -30,4 +30,6 @@ public interface SalaryService {
     public void calculateMonthlySalaries(int month, int year);
     
     public List<Salary> getSalaryByStaffId(Integer id);
+    
+    public boolean existsSalaryForMonth(int month, int year);
 }

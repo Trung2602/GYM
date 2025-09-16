@@ -32,6 +32,14 @@ class _RegisterState extends State<Register> {
   final AuthService _authService = AuthService();
   final ImagePicker _picker = ImagePicker();
 
+  late BuildContext rootContext;
+
+  @override
+  void initState() {
+    super.initState();
+    rootContext = context;
+  }
+
   Future<void> _pickImage(ImageSource source) async {
     final pickedFile = await _picker.pickImage(source: source, imageQuality: 80);
     if (pickedFile != null) {
@@ -41,6 +49,64 @@ class _RegisterState extends State<Register> {
     }
   }
 
+  // Future<void> _submitRegister() async {
+  //   if (_selectedImage == null) {
+  //     setState(() {
+  //       _errorMessage = "Vui lòng chọn ảnh đại diện!";
+  //     });
+  //     return;
+  //   }
+  //
+  //   if (_passwordController.text.trim() != _confirmPasswordController.text.trim()) {
+  //     setState(() {
+  //       _errorMessage = "Mật khẩu xác nhận không khớp!";
+  //     });
+  //     return;
+  //   }
+  //
+  //   setState(() {
+  //     _isLoading = true;
+  //     _errorMessage = null;
+  //   });
+  //
+  //   final account = Account(
+  //     id: 0,
+  //     username: _usernameController.text.trim(),
+  //     password: _passwordController.text.trim(),
+  //     name: _nameController.text.trim(),
+  //     mail: _emailController.text.trim(),
+  //     birthday: _birthdayController.text.trim().isNotEmpty
+  //         ? DateTime.tryParse(_birthdayController.text.trim())
+  //         : null,
+  //     gender: _gender ?? true,
+  //     role: "Customer",
+  //     isActive: true,
+  //     avatar: "", // server sẽ nhận file multipart
+  //   );
+  //
+  //   try {
+  //     // ép nullable File! vì đã chắc chắn có ảnh
+  //     final result = await _authService.registerAndLogin(context, account, _selectedImage!);
+  //
+  //     if (!mounted) return;
+  //
+  //     if (result != null) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(content: Text("Đăng ký thành công!")),
+  //       );
+  //       // Điều hướng sang màn hình Home hoặc màn hình chính
+  //       Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const Home()),);
+  //     }
+  //   } catch (e) {
+  //     setState(() {
+  //       _errorMessage = e.toString();
+  //     });
+  //   } finally {
+  //     setState(() {
+  //       _isLoading = false;
+  //     });
+  //   }
+  // }
   Future<void> _submitRegister() async {
     if (_selectedImage == null) {
       setState(() {
@@ -73,21 +139,18 @@ class _RegisterState extends State<Register> {
       gender: _gender ?? true,
       role: "Customer",
       isActive: true,
-      avatar: "", // server sẽ nhận file multipart
+      avatar: "",
     );
 
     try {
-      // ép nullable File! vì đã chắc chắn có ảnh
-      final result = await _authService.registerAndLogin(context, account, _selectedImage!);
+      // Gọi API đăng ký
+      final registered = await _authService.registerWithImage(account, _selectedImage!);
 
       if (!mounted) return;
 
-      if (result != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Đăng ký thành công!")),
-        );
-        // Điều hướng sang màn hình Home hoặc màn hình chính
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const Home()),);
+      if (registered) {
+        // Nếu đăng ký thành công, mở dialog nhập OTP
+        _showOtpDialog(context, account);
       }
     } catch (e) {
       setState(() {
@@ -99,6 +162,70 @@ class _RegisterState extends State<Register> {
       });
     }
   }
+
+  void _showOtpDialog(BuildContext rootContext, Account account) {
+    final otpController = TextEditingController();
+
+    showDialog(
+      context: rootContext,
+      barrierDismissible: false,
+      builder: (ctx) {
+        return AlertDialog(
+          title: const Text("Xác thực OTP"),
+          content: TextField(
+            controller: otpController,
+            keyboardType: TextInputType.number,
+            maxLength: 6,
+            decoration: const InputDecoration(
+              hintText: "Nhập 6 số OTP",
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx), // dùng ctx để đóng dialog
+              child: const Text("Hủy"),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final otp = int.tryParse(otpController.text.trim());
+                if (otp == null) return;
+
+                Navigator.pop(ctx); // đóng dialog bằng ctx
+
+                // Gọi verifyOtpAndLogin
+                final acc = await _authService.verifyOtpAndLogin(
+                  rootContext,
+                  account.mail ?? '',
+                  account.password ?? '',
+                  otp,
+                );
+
+                if (!rootContext.mounted) return;
+
+                if (acc != null) {
+                  ScaffoldMessenger.of(rootContext).showSnackBar(
+                    const SnackBar(content: Text("Đăng ký & xác thực thành công!")),
+                  );
+                  Navigator.pushReplacement(
+                    rootContext,
+                    MaterialPageRoute(builder: (_) => const Home()),
+                  );
+                } else {
+                  ScaffoldMessenger.of(rootContext).showSnackBar(
+                    const SnackBar(content: Text("OTP không hợp lệ hoặc đã hết hạn!")),
+                  );
+                }
+              },
+              child: const Text("Xác nhận"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
+  //======================================
 
   bool get _isFormValid {
     return _usernameController.text.isNotEmpty &&
@@ -114,13 +241,14 @@ class _RegisterState extends State<Register> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF0F123A),
       appBar: AppBar(
         title: const Text("Đăng ký tài khoản"),
         backgroundColor: const Color(0xFF1A237E),
       ),
       body: Container(
         padding: const EdgeInsets.all(16),
-        color: const Color(0xFF0D1333),
+        color: const Color(0xFF0F123A),
         child: SingleChildScrollView(
           child: Column(
             children: [

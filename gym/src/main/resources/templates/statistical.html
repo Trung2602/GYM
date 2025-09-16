@@ -219,6 +219,15 @@
                        class="btn btn-success btn-sm">
                         <i class="fas fa-file-excel"></i> Xuất Excel
                     </a>
+                    <form th:action="@{/statistical/export-pay}" method="get">
+                        <input type="hidden" name="startDate" th:value="${startDate}">
+                        <input type="hidden" name="endDate" th:value="${endDate}">
+                        <input type="hidden" name="totalRevenue" th:value="${totalPayCustomerRevenue}">
+                        <input type="hidden" name="totalExpense" th:value="${totalSalary}">
+                        <input type="hidden" name="totalProfit" th:value="${totalProfit}">
+                        <button type="submit">Xuất Excel</button>
+                    </form>
+
                 </div>
             </div>
             <div class="card-body">
@@ -336,7 +345,7 @@
             responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                    legend: { position: 'right' },
+                    legend: { position: 'right'},
                             tooltip: {
                             callbacks: {
                             label: (context) => {
@@ -440,7 +449,7 @@
     });
 
     // Biểu đồ cột kép: So sánh Doanh thu và Chi tiêu
-        const revenueVsExpenseData = {
+    const revenueVsExpenseData = {
     labels: [[${allMonths}]],
     datasets: [
         {

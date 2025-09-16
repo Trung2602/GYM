@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,7 @@ public class SalaryServiceImpl implements SalaryService {
 
     @Autowired
     private SalaryRepository salaryRepository;
-    
+
     @Autowired
     private StaffService staffService;
 
@@ -144,7 +145,7 @@ public class SalaryServiceImpl implements SalaryService {
     public List<Salary> getSalaryByStaffId(Integer id) {
         return this.salaryRepository.findByStaffId_Id(id);
     }
-    
+
 //=================================================================================
     @Override
     public void calculateMonthlySalaries(int month, int year) {
@@ -164,13 +165,13 @@ public class SalaryServiceImpl implements SalaryService {
                 duration = 240; // 240h/tháng
                 int allowedDayOff = type.getDayOff(); //Số ngày cho phép nghỉ
                 int extraDayOff = Math.max(totalDayOff - allowedDayOff, 0); //Nghỉ quá ngày cho phépp
-                double bonusOrPenalty ;
+                double bonusOrPenalty;
                 if (totalDayOff == 0) {
-                    bonusOrPenalty  = -5000000; //Nếu không nghỉ ngày nào thì thưởng 500.000
+                    bonusOrPenalty = -5000000; //Nếu không nghỉ ngày nào thì thưởng 500.000
                 } else {
-                    bonusOrPenalty  = extraDayOff * 500; //Phạt 500/ngày nghỉ
+                    bonusOrPenalty = extraDayOff * 500; //Phạt 500/ngày nghỉ
                 }
-                totalSalary = type.getSalary() - bonusOrPenalty ;
+                totalSalary = type.getSalary() - bonusOrPenalty;
 
             } else if ("PartTime".equals(type.getName()) || "Intern".equals(type.getName())) { // PartTime hoặc Intern
                 // Tính tổng số giờ từ các lịch làm
@@ -193,4 +194,19 @@ public class SalaryServiceImpl implements SalaryService {
             salaryRepository.save(salary);
         }
     }
+    
+    @Override
+    public boolean existsSalaryForMonth(int month, int year) {
+        // tuỳ cách bạn lưu, giả sử salary có field Date date
+        LocalDate start = LocalDate.of(year, month, 1);
+        LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
+
+        Map<String, String> params = new HashMap<>();
+        params.put("startDate", start.toString());
+        params.put("endDate", end.toString());
+
+        List<Salary> list = this.getSalaries(params);
+        return !list.isEmpty();
+    }
+
 }

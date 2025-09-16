@@ -6,11 +6,15 @@ package com.lht.controllers.api;
 
 import com.lht.dto.AccountDTO;
 import com.lht.dto.CustomerDTO;
+import com.lht.dto.VerifyCustomerDTO;
 import com.lht.pojo.Customer;
 import com.lht.services.AccountService;
 import com.lht.services.CustomerService;
+import com.lht.services.MailService;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,9 +40,12 @@ public class ApiCustomerController {
 
     @Autowired
     private CustomerService customerService;
-    
+
     @Autowired
     private AccountService accountService;
+
+    @Autowired
+    private MailService mailService;
 
     // Lấy danh sách có thể có filter qua query param (tên, giới tính, ... tùy bạn định nghĩa)
     @GetMapping("/customers")
@@ -84,22 +91,77 @@ public class ApiCustomerController {
         return ResponseEntity.notFound().build();
     }
 
+//    @PostMapping("/register-customer")
+//    public ResponseEntity<?> register(
+//            @ModelAttribute("account") Customer customer,
+//            @RequestPart(value = "image", required = false) MultipartFile file) {
+//        if (file != null) {
+//            customer.setFile(file); // gán MultipartFile vào Customer
+//        }
+//        // kiểm tra trùng username và mail
+//        String check = accountService.checkDuplicate(customer.getUsername(), customer.getMail());
+//        if (!"OK".equals(check)) {
+//            return ResponseEntity
+//                    .badRequest()
+//                    .body(Map.of("error", check)); // trả lỗi nếu trùng
+//        }
+//        customer.setId(null);
+//        Customer saved = customerService.addOrUpdateCustomer(customer);
+//        return ResponseEntity.ok(new CustomerDTO(saved));
+//    }
+    private final Map<String, VerifyCustomerDTO> pendingRegistrations = new ConcurrentHashMap<>();
+
     @PostMapping("/register-customer")
     public ResponseEntity<?> register(
             @ModelAttribute("account") Customer customer,
             @RequestPart(value = "image", required = false) MultipartFile file) {
+
         if (file != null) {
-            customer.setFile(file); // gán MultipartFile vào Customer
+            customer.setFile(file);
         }
+
         // kiểm tra trùng username và mail
         String check = accountService.checkDuplicate(customer.getUsername(), customer.getMail());
         if (!"OK".equals(check)) {
             return ResponseEntity
                     .badRequest()
-                    .body(Map.of("error", check)); // trả lỗi nếu trùng
+                    .body(Map.of("error", check));
         }
-        customer.setId(null);
-        Customer saved = customerService.addOrUpdateCustomer(customer);
-        return ResponseEntity.ok(new CustomerDTO(saved));
+
+        // Sinh OTP 6 số
+        int otp = 100000 + new Random().nextInt(900000);
+
+        // Gửi OTP qua mail
+        mailService.sendOTP(customer.getMail(), otp);
+
+        // Lưu tạm thông tin customer + otp vào session (hoặc Redis, hoặc Map static)
+        pendingRegistrations.put(customer.getMail(), new VerifyCustomerDTO(customer, otp));
+
+        return ResponseEntity.ok(Map.of("message", "OTP đã được gửi tới email, có hiệu lực trong 5 phút"));
     }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<?> verifyOtp(@RequestParam String mail, @RequestParam int otp) {
+        VerifyCustomerDTO pending = pendingRegistrations.get(mail);
+
+        if (pending == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Không tìm thấy yêu cầu đăng ký"));
+        }
+
+        if (pending.isExpired()) {
+            pendingRegistrations.remove(mail);
+            return ResponseEntity.badRequest().body(Map.of("error", "OTP đã hết hạn"));
+        }
+
+        if (pending.getOtp() == otp) {
+            Customer saved = customerService.addOrUpdateCustomer(pending.getCustomer());
+            pendingRegistrations.remove(mail);
+            
+            mailService.sendWelcomeMail(saved.getMail());
+            return ResponseEntity.ok(new CustomerDTO(saved));
+        }
+
+        return ResponseEntity.badRequest().body(Map.of("error", "OTP không hợp lệ"));
+    }
+
 }

@@ -29,10 +29,10 @@ public class SalaryController {
 
     @Autowired
     private SalaryService salaryService;
-    
+
     @Autowired
     private StaffService staffService;
-    
+
     @Autowired
     private StaffDayOffService staffDayOffService;
 
@@ -42,7 +42,7 @@ public class SalaryController {
             @RequestParam(defaultValue = "asc") String sortDir,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        
+
         Page<Salary> salaryPage = salaryService.getAllSort(sortField, sortDir, page, size);
 
         model.addAttribute("salaries", salaryPage.getContent());
@@ -93,10 +93,15 @@ public class SalaryController {
     public String calculateMonthly(Model model,
             @RequestParam int month,
             @RequestParam int year) {
-        
-        this.salaryService.calculateMonthlySalaries(month, year);
+        if (salaryService.existsSalaryForMonth(month, year)) {
+            model.addAttribute("message", "Tháng " + month + "/" + year + " đã thanh toán lương.");
+        } else {
+            this.salaryService.calculateMonthlySalaries(month, year);
+            model.addAttribute("message", "Đã tính lương cho tháng " + month + "/" + year + ".");
+        }
+
         model.addAttribute("salaries", salaryService.getAllSalaries());
         return "salaries";
     }
-    
+
 }
